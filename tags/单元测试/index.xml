@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>单元测试 on CodeStack</title>
+    <link>https://chenquan.me/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/</link>
+    <description>Recent content in 单元测试 on CodeStack</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 22 Jun 2017 15:26:11 +0000</lastBuildDate><atom:link href="https://chenquan.me/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>用gomock进行mock测试</title>
+      <link>https://chenquan.me/posts/use-gomock-to-mock-testing/</link>
+      <pubDate>Thu, 22 Jun 2017 15:26:11 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/use-gomock-to-mock-testing/</guid>
+      <description>mock对象就是为了解决上面的问题而诞生的，mock(模拟)对象能够模拟实际依赖对象的功能，同时又不需要非常复杂的准备工作，你需要做的，仅仅就是定义对象接口，然后实现它，再交给测试对象去使用。
+go-mock是专门为go语言开发的mock库，该库使用方式简单，支持自动生成代码，可以说是不可多得的好工具。下面我就简单地展示一下go-mock是如何工作的:
+首先你需要做的是将依赖下载到本地：
+1 2  go get github.com/golang/mock/gomock go get github.com/golang/mock/mockgen   第一个是代码依赖，第二个是命令行工具（特别好用）。
+下面用一个非常简单的例子来说明gomock是如何工作的：
+我在$GOPATH/src目录下新建一个项目：hellomock，在$GOPATH/src/hellomock目录下新建hellomock.go，并定义一个接口Talker:
+1 2 3 4 5  package hellomock type Talker interface { SayHello(word string)(response string) }   然后我们需要一个实现了Talker功能的结构体，假设我们有这样的场景，我们现在有一个迎宾的岗位，需要一个能够迎宾的迎宾员，当然这个迎宾员可以是一个人，或者是一只鹦鹉。那么我们需要做的是，定义一个Persion结构体（或者是鹦鹉或者是别的什么东西），并实现Talker接口：
+person.go
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18  package hellomock import &amp;#34;fmt&amp;#34; type Person struct{ name string } func NewPerson(name string)*Person{ return &amp;amp;Person{ name:name, } } func (p *Person)SayHello(name string)(word string) { return fmt.</description>
+    </item>
+    
+  </channel>
+</rss>

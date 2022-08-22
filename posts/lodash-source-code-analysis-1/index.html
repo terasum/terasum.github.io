@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="theme-color" content="dark">
+    <title>Lodash 源码分析（一）“Function” Methods | CodeStack</title>
+
+    
+    
+    
+    <meta property="og:site_name" content="Hugo Tania is Amazing" />
+    <meta property="og:title" content="Lodash 源码分析（一）“Function” Methods | CodeStack"/>
+    <meta itemprop="name" content="Lodash 源码分析（一）“Function” Methods | CodeStack" />
+    <meta name="twitter:title" content="Lodash 源码分析（一）“Function” Methods | CodeStack" />
+    <meta name="application-name" content="Lodash 源码分析（一）“Function” Methods | CodeStack" />
+
+
+    <meta name="description" content="Hugo is Absurdly Fast!" />
+    <meta name="twitter:description" content="Hugo is Absurdly Fast!"/>
+    <meta itemprop="description" content="Hugo is Absurdly Fast!"/>
+    <meta property="og:description" content="Hugo is Absurdly Fast!" />
+
+    
+
+
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    
+    <link rel="stylesheet" href="/sass/main.min.0158e06e6beeec53cf25d2cb31334e3da41c26993a6f06151e34b499e132997a.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.gallery.min.css" integrity="sha512-B31/elyDKOSa2yGC1ALSAHkdlJ5FOhZJTNANGUFxWOnVMfKQmekRG2/sNdp6yJPrO7Ae9rlAxUlr0QjiJne01Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.css" integrity="sha512-56GJrpSgHk6Mc9Fltt+bQKcICJoEpxtvozXPA5n5OT0rfWiqGlJmJCI/vl16kctf/0XbBloh03vl7OF2xFnR8g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+</head>
+    <script>
+    (function() {
+        const colorSchemeKey = 'ThemeColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.userColorScheme = 'dark';
+        } else {
+            document.documentElement.dataset.userColorScheme = 'light';
+        }
+    })();
+</script>
+
+    <body class="dark">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-content flex">
+            <div id="nav-left" class="nav-left flex">
+                <a class="brand" href="/">
+                    
+                    <i class="fas fa-code"></i> 
+                    &nbsp; CodeStack
+                 </a>
+                 
+                 
+                 <a id="nav-left-extend" href="javascript:toggle_nav_extend();" class="nav-left-extend"><i class="czs-category-l"></i></a>
+            </div>
+
+            <div id="nav-right" class="nav-right flex">
+                
+                <a target="_blank" href="https://docker.chenquan.me/">
+                    
+                    <i class="fab fa-docker"></i>
+                    
+                   Docker 教程 
+                </a>
+                
+                <a target="_blank" href="/articles/">
+                    
+                    <i class="fas fa-archive"></i>
+                    
+                   文章归档 
+                </a>
+                
+
+                
+            </div>
+         </div>
+    </div>
+</nav>
+
+<script lang="javascript">
+    
+    function toggle_search_box() {
+        let search_box = document.getElementById('search-query');
+        let computedStyle = window.getComputedStyle(search_box, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'block') {
+            search_box.setAttribute('style', 'display: none; width: 0px;');
+        } else {
+            search_box.setAttribute('style', 'display: block; width: 200px;');
+        }
+    }
+    
+    function toggle_nav_extend() {
+        let nav_left_extend = document.getElementById('nav-left-extend');
+        let extend_icon = nav_left_extend.children[0];
+        let nav_right = document.getElementById('nav-right');
+        let computedStyle = window.getComputedStyle(nav_right, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'flex') {
+            nav_right.setAttribute('style', 'display: none;');
+            extend_icon.setAttribute('style', 'font-size: 26px;');
+            extend_icon.setAttribute('class', 'czs-category-l');
+        } else {
+            extend_icon.setAttribute('class', 'czs-close-l');
+            extend_icon.setAttribute('style', 'font-size: 20px;padding: 1px 0 0 3px;');
+            nav_right.setAttribute('style', 'display: flex;');
+        }
+    }
+</script>
+        <main>
+            
+<div class="container mainarea post-shadow">
+    <article class="post-article">
+        <header class="article-header">
+            <div class="thumb">
+                <div>
+                    <h1>Lodash 源码分析（一）“Function” Methods</h1>
+                    <div class="post-meta">
+                        <div>
+                            
+                            
+                            By terasum / <time>2017-08-21</time>
+                        </div>
+                        <div class="tags">
+                            
+                            <a href="/tags/javascript/">javascript</a>
+                            
+                            <a href="/tags/lodash/">lodash</a>
+                            
+                            <a href="/tags/%E5%89%8D%E7%AB%AF/">前端</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="article-post" id="write">
+        <p>Lodash一直是我很喜欢用的一个库，代码也十分简洁优美，一直想抽时间好好分析一下Lodash的源代码。最近抽出早上的一些时间来分析一下Lodash的一些我觉得比较好的源码。因为函数之间可能会有相互依赖，所以不会按照文档顺序进行分析，而是根据依赖关系和简易程度由浅入深地进行分析。因为个人能力有限，如果理解有偏差，还请直接指出，以便我及时修改。</p>
+<p>源码都是针对<code>4.17.4</code>版本的，<a href="https://lodash.com/docs/4.17.4#after">源docs</a>写得也很好，还有很多样例。</p>
+<h2 id="_after">
+    <a href="#_after" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    _.after
+</h2>
+<p><code>_.after</code>函数几乎是Lodash中最容易理解的一个函数了，它一共有两个参数，第一个参数是调用次数<code>n</code>,第二个参数是<code>n</code>次调用之后执行的函数<code>func</code>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">after</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">func</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">func</span> <span class="o">!=</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="nx">FUNC_ERROR_TEXT</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="nx">n</span> <span class="o">=</span> <span class="nx">toInteger</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span>
+      <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">--</span><span class="nx">n</span> <span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+        <span class="p">}</span>
+      <span class="p">};</span>
+    <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这个函数的核心代码就是：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span><span class="nx">arguments</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>但是一定要注意，这个函数中有闭包的应用，就是这个参数<code>n</code>。<code>n</code>本应该在函数<code>_.after</code>返回的时候就应该从栈空间回收，但事实上它还被返回的函数引用着，一直在内存中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">--</span><span class="nx">n</span> <span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+        <span class="p">}</span>
+      <span class="p">};</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>所以一直到返回的函数执行完毕，<code>n</code>所占用的内存空间都无法被回收。</p>
+<p>我们再来看看这个<code>apply</code>函数，我们知道<code>apply</code>函数可以改变函数运行时的作用域了，那么问题来了，在在<code>_.after</code>函数中<code>func.apply</code>函数的<code>this</code>，是谁呢？这个东西我们没有办法从源码中看出来，因为<code>this</code>是在运行时决定的。那么<code>this</code>会变吗？如果会的话怎么变呢？这个问题我们需要先弄懂<code>_.after</code>函数怎么用。</p>
+<p><code>_.after</code>函数调用后返回了另一个函数，所以对于<code>_.after</code>函数的返回值，我们是需要再次调用的。所以最好的场景可能是在延迟加载等场景中。当然为了简单起见我给出一个很简单的例子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kr">const</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&#34;lodash&#34;</span><span class="p">);</span>
+
+<span class="kd">function</span> <span class="nx">foo</span><span class="p">(</span><span class="nx">func</span> <span class="p">){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;invoked foo.&#34;</span><span class="p">);</span>
+    <span class="nx">func</span><span class="p">();</span>
+<span class="p">}</span>
+
+
+<span class="kd">var</span> <span class="nx">done</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="kd">function</span> <span class="nx">bar</span><span class="p">(){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;invoke bar&#34;</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="k">for</span><span class="p">(</span> <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span>  <span class="mi">4</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">){</span>
+   <span class="nx">foo</span><span class="p">(</span><span class="nx">done</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>正如我们前面说的，<code>n</code>的作用域是<code>_.after</code>函数内部，所以在执行过程中<code>n</code>会一直递减，因此输出结果应该是在调用两次<code>foo</code>之后调用一次<code>bar</code>，之后每次调用<code>foo</code>，都会调用一次<code>bar</code>。结果和我们预期的一致：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">invoked</span> <span class="nx">foo</span>
+<span class="nx">invoked</span> <span class="nx">foo</span>
+<span class="nx">invoke</span> <span class="nx">bar</span>
+<span class="nx">invoked</span> <span class="nx">foo</span>
+<span class="nx">invoke</span> <span class="nx">bar</span>
+<span class="nx">invoked</span> <span class="nx">foo</span>
+<span class="nx">invoke</span> <span class="nx">bar</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>那么我们再看看<code>this</code>指向的问题，我们修改一下上面的调用函数，让<code>bar</code>函数输出一下内部的<code>this</code>的一些属性：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kr">const</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&#34;lodash&#34;</span><span class="p">);</span>
+
+<span class="kd">function</span> <span class="nx">foo</span><span class="p">(</span><span class="nx">func</span> <span class="p">){</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="s2">&#34;foo&#34;</span><span class="p">;</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;invoked foo: &#34;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span> <span class="p">);</span>
+    <span class="nx">func</span><span class="p">();</span>
+<span class="p">}</span>
+
+
+<span class="kd">var</span> <span class="nx">done</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">after</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="kd">function</span> <span class="nx">bar</span><span class="p">(){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;invoke bar: &#34;</span> <span class="o">+</span> <span class="k">this</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="k">for</span><span class="p">(</span> <span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span>  <span class="mi">4</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">){</span>
+   <span class="nx">foo</span><span class="p">(</span><span class="nx">done</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>其实想来大家也应该能够猜到，在<code>bar</code>函数中输出的<code>this.name</code>也是<code>foo</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">invoked</span> <span class="nx">foo</span><span class="o">:</span> <span class="nx">foo</span>
+<span class="nx">invoked</span> <span class="nx">foo</span><span class="o">:</span> <span class="nx">foo</span>
+<span class="nx">invoke</span> <span class="nx">bar</span><span class="o">:</span> <span class="nx">foo</span>
+<span class="nx">invoked</span> <span class="nx">foo</span><span class="o">:</span> <span class="nx">foo</span>
+<span class="nx">invoke</span> <span class="nx">bar</span><span class="o">:</span> <span class="nx">foo</span>
+<span class="nx">invoked</span> <span class="nx">foo</span><span class="o">:</span> <span class="nx">foo</span>
+<span class="nx">invoke</span> <span class="nx">bar</span><span class="o">:</span> <span class="nx">foo</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这是因为<code>bar</code>的<code>this</code>应该指向的是<code>_.after</code>创建的函数的<code>this</code>,而这个函数是由<code>foo</code>函数调用的，因此<code>this</code>实际上指向就是<code>foo</code>。</p>
+<h2 id="_map">
+    <a href="#_map" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    _.map
+</h2>
+<p><code>_.map</code>函数我们几乎随处可见，这个函数应用也相当广泛。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">map</span><span class="p">(</span><span class="nx">collection</span><span class="p">,</span> <span class="nx">iteratee</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">func</span> <span class="o">=</span> <span class="nx">isArray</span><span class="p">(</span><span class="nx">collection</span><span class="p">)</span> <span class="o">?</span> <span class="nx">arrayMap</span> <span class="o">:</span> <span class="nx">baseMap</span><span class="p">;</span>
+      <span class="k">return</span> <span class="nx">func</span><span class="p">(</span><span class="nx">collection</span><span class="p">,</span> <span class="nx">getIteratee</span><span class="p">(</span><span class="nx">iteratee</span><span class="p">,</span> <span class="mi">3</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>为了简化问题，我们分析比较简单的情况：用一个func函数处理数组。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">_</span><span class="p">.</span><span class="nx">map</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="nx">func</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在处理数组的时候，lodash是分开处理的，对于<code>Array</code>采用<code>arrayMap</code>进行处理，对于对象则采用<code>baseMap</code>进行处理。</p>
+<p>我们先看数组<code>arrayMap</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">arrayMap</span><span class="p">(</span><span class="nx">array</span><span class="p">,</span> <span class="nx">iteratee</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="nx">length</span> <span class="o">=</span> <span class="nx">array</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="nx">array</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+        <span class="nx">result</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">length</span><span class="p">);</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="o">++</span><span class="nx">index</span> <span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span> <span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">result</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span> <span class="o">=</span> <span class="nx">iteratee</span><span class="p">(</span><span class="nx">array</span><span class="p">[</span><span class="nx">index</span><span class="p">],</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">array</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+  <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这个函数是一个私有函数，第一个参数是一个需要遍历的数组，第二个参数是在遍历过程当中进行处理的函数；返回一个进行map处理之后的函数。</p>
+<p>在看我们需要进行遍历处理的函数<code>iteratee</code>，这个函数式通过<code>getIteratee</code>函数得到的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">getIteratee</span><span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">lodash</span><span class="p">.</span><span class="nx">iteratee</span> <span class="o">||</span> <span class="nx">iteratee</span><span class="p">;</span>
+      <span class="nx">result</span> <span class="o">=</span> <span class="nx">result</span> <span class="o">===</span> <span class="nx">iteratee</span> <span class="o">?</span> <span class="nx">baseIteratee</span> <span class="o">:</span> <span class="nx">result</span><span class="p">;</span>
+      <span class="k">return</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">?</span> <span class="nx">result</span><span class="p">(</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">:</span> <span class="nx">result</span><span class="p">;</span>
+    <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如果<code>lodash.iteratee</code>被重新定义,则使用用户定义的<code>iteratee</code>，否则就用官方定义的<code>baseIteratee</code>。需要强调的是，<code>result(arguments[0],arguments[1])</code>是柯里化的函数返回，返回的仍旧是一个函数。不可避免地，我们需要看看官方定义的<code>baseIteratee</code>的实现：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript">   <span class="kd">function</span> <span class="nx">baseIteratee</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// Don&#39;t store the `typeof` result in a variable to avoid a JIT bug in Safari 9.
+</span><span class="c1"></span>      <span class="c1">// See https://bugs.webkit.org/show_bug.cgi?id=156034 for more details.
+</span><span class="c1"></span>      <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">value</span> <span class="o">==</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">value</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">value</span> <span class="o">==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">identity</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">value</span> <span class="o">==</span> <span class="s1">&#39;object&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">isArray</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span>
+          <span class="o">?</span> <span class="nx">baseMatchesProperty</span><span class="p">(</span><span class="nx">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">value</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+          <span class="o">:</span> <span class="nx">baseMatches</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="nx">property</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+    <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们可以看出来，这个<code>iteratee</code>迭代者其实就是一个函数，在<code>_.map</code>中<code>getIteratee(iteratee, 3)</code>，给了两个参数，按照逻辑，最终返回的是一个<code>baseIteratee</code>，<code>baseIteratee</code>的第一个参数<code>value</code>就是<code>iteratee</code>,这是一个函数，所以，<code>baseIteratee</code>函数在第一个判断就返回了。</p>
+<p>所以我们可以将map函数简化为如下版本:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">map</span><span class="p">(</span><span class="nx">collection</span><span class="p">,</span><span class="nx">iteratee</span><span class="p">){</span>
+    <span class="k">return</span> <span class="nx">arrayMap</span><span class="p">(</span><span class="nx">collection</span><span class="p">,</span><span class="nx">getIteratee</span><span class="p">(</span><span class="nx">iteratee</span><span class="p">,</span><span class="mi">3</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">arrayMap</span><span class="p">(</span><span class="nx">array</span><span class="p">,</span> <span class="nx">iteratee</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="nx">length</span> <span class="o">=</span> <span class="nx">array</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="nx">array</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+        <span class="nx">result</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">length</span><span class="p">);</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="o">++</span><span class="nx">index</span> <span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span> <span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">result</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span> <span class="o">=</span> <span class="nx">iteratee</span><span class="p">(</span><span class="nx">array</span><span class="p">[</span><span class="nx">index</span><span class="p">],</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">array</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">getIteratee</span><span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span>  <span class="nx">baseIteratee</span><span class="p">;</span>
+      <span class="k">return</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">?</span> <span class="nx">result</span><span class="p">(</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">:</span> <span class="nx">result</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">baseIteratee</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">value</span> <span class="o">==</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">value</span><span class="p">;</span>
+      <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以看到，最终调用函数<code>func</code>的时候会传入3个参数。<code>array[index],index,array</code>。我们可以实验，将<code>func</code>实现如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">func</span><span class="p">(){</span>
+   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="err">“</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="err">”</span> <span class="o">+</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="err">“</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="err">”</span> <span class="o">+</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="err">“</span><span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="err">”</span> <span class="o">+</span> <span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+   <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&#34;-----&#34;</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>输出的结果也和我们的预期一样，输出的第一个参数是该列表元素本身，第二个参数是数组下标，第三个参数是整个列表：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="mi">6</span>
+<span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="mi">0</span>
+<span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">10</span>
+<span class="o">-----</span>
+<span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="mi">8</span>
+<span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="mi">1</span>
+<span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">10</span>
+<span class="o">-----</span>
+<span class="nx">arguments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="mi">10</span>
+<span class="nx">arguments</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="mi">2</span>
+<span class="nx">arguments</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">10</span>
+<span class="o">-----</span>
+<span class="p">[</span> <span class="kc">undefined</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span> <span class="kc">undefined</span> <span class="p">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面的分析就是抛砖引玉，先给出数组的分析，别的非数组，例如对象的遍历处理则会走到别的分支进行处理，各位看官有兴趣可以深入研究。</p>
+<h2 id="_ary">
+    <a href="#_ary" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    _.ary
+</h2>
+<p>这个函数是用来限制参数个数的。这个函数咋一看好像没有什么用，但我们考虑如下场景，将一个字符列表<code>['6','8','10']</code>转为整型列表<code>[6,8,10]</code>，用<code>_.map</code>实现，我们自然而然会写出这样的代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kr">const</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&#34;lodash&#34;</span><span class="p">);</span>
+<span class="nx">_</span><span class="p">.</span><span class="nx">map</span><span class="p">([</span><span class="s1">&#39;6&#39;</span><span class="p">,</span><span class="s1">&#39;8&#39;</span><span class="p">,</span><span class="s1">&#39;10&#39;</span><span class="p">],</span><span class="nb">parseInt</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>好像很完美，我们输出看看：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="p">[</span> <span class="mi">6</span><span class="p">,</span> <span class="kc">NaN</span><span class="p">,</span> <span class="mi">2</span> <span class="p">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>很诡异是不是，看看内部到底发生了什么？其实看了上面的<code>-.map</code>函数的分析，其实原因已经很明显了。对于<code>parseInt</code>函数而言，其接收两个参数，第一个是需要处理的字符串，第二个是进制：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="cm">/**
+</span><span class="cm">* @param string 必需。要被解析的字符串。
+</span><span class="cm">* @param radix  
+</span><span class="cm">* 可选。表示要解析的数字的基数。该值介于 2 ~ 36 之间。
+</span><span class="cm">* 如果省略该参数或其值为 0，则数字将以 10 为基础来解析。如果它以 “0x” 或 “0X” 开头，将以 16 为基数。
+</span><span class="cm">* 如果该参数小于 2 或者大于 36，则 parseInt() 将返回 NaN
+</span><span class="cm">*/</span>
+<span class="nb">parseInt</span><span class="p">(</span><span class="nx">string</span><span class="p">,</span> <span class="nx">radix</span><span class="p">)</span>
+<span class="cm">/**
+</span><span class="cm">当参数 radix 的值为 0，或没有设置该参数时，parseInt() 会根据 string 来判断数字的基数。
+</span><span class="cm">
+</span><span class="cm">举例，如果 string 以 &#34;0x&#34; 开头，parseInt() 会把 string 的其余部分解析为十六进制的整数。如果 string 以 0 开头，那么 ECMAScript v3 允许 parseInt() 的一个实现把其后的字符解析为八进制或十六进制的数字。如果 string 以 1 ~ 9 的数字开头，parseInt() 将把它解析为十进制的整数。
+</span><span class="cm">*/</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>那么这样的输出也就不难理解了：</p>
+<p>处理第一个数组元素6的时候，<code>parseInt</code>实际传入参数<code>(6,0)</code>,那么按照十进制解析，会得到<code>6</code>,处理第二个数组元素的时候传入的实际参数是<code>(8,1)</code>，返回<code>NaN</code>,对于第三个数组元素，按照2进制处理，则<code>10</code>返回的是<code>2</code>。</p>
+<p>所以在上述需求的时候我们需要限制参数的个数，这个时候<code>_.ary</code>函数就登场了，上面的函数这样处理就没有问题了：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kr">const</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&#34;lodash&#34;</span><span class="p">);</span>
+<span class="nx">_</span><span class="p">.</span><span class="nx">map</span><span class="p">([</span><span class="s1">&#39;6&#39;</span><span class="p">,</span><span class="s1">&#39;8&#39;</span><span class="p">,</span><span class="s1">&#39;10&#39;</span><span class="p">],</span><span class="nx">_</span><span class="p">.</span><span class="nx">ary</span><span class="p">(</span><span class="nb">parseInt</span><span class="p">),</span><span class="mi">1</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们看看这个函数是怎么实现的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"> <span class="kd">function</span> <span class="nx">ary</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">guard</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">n</span> <span class="o">=</span> <span class="nx">guard</span> <span class="o">?</span> <span class="kc">undefined</span> <span class="o">:</span> <span class="nx">n</span><span class="p">;</span>
+      <span class="nx">n</span> <span class="o">=</span> <span class="p">(</span><span class="nx">func</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span> <span class="o">==</span> <span class="kc">null</span><span class="p">)</span> <span class="o">?</span> <span class="nx">func</span><span class="p">.</span><span class="nx">length</span> <span class="o">:</span> <span class="nx">n</span><span class="p">;</span>
+      <span class="k">return</span> <span class="nx">createWrap</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">WRAP_ARY_FLAG</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span> <span class="nx">n</span><span class="p">);</span>
+    <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这个函数先检查<code>n</code>的值，需要说明的是<code>func.length</code>返回的是函数的声明参数个数。然后返回了一个<code>createWrap</code>包裹函数，这个函数可以说是脏活累活处理工厂了，负责很多函数的包裹处理工作，而且为了提升性能，还将不同的判断用<code>bitflag</code>进行与/非处理，可以说是很用尽心机了。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="cm">/**
+</span><span class="cm">     * Creates a function that either curries or invokes `func` with optional
+</span><span class="cm">     * `this` binding and partially applied arguments.
+</span><span class="cm">     *
+</span><span class="cm">     * @private
+</span><span class="cm">     * @param {Function|string} func The function or method name to wrap.
+</span><span class="cm">     * @param {number} bitmask The bitmask flags.
+</span><span class="cm">     *    1 - `_.bind` 1                      0b0000000000000001
+</span><span class="cm">     *    2 - `_.bindKey`                     0b0000000000000010
+</span><span class="cm">     *    4 - `_.curry` or `_.curryRight`...  0b0000000000000100
+</span><span class="cm">     *    8 - `_.curry`                       0b0000000000001000
+</span><span class="cm">     *   16 - `_.curryRight`                  0b0000000000010000
+</span><span class="cm">     *   32 - `_.partial`                     0b0000000000100000
+</span><span class="cm">     *   64 - `_.partialRight`                0b0000000001000000
+</span><span class="cm">     *  128 - `_.rearg`                       0b0000000010000000
+</span><span class="cm">     *  256 - `_.ary`                         0b0000000100000000
+</span><span class="cm">     *  512 - `_.flip`                        0b0000001000000000
+</span><span class="cm">     * @param {*} [thisArg] The `this` binding of `func`.
+</span><span class="cm">     * @param {Array} [partials] The arguments to be partially applied.
+</span><span class="cm">     * @param {Array} [holders] The `partials` placeholder indexes.
+</span><span class="cm">     * @param {Array} [argPos] The argument positions of the new function.
+</span><span class="cm">     * @param {number} [ary] The arity cap of `func`.
+</span><span class="cm">     * @param {number} [arity] The arity of `func`.
+</span><span class="cm">     * @returns {Function} Returns the new wrapped function.
+</span><span class="cm">     */</span>
+    <span class="kd">function</span> <span class="nx">createWrap</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">bitmask</span><span class="p">,</span> <span class="nx">thisArg</span><span class="p">,</span> <span class="nx">partials</span><span class="p">,</span> <span class="nx">holders</span><span class="p">,</span> <span class="nx">argPos</span><span class="p">,</span> <span class="nx">ary</span><span class="p">,</span> <span class="nx">arity</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">isBindKey</span> <span class="o">=</span> <span class="nx">bitmask</span> <span class="o">&amp;</span> <span class="nx">WRAP_BIND_KEY_FLAG</span><span class="p">;</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">isBindKey</span> <span class="o">&amp;&amp;</span> <span class="k">typeof</span> <span class="nx">func</span> <span class="o">!=</span> <span class="s1">&#39;function&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="nx">FUNC_ERROR_TEXT</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="kd">var</span> <span class="nx">length</span> <span class="o">=</span> <span class="nx">partials</span> <span class="o">?</span> <span class="nx">partials</span><span class="p">.</span><span class="nx">length</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">bitmask</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="nx">WRAP_PARTIAL_FLAG</span> <span class="o">|</span> <span class="nx">WRAP_PARTIAL_RIGHT_FLAG</span><span class="p">);</span>
+        <span class="nx">partials</span> <span class="o">=</span> <span class="nx">holders</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="nx">ary</span> <span class="o">=</span> <span class="nx">ary</span> <span class="o">===</span> <span class="kc">undefined</span> <span class="o">?</span> <span class="nx">ary</span> <span class="o">:</span> <span class="nx">nativeMax</span><span class="p">(</span><span class="nx">toInteger</span><span class="p">(</span><span class="nx">ary</span><span class="p">),</span> <span class="mi">0</span><span class="p">);</span>
+      <span class="nx">arity</span> <span class="o">=</span> <span class="nx">arity</span> <span class="o">===</span> <span class="kc">undefined</span> <span class="o">?</span> <span class="nx">arity</span> <span class="o">:</span> <span class="nx">toInteger</span><span class="p">(</span><span class="nx">arity</span><span class="p">);</span>
+      <span class="nx">length</span> <span class="o">-=</span> <span class="nx">holders</span> <span class="o">?</span> <span class="nx">holders</span><span class="p">.</span><span class="nx">length</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="nx">bitmask</span> <span class="o">&amp;</span> <span class="nx">WRAP_PARTIAL_RIGHT_FLAG</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">partialsRight</span> <span class="o">=</span> <span class="nx">partials</span><span class="p">,</span>
+            <span class="nx">holdersRight</span> <span class="o">=</span> <span class="nx">holders</span><span class="p">;</span>
+
+        <span class="nx">partials</span> <span class="o">=</span> <span class="nx">holders</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">isBindKey</span> <span class="o">?</span> <span class="kc">undefined</span> <span class="o">:</span> <span class="nx">getData</span><span class="p">(</span><span class="nx">func</span><span class="p">);</span>
+
+      <span class="kd">var</span> <span class="nx">newData</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nx">func</span><span class="p">,</span> <span class="nx">bitmask</span><span class="p">,</span> <span class="nx">thisArg</span><span class="p">,</span> <span class="nx">partials</span><span class="p">,</span> <span class="nx">holders</span><span class="p">,</span> <span class="nx">partialsRight</span><span class="p">,</span> <span class="nx">holdersRight</span><span class="p">,</span>
+        <span class="nx">argPos</span><span class="p">,</span> <span class="nx">ary</span><span class="p">,</span> <span class="nx">arity</span>
+      <span class="p">];</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">mergeData</span><span class="p">(</span><span class="nx">newData</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="nx">func</span> <span class="o">=</span> <span class="nx">newData</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+      <span class="nx">bitmask</span> <span class="o">=</span> <span class="nx">newData</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+      <span class="nx">thisArg</span> <span class="o">=</span> <span class="nx">newData</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+      <span class="nx">partials</span> <span class="o">=</span> <span class="nx">newData</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+      <span class="nx">holders</span> <span class="o">=</span> <span class="nx">newData</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span>
+      <span class="nx">arity</span> <span class="o">=</span> <span class="nx">newData</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">=</span> <span class="nx">newData</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">===</span> <span class="kc">undefined</span>
+        <span class="o">?</span> <span class="p">(</span><span class="nx">isBindKey</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="nx">func</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span>
+        <span class="o">:</span> <span class="nx">nativeMax</span><span class="p">(</span><span class="nx">newData</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">-</span> <span class="nx">length</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">arity</span> <span class="o">&amp;&amp;</span> <span class="nx">bitmask</span> <span class="o">&amp;</span> <span class="p">(</span><span class="nx">WRAP_CURRY_FLAG</span> <span class="o">|</span> <span class="nx">WRAP_CURRY_RIGHT_FLAG</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nx">bitmask</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="nx">WRAP_CURRY_FLAG</span> <span class="o">|</span> <span class="nx">WRAP_CURRY_RIGHT_FLAG</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">bitmask</span> <span class="o">||</span> <span class="nx">bitmask</span> <span class="o">==</span> <span class="nx">WRAP_BIND_FLAG</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">createBind</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">bitmask</span><span class="p">,</span> <span class="nx">thisArg</span><span class="p">);</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">bitmask</span> <span class="o">==</span> <span class="nx">WRAP_CURRY_FLAG</span> <span class="o">||</span> <span class="nx">bitmask</span> <span class="o">==</span> <span class="nx">WRAP_CURRY_RIGHT_FLAG</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">result</span> <span class="o">=</span> <span class="nx">createCurry</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">bitmask</span><span class="p">,</span> <span class="nx">arity</span><span class="p">);</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">((</span><span class="nx">bitmask</span> <span class="o">==</span> <span class="nx">WRAP_PARTIAL_FLAG</span> <span class="o">||</span> <span class="nx">bitmask</span> <span class="o">==</span> <span class="p">(</span><span class="nx">WRAP_BIND_FLAG</span> <span class="o">|</span> <span class="nx">WRAP_PARTIAL_FLAG</span><span class="p">))</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">holders</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">result</span> <span class="o">=</span> <span class="nx">createPartial</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">bitmask</span><span class="p">,</span> <span class="nx">thisArg</span><span class="p">,</span> <span class="nx">partials</span><span class="p">);</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">result</span> <span class="o">=</span> <span class="nx">createHybrid</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="kc">undefined</span><span class="p">,</span> <span class="nx">newData</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="kd">var</span> <span class="nx">setter</span> <span class="o">=</span> <span class="nx">data</span> <span class="o">?</span> <span class="nx">baseSetData</span> <span class="o">:</span> <span class="nx">setData</span><span class="p">;</span>
+      <span class="k">return</span> <span class="nx">setWrapToString</span><span class="p">(</span><span class="nx">setter</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">newData</span><span class="p">),</span> <span class="nx">func</span><span class="p">,</span> <span class="nx">bitmask</span><span class="p">);</span>
+    <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>看上去太复杂了，把无关的代码削减掉：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">createWrap</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">bitmask</span><span class="p">,</span> <span class="nx">thisArg</span><span class="p">,</span> <span class="nx">partials</span><span class="p">,</span> <span class="nx">holders</span><span class="p">,</span> <span class="nx">argPos</span><span class="p">,</span> <span class="nx">ary</span><span class="p">,</span> <span class="nx">arity</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">//      0000000100000000 &amp; 0000000000000010
+</span><span class="c1"></span>      <span class="c1">// var isBindKey = bitmask &amp; WRAP_BIND_KEY_FLAG;
+</span><span class="c1"></span>      <span class="kd">var</span> <span class="nx">isBindKey</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">length</span> <span class="o">=</span>  <span class="mi">0</span><span class="p">;</span>
+      <span class="c1">// if (!length) {
+</span><span class="c1"></span>        <span class="c1">//              0000000000100000 | 0000000001000000
+</span><span class="c1"></span>        <span class="c1">//            ~(0000000001100000)
+</span><span class="c1"></span>        <span class="c1">//              1111111110011111
+</span><span class="c1"></span>        <span class="c1">//             &amp;0000000100000000
+</span><span class="c1"></span>        <span class="c1">//              0000000100000000 = WRAP_ARY_FLAG 
+</span><span class="c1"></span>        <span class="c1">// bitmask &amp;= ~(WRAP_PARTIAL_FLAG | WRAP_PARTIAL_RIGHT_FLAG);
+</span><span class="c1"></span>      <span class="c1">//  bitmask = WRAP_ARY_FLAG;
+</span><span class="c1"></span>      <span class="c1">//  partials = holders = undefined;
+</span><span class="c1"></span>      <span class="c1">// }
+</span><span class="c1"></span>      <span class="nx">bitmask</span> <span class="o">=</span> <span class="nx">WRAP_ARY_FLAG</span><span class="p">;</span>
+      <span class="nx">partials</span> <span class="o">=</span> <span class="nx">holders</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+      <span class="nx">ary</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+      <span class="nx">arity</span> <span class="o">=</span> <span class="nx">arity</span> <span class="o">===</span> <span class="kc">undefined</span> <span class="o">?</span> <span class="nx">arity</span> <span class="o">:</span> <span class="nx">toInteger</span><span class="p">(</span><span class="nx">arity</span><span class="p">);</span>
+      <span class="c1">// because holders == undefined
+</span><span class="c1"></span>      <span class="c1">//length -= 0;
+</span><span class="c1"></span>      <span class="c1">// because isBindKey  == 0
+</span><span class="c1"></span>      <span class="c1">// var data = isBindKey ? undefined : getData(func);
+</span><span class="c1"></span>      <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">getData</span><span class="p">(</span><span class="nx">func</span><span class="p">);</span>
+      <span class="kd">var</span> <span class="nx">newData</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nx">func</span><span class="p">,</span> <span class="nx">bitmask</span><span class="p">,</span> <span class="nx">thisArg</span><span class="p">,</span> <span class="nx">partials</span><span class="p">,</span> <span class="nx">holders</span><span class="p">,</span> <span class="nx">partialsRight</span><span class="p">,</span> <span class="nx">holdersRight</span><span class="p">,</span>
+        <span class="nx">argPos</span><span class="p">,</span> <span class="nx">ary</span><span class="p">,</span> <span class="nx">arity</span>
+      <span class="p">];</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">mergeData</span><span class="p">(</span><span class="nx">newData</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="nx">func</span> <span class="o">=</span> <span class="nx">newData</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+      <span class="nx">bitmask</span> <span class="o">=</span> <span class="nx">newData</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+      <span class="nx">thisArg</span> <span class="o">=</span> <span class="nx">newData</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+      <span class="nx">partials</span> <span class="o">=</span> <span class="nx">newData</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+      <span class="nx">holders</span> <span class="o">=</span> <span class="nx">newData</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span>
+      <span class="nx">arity</span> <span class="o">=</span> <span class="nx">newData</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">=</span> <span class="nx">newData</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">===</span> <span class="kc">undefined</span>
+        <span class="o">?</span> <span class="nx">func</span><span class="p">.</span><span class="nx">length</span> <span class="o">:</span> <span class="nx">newData</span><span class="p">[</span><span class="mi">9</span><span class="p">];</span>
+      <span class="nx">result</span> <span class="o">=</span> <span class="nx">createHybrid</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="kc">undefined</span><span class="p">,</span> <span class="nx">newData</span><span class="p">);</span>
+      <span class="kd">var</span> <span class="nx">setter</span> <span class="o">=</span> <span class="nx">data</span> <span class="o">?</span> <span class="nx">baseSetData</span> <span class="o">:</span> <span class="nx">setData</span><span class="p">;</span>
+      <span class="k">return</span> <span class="nx">setWrapToString</span><span class="p">(</span><span class="nx">setter</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">newData</span><span class="p">),</span> <span class="nx">func</span><span class="p">,</span> <span class="nx">bitmask</span><span class="p">);</span>
+    <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>简化了一些之后我们来到了<code>createHybrid</code>函数，这个函数也巨复杂，所以我们还是按照简化方法，把我们用不到的逻辑给简化:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript">   <span class="kd">function</span> <span class="nx">createHybrid</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">bitmask</span><span class="p">,</span> <span class="nx">thisArg</span><span class="p">,</span> <span class="nx">partials</span><span class="p">,</span> <span class="nx">holders</span><span class="p">,</span> <span class="nx">partialsRight</span><span class="p">,</span> <span class="nx">holdersRight</span><span class="p">,</span> <span class="nx">argPos</span><span class="p">,</span> <span class="nx">ary</span><span class="p">,</span> <span class="nx">arity</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">isAry</span> <span class="o">=</span> <span class="nx">bitmask</span> <span class="o">&amp;</span> <span class="nx">WRAP_ARY_FLAG</span><span class="p">,</span>
+          <span class="nx">isBind</span> <span class="o">=</span> <span class="nx">bitmask</span> <span class="o">&amp;</span> <span class="nx">WRAP_BIND_FLAG</span><span class="p">,</span>
+          <span class="nx">isBindKey</span> <span class="o">=</span> <span class="nx">bitmask</span> <span class="o">&amp;</span> <span class="nx">WRAP_BIND_KEY_FLAG</span><span class="p">,</span>
+          <span class="nx">isCurried</span> <span class="o">=</span> <span class="nx">bitmask</span> <span class="o">&amp;</span> <span class="p">(</span><span class="nx">WRAP_CURRY_FLAG</span> <span class="o">|</span> <span class="nx">WRAP_CURRY_RIGHT_FLAG</span><span class="p">),</span>
+          <span class="nx">isFlip</span> <span class="o">=</span> <span class="nx">bitmask</span> <span class="o">&amp;</span> <span class="nx">WRAP_FLIP_FLAG</span><span class="p">,</span>
+          <span class="nx">Ctor</span> <span class="o">=</span> <span class="nx">isBindKey</span> <span class="o">?</span> <span class="kc">undefined</span> <span class="o">:</span> <span class="nx">createCtor</span><span class="p">(</span><span class="nx">func</span><span class="p">);</span>
+
+      <span class="kd">function</span> <span class="nx">wrapper</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">length</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">length</span><span class="p">),</span>
+            <span class="nx">index</span> <span class="o">=</span> <span class="nx">length</span><span class="p">;</span>
+
+        <span class="k">while</span> <span class="p">(</span><span class="nx">index</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">args</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">index</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">isCurried</span><span class="p">)</span> <span class="p">{</span>
+          <span class="kd">var</span> <span class="nx">placeholder</span> <span class="o">=</span> <span class="nx">getHolder</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">),</span>
+              <span class="nx">holdersCount</span> <span class="o">=</span> <span class="nx">countHolders</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">placeholder</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">partials</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">args</span> <span class="o">=</span> <span class="nx">composeArgs</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">partials</span><span class="p">,</span> <span class="nx">holders</span><span class="p">,</span> <span class="nx">isCurried</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">partialsRight</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">args</span> <span class="o">=</span> <span class="nx">composeArgsRight</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">partialsRight</span><span class="p">,</span> <span class="nx">holdersRight</span><span class="p">,</span> <span class="nx">isCurried</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="nx">length</span> <span class="o">-=</span> <span class="nx">holdersCount</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">isCurried</span> <span class="o">&amp;&amp;</span> <span class="nx">length</span> <span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span> <span class="nx">arity</span><span class="p">)</span> <span class="p">{</span>
+          <span class="kd">var</span> <span class="nx">newHolders</span> <span class="o">=</span> <span class="nx">replaceHolders</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">placeholder</span><span class="p">);</span>
+          <span class="k">return</span> <span class="nx">createRecurry</span><span class="p">(</span>
+            <span class="nx">func</span><span class="p">,</span> <span class="nx">bitmask</span><span class="p">,</span> <span class="nx">createHybrid</span><span class="p">,</span> <span class="nx">wrapper</span><span class="p">.</span><span class="nx">placeholder</span><span class="p">,</span> <span class="nx">thisArg</span><span class="p">,</span>
+            <span class="nx">args</span><span class="p">,</span> <span class="nx">newHolders</span><span class="p">,</span> <span class="nx">argPos</span><span class="p">,</span> <span class="nx">ary</span><span class="p">,</span> <span class="nx">arity</span> <span class="o">-</span> <span class="nx">length</span>
+          <span class="p">);</span>
+        <span class="p">}</span>
+        <span class="kd">var</span> <span class="nx">thisBinding</span> <span class="o">=</span> <span class="nx">isBind</span> <span class="o">?</span> <span class="nx">thisArg</span> <span class="o">:</span> <span class="k">this</span><span class="p">,</span>
+            <span class="nx">fn</span> <span class="o">=</span> <span class="nx">isBindKey</span> <span class="o">?</span> <span class="nx">thisBinding</span><span class="p">[</span><span class="nx">func</span><span class="p">]</span> <span class="o">:</span> <span class="nx">func</span><span class="p">;</span>
+
+        <span class="nx">length</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">argPos</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">args</span> <span class="o">=</span> <span class="nx">reorder</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">argPos</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">isFlip</span> <span class="o">&amp;&amp;</span> <span class="nx">length</span> <span class="o">&amp;</span><span class="nx">gt</span><span class="p">;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">args</span><span class="p">.</span><span class="nx">reverse</span><span class="p">();</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">isAry</span> <span class="o">&amp;&amp;</span> <span class="nx">ary</span> <span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span> <span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">args</span><span class="p">.</span><span class="nx">length</span> <span class="o">=</span> <span class="nx">ary</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="k">this</span> <span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="o">!==</span> <span class="nx">root</span> <span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="k">instanceof</span> <span class="nx">wrapper</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">fn</span> <span class="o">=</span> <span class="nx">Ctor</span> <span class="o">||</span> <span class="nx">createCtor</span><span class="p">(</span><span class="nx">fn</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">thisBinding</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="nx">wrapper</span><span class="p">;</span>
+    <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>把不需要的逻辑削减掉：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript">   <span class="kd">function</span> <span class="nx">createHybrid</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">bitmask</span><span class="p">,</span> <span class="nx">thisArg</span><span class="p">,</span> <span class="nx">partials</span><span class="p">,</span> <span class="nx">holders</span><span class="p">,</span> <span class="nx">partialsRight</span><span class="p">,</span> <span class="nx">holdersRight</span><span class="p">,</span> <span class="nx">argPos</span><span class="p">,</span> <span class="nx">ary</span><span class="p">,</span> <span class="nx">arity</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">isAry</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+      <span class="kd">function</span> <span class="nx">wrapper</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">length</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">length</span><span class="p">),</span>
+            <span class="nx">index</span> <span class="o">=</span> <span class="nx">length</span><span class="p">;</span>
+        <span class="k">while</span> <span class="p">(</span><span class="nx">index</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">args</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">index</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="kd">var</span> <span class="nx">thisBinding</span> <span class="o">=</span> <span class="k">this</span><span class="p">,</span> <span class="nx">fn</span> <span class="o">=</span> <span class="nx">func</span><span class="p">;</span>
+        <span class="nx">length</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">isAry</span> <span class="o">&amp;&amp;</span> <span class="nx">ary</span> <span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span> <span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">args</span><span class="p">.</span><span class="nx">length</span> <span class="o">=</span> <span class="nx">ary</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">thisBinding</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="nx">wrapper</span><span class="p">;</span>
+    <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>好了，绕了一大圈，终于看到最终的逻辑了，<code>_.ary</code>函数其实就是把参数列表重新赋值了一下，并进行了长度限制。想想这个函数实在是太麻烦了，我们自己可以根据这个逻辑实现一个简化版的<code>_.ary</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">ary</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span><span class="nx">n</span><span class="p">){</span>
+    <span class="k">return</span> <span class="kd">function</span><span class="p">(){</span>
+        <span class="kd">var</span> <span class="nx">length</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">length</span><span class="p">),</span>
+            <span class="nx">index</span> <span class="o">=</span> <span class="nx">length</span><span class="p">;</span>
+        <span class="k">while</span><span class="p">(</span><span class="nx">index</span><span class="o">--</span><span class="p">){</span>
+            <span class="nx">args</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">index</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="nx">args</span><span class="p">.</span><span class="nx">length</span> <span class="o">=</span> <span class="nx">n</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span><span class="nx">args</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>试试效果：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">map</span><span class="p">([</span><span class="s1">&#39;6&#39;</span><span class="p">,</span><span class="s1">&#39;8&#39;</span><span class="p">,</span><span class="s1">&#39;10&#39;</span><span class="p">],</span><span class="nx">ary</span><span class="p">(</span><span class="nb">parseInt</span><span class="p">,</span><span class="mi">1</span><span class="p">)));</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>工作得很不错：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="p">[</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">10</span> <span class="p">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="小结">
+    <a href="#%e5%b0%8f%e7%bb%93" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    小结
+</h2>
+<p>今天分析这三个函数就花了一整天的时间，但是收获颇丰，能够静下心来好好分析一个著名的开源库，并能够理解透里面的一些逻辑，确实是一件很有意思的事情。我会在有时间的时候把Lodash这个我很喜欢的库都好好分析一遍，尽我最大的努力将里面的逻辑表述清楚，希望能够简明易懂。</p>
+
+        </div>
+    </article>
+
+</div>
+
+ 
+<div class="container">
+
+    
+    <nav class="flex suggested">
+        
+        <a rel="prev" href="/posts/golang-gc-algorithm-3-colors/" title="Previous post (older)">
+            <span>Previous</span>
+            Go实时GC——三色算法理论与实践
+            </a>
+        
+        
+        
+        <a rel="next" href="/posts/lodash-source-code-analysis-2/" title="Next post (newer)">
+            <span>Next</span>
+            Lodash 源码分析（二）“Function” Methods
+            </a> 
+        
+    </nav>
+    
+
+    
+</div>
+
+</main>
+
+
+        </main>
+        <footer class="footer flex">
+    <section class="container">
+        <nav class="footer-links">
+            
+            <a href="https://chainlark.com/">chainlark</a>
+            
+            <a href="/index.xml">RSS</a>
+            
+        </nav>
+    </section>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.js" integrity="sha512-0UbR6HN0dY8fWN9T7fF658896tsPgnbRREHCNq46J9/JSn8GonXDZmqtTc3qS879GM0zV49b9LPhdc/maKP8Kg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" integrity="sha512-Tn2m0TIpgVyTzzvmxLNuqbSJH3JP8jm+Cy3hvHrW7ndTDcJ1w5mBiksqDBb8GpE2ksktFvDB/ykZ0mDpsZj20w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+
+    (function(){
+        
+        
+        let images = $('img');
+        for (let img of images) {
+            $(img).featherlight($(img));
+        }
+    })();
+    </script>
+    <script defer src="/ts/features.882b72337b0ef8cf09fe2162c5a3e8bc2381c17b65e1c654a4fbd770d38fe420.js" data-enable-footnotes="false"></script>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8R697QBLL4"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-8R697QBLL4');
+    </script>
+</footer>
+    </body>
+</html>

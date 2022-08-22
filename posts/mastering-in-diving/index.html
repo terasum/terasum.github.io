@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="theme-color" content="dark">
+    <title>精通 sed (mastering sed) | CodeStack</title>
+
+    
+    
+    
+    <meta property="og:site_name" content="Hugo Tania is Amazing" />
+    <meta property="og:title" content="精通 sed (mastering sed) | CodeStack"/>
+    <meta itemprop="name" content="精通 sed (mastering sed) | CodeStack" />
+    <meta name="twitter:title" content="精通 sed (mastering sed) | CodeStack" />
+    <meta name="application-name" content="精通 sed (mastering sed) | CodeStack" />
+
+
+    <meta name="description" content="Hugo is Absurdly Fast!" />
+    <meta name="twitter:description" content="Hugo is Absurdly Fast!"/>
+    <meta itemprop="description" content="Hugo is Absurdly Fast!"/>
+    <meta property="og:description" content="Hugo is Absurdly Fast!" />
+
+    
+
+
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    
+    <link rel="stylesheet" href="/sass/main.min.0158e06e6beeec53cf25d2cb31334e3da41c26993a6f06151e34b499e132997a.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.gallery.min.css" integrity="sha512-B31/elyDKOSa2yGC1ALSAHkdlJ5FOhZJTNANGUFxWOnVMfKQmekRG2/sNdp6yJPrO7Ae9rlAxUlr0QjiJne01Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.css" integrity="sha512-56GJrpSgHk6Mc9Fltt+bQKcICJoEpxtvozXPA5n5OT0rfWiqGlJmJCI/vl16kctf/0XbBloh03vl7OF2xFnR8g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+</head>
+    <script>
+    (function() {
+        const colorSchemeKey = 'ThemeColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.userColorScheme = 'dark';
+        } else {
+            document.documentElement.dataset.userColorScheme = 'light';
+        }
+    })();
+</script>
+
+    <body class="dark">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-content flex">
+            <div id="nav-left" class="nav-left flex">
+                <a class="brand" href="/">
+                    
+                    <i class="fas fa-code"></i> 
+                    &nbsp; CodeStack
+                 </a>
+                 
+                 
+                 <a id="nav-left-extend" href="javascript:toggle_nav_extend();" class="nav-left-extend"><i class="czs-category-l"></i></a>
+            </div>
+
+            <div id="nav-right" class="nav-right flex">
+                
+                <a target="_blank" href="https://docker.chenquan.me/">
+                    
+                    <i class="fab fa-docker"></i>
+                    
+                   Docker 教程 
+                </a>
+                
+                <a target="_blank" href="/articles/">
+                    
+                    <i class="fas fa-archive"></i>
+                    
+                   文章归档 
+                </a>
+                
+
+                
+            </div>
+         </div>
+    </div>
+</nav>
+
+<script lang="javascript">
+    
+    function toggle_search_box() {
+        let search_box = document.getElementById('search-query');
+        let computedStyle = window.getComputedStyle(search_box, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'block') {
+            search_box.setAttribute('style', 'display: none; width: 0px;');
+        } else {
+            search_box.setAttribute('style', 'display: block; width: 200px;');
+        }
+    }
+    
+    function toggle_nav_extend() {
+        let nav_left_extend = document.getElementById('nav-left-extend');
+        let extend_icon = nav_left_extend.children[0];
+        let nav_right = document.getElementById('nav-right');
+        let computedStyle = window.getComputedStyle(nav_right, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'flex') {
+            nav_right.setAttribute('style', 'display: none;');
+            extend_icon.setAttribute('style', 'font-size: 26px;');
+            extend_icon.setAttribute('class', 'czs-category-l');
+        } else {
+            extend_icon.setAttribute('class', 'czs-close-l');
+            extend_icon.setAttribute('style', 'font-size: 20px;padding: 1px 0 0 3px;');
+            nav_right.setAttribute('style', 'display: flex;');
+        }
+    }
+</script>
+        <main>
+            
+<div class="container mainarea post-shadow">
+    <article class="post-article">
+        <header class="article-header">
+            <div class="thumb">
+                <div>
+                    <h1>精通 sed (mastering sed)</h1>
+                    <div class="post-meta">
+                        <div>
+                            
+                            
+                            By terasum / <time>2017-07-05</time>
+                        </div>
+                        <div class="tags">
+                            
+                            <a href="/tags/sed/">sed</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="article-post" id="write">
+        <h1 id="mastering-sed">
+    <a href="#mastering-sed" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    mastering sed
+</h1>
+<blockquote>
+<p>我承认这是标题党，但是sed在平时工作中sed真的很有用，特别是像我这种需要写一些shell进行自动化工作的。</p>
+</blockquote>
+<h2 id="sed-快速入门">
+    <a href="#sed-%e5%bf%ab%e9%80%9f%e5%85%a5%e9%97%a8" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    sed 快速入门
+</h2>
+<p><code>sed</code> 作为流编辑神器，在写脚本的时候往往会发挥奇效，所以这里我将<code>sed</code>的一些关键用法介绍一下，目的在于实用，而不是全面。</p>
+<h3 id="-i-参数">
+    <a href="#-i-%e5%8f%82%e6%95%b0" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    &lt;code&gt;-i&lt;/code&gt; 参数
+</h3>
+<p>常常会看到会有<code>sed -i</code>这样的命令，<code>-i</code>的意思就是直接在源文件上进行操作。</p>
+<h3 id="动作">
+    <a href="#%e5%8a%a8%e4%bd%9c" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    动作
+</h3>
+<p><code>sed</code>的<strong>动作</strong>是我们需要掌握的最为重要的内容 ：<br>
+– a ：新增， a 的后面可以接字串，而这些字串会在新的一行出现(目前的下一行);<br>
+– c ：取代， c 的后面可以接字串，这些字串可以取代 n1,n2 之间的行;<br>
+– d ：删除， d 后面通常不接任何字符;<br>
+– i ：插入， i 的后面可以接字串，而这些字串会在新的一行出现(目前的上一行)；<br>
+– p ：列印，亦即将某个选择的数据印出。通常 p 会与参数 sed -n 一起运行;<br>
+– s ：替换，可以直接进行取代的工作通常这个 s 的动作可以搭配正则语法,语法很像vim的替换。</p>
+<h3 id="样例">
+    <a href="#%e6%a0%b7%e4%be%8b" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    样例
+</h3>
+<p>测试文件内容：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># cat song.txt</span>
+my name is zhangshan
+his name is lisi
+my dog name is doglas
+today is good day
+we sang a song:
+lalalalala
+hahahahaha
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="s-替换">
+    <a href="#s-%e6%9b%bf%e6%8d%a2" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    &lt;code&gt;s&lt;/code&gt; 替换
+</h4>
+<pre><code>sed &quot;s/zhangshan/wangnima/g&quot; song.txt
+</code></pre>
+<blockquote>
+<p>替换的方式和<code>vim</code>很像</p>
+</blockquote>
+<p>输出</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># sed &#34;s/zhangshan/wangnima/g&#34; song.txt</span>
+my name is wangnima
+his name is lisi
+my dog name is doglas
+today is good day
+we sang a song:
+lalalalala
+hahahahaha
+</code></pre></td></tr></table>
+</div>
+</div><p>这样只会将修改之后的文件输出到标准输出，如果需要修改原来的文件的话，加上<code>-i</code>参数：</p>
+<pre><code>sed -i &quot;s/zhangshan/wangnima/g&quot; song.txt
+</code></pre>
+<p>修改就会在源文件上生效</p>
+<p><strong>用正则武装sed</strong><br>
+正则表达式是一件神兵利器，这里介绍一些较为简单的正则表达式：<br>
+– <code>^</code> 表示一行的开头，如：<code>/^my/</code> 这就是以单词my为开头的匹配<br>
+– <code>$</code> 表示一行的结尾，如: <code>/:$/</code> 就是以字符<code>:</code>为结尾的匹配<br>
+– <code>\&lt;</code> 表示一个词的开头，如<code>\&lt;s</code> 就是以s开头的词<br>
+– <code>\&gt;</code> 表示一个词的结尾，如<code>g\&gt;</code> 就是以g为结尾的词<br>
+– <code>.</code> 表示任意单个字符<br>
+– <code>*</code> 表示一个字符可以出现0次或者多次<br>
+– <code>?</code> 表示一个字符可以出现1次或者多次<br>
+– <code>[]</code> 集合，例如[abc]可以匹配a,或b,或c，经典例子：[a-zA-Z]匹配所有26个字母,<code>^</code>表示取反，如<code>[^a]</code>表示非a的字符。</p>
+<p><strong>只替换第一行的内容</strong></p>
+<pre><code>sed &quot;1s/name/nume/g&quot;
+</code></pre>
+<p>输出</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># sed &#34;1s/name/nume/g&#34; song.txt</span>
+my nume is wangnima
+his name is lisi
+my dog name is doglas
+today is good day
+we sang a song:
+lalalalala
+hahahahaha
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>指定行号范围</strong></p>
+<pre><code>sed &quot;1,2s/name/nume/g&quot; song.txt
+</code></pre>
+<p>输出</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># sed &#34;1,2s/name/nume/g&#34; song.txt</span>
+my nume is wangnima
+his nume is lisi
+my dog name is doglas
+today is good day
+we sang a song:
+lalalalala
+hahahahaha
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>只替换每行第一个s</strong></p>
+<pre><code>sed &quot;s/s/S/1&quot; song.txt
+</code></pre>
+<p>输出</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># sed &#34;s/s/S/1&#34; song.txt</span>
+my name iS wangnima
+hiS name is lisi
+my dog name iS doglas
+today iS good day
+we Sang a song:
+lalalalala
+hahahahaha
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>只替换每行第2个s</strong></p>
+<pre><code>sed &quot;s/s/S/2&quot; song.txt
+</code></pre>
+<p>输出</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># sed &#34;s/s/S/2&#34; song.txt</span>
+my name is wangnima
+his name iS lisi
+my dog name is doglaS
+today is good day
+we sang a Song:
+lalalalala
+hahahahaha
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>只替换每行第2个之后的s</strong></p>
+<pre><code>sed &quot;s/s/S/2g&quot; song.txt
+</code></pre>
+<p>输出</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># sed &#34;s/s/S/2g&#34; song.txt</span>
+my name is wangnima
+his name iS liSi
+my dog name is doglaS
+today is good day
+we sang a Song:
+lalalalala
+hahahahaha
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>多次匹配</strong></p>
+<p>将第一行的”wangnima”改成”zhangshan”然后把第二行的lisi改成”wangwu”</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">sed <span class="s2">&#34;1s/wangnima/zhangshan/g; 2s/lisi/wangwu/&#34;</span> song.txt
+</code></pre></td></tr></table>
+</div>
+</div><p>输出</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">    <span class="c1"># sed &#34;1s/wangnima/zhangshan/g; 2s/lisi/wangwu/&#34; song.txt</span>
+    my name is zhangshan
+    his name is wangwu
+    my dog name is doglas
+    today is good day
+    we sang a song:
+    lalalalala
+    hahahahaha
+</code></pre></td></tr></table>
+</div>
+</div><p>等价命令</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">sed -e <span class="s2">&#34;1s/wangnima/zhangshan/g&#34;</span> -e <span class="s2">&#34;2s/lisi/wangwu/&#34;</span> song.txt
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>`&amp;` 的妙用</strong><br>
+可以用&amp;表示被匹配到的字符，我们可以用这个trick 做一些事情：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">sed <span class="s2">&#34;s/name/@&amp;@/g&#34;</span> song.txt
+</code></pre></td></tr></table>
+</div>
+</div><p>输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">    my @name@ is wangnima
+    his @name@ is lisi
+    my dog @name@ is doglas
+    today is good day
+    we sang a song:
+    lalalalala
+    hahahahaha
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>圆括号匹配</strong><br>
+在正则表达式中，圆括号括起来的正则部分可以作为变量使用，sed中用<code>\1</code>,<code>\2</code>…表示匹配到的值：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">    sed <span class="s2">&#34;s/\([a-z]*\) name is \([a-z]*\)/\1:\2/g&#34;</span> song.txt
+</code></pre></td></tr></table>
+</div>
+</div><p>输出</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">    <span class="c1"># sed &#34;s/\([a-z]*\) name is \([a-z]*\)/\1:\2/g&#34; song.txt</span>
+    my:wangnima
+    his:lisi
+    my dog:doglas
+    today is good day
+    we sang a song:
+    lalalalala
+    hahahahaha
+</code></pre></td></tr></table>
+</div>
+</div>
+        </div>
+    </article>
+
+</div>
+
+ 
+<div class="container">
+
+    
+    <nav class="flex suggested">
+        
+        <a rel="prev" href="/posts/traveling-in-wuzhen/" title="Previous post (older)">
+            <span>Previous</span>
+            小船浮绿水——乌镇一日游
+            </a>
+        
+        
+        
+        <a rel="next" href="/posts/haskell-the-language-you-should-learn/" title="Next post (newer)">
+            <span>Next</span>
+            Haskell — 你应该学的一门语言
+            </a> 
+        
+    </nav>
+    
+
+    
+</div>
+
+</main>
+
+
+        </main>
+        <footer class="footer flex">
+    <section class="container">
+        <nav class="footer-links">
+            
+            <a href="https://chainlark.com/">chainlark</a>
+            
+            <a href="/index.xml">RSS</a>
+            
+        </nav>
+    </section>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.js" integrity="sha512-0UbR6HN0dY8fWN9T7fF658896tsPgnbRREHCNq46J9/JSn8GonXDZmqtTc3qS879GM0zV49b9LPhdc/maKP8Kg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" integrity="sha512-Tn2m0TIpgVyTzzvmxLNuqbSJH3JP8jm+Cy3hvHrW7ndTDcJ1w5mBiksqDBb8GpE2ksktFvDB/ykZ0mDpsZj20w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+
+    (function(){
+        
+        
+        let images = $('img');
+        for (let img of images) {
+            $(img).featherlight($(img));
+        }
+    })();
+    </script>
+    <script defer src="/ts/features.882b72337b0ef8cf09fe2162c5a3e8bc2381c17b65e1c654a4fbd770d38fe420.js" data-enable-footnotes="false"></script>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8R697QBLL4"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-8R697QBLL4');
+    </script>
+</footer>
+    </body>
+</html>

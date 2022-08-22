@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="theme-color" content="dark">
+    <title>Elliptic Curve Cryptography: a gentle introduction (1) | CodeStack</title>
+
+    
+    
+    
+    <meta property="og:site_name" content="Hugo Tania is Amazing" />
+    <meta property="og:title" content="Elliptic Curve Cryptography: a gentle introduction (1) | CodeStack"/>
+    <meta itemprop="name" content="Elliptic Curve Cryptography: a gentle introduction (1) | CodeStack" />
+    <meta name="twitter:title" content="Elliptic Curve Cryptography: a gentle introduction (1) | CodeStack" />
+    <meta name="application-name" content="Elliptic Curve Cryptography: a gentle introduction (1) | CodeStack" />
+
+
+    <meta name="description" content="Hugo is Absurdly Fast!" />
+    <meta name="twitter:description" content="Hugo is Absurdly Fast!"/>
+    <meta itemprop="description" content="Hugo is Absurdly Fast!"/>
+    <meta property="og:description" content="Hugo is Absurdly Fast!" />
+
+    
+
+
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    
+    <link rel="stylesheet" href="/sass/main.min.0158e06e6beeec53cf25d2cb31334e3da41c26993a6f06151e34b499e132997a.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.gallery.min.css" integrity="sha512-B31/elyDKOSa2yGC1ALSAHkdlJ5FOhZJTNANGUFxWOnVMfKQmekRG2/sNdp6yJPrO7Ae9rlAxUlr0QjiJne01Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.css" integrity="sha512-56GJrpSgHk6Mc9Fltt+bQKcICJoEpxtvozXPA5n5OT0rfWiqGlJmJCI/vl16kctf/0XbBloh03vl7OF2xFnR8g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+</head>
+    <script>
+    (function() {
+        const colorSchemeKey = 'ThemeColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.userColorScheme = 'dark';
+        } else {
+            document.documentElement.dataset.userColorScheme = 'light';
+        }
+    })();
+</script>
+
+    <body class="dark">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-content flex">
+            <div id="nav-left" class="nav-left flex">
+                <a class="brand" href="/">
+                    
+                    <i class="fas fa-code"></i> 
+                    &nbsp; CodeStack
+                 </a>
+                 
+                 
+                 <a id="nav-left-extend" href="javascript:toggle_nav_extend();" class="nav-left-extend"><i class="czs-category-l"></i></a>
+            </div>
+
+            <div id="nav-right" class="nav-right flex">
+                
+                <a target="_blank" href="https://docker.chenquan.me/">
+                    
+                    <i class="fab fa-docker"></i>
+                    
+                   Docker 教程 
+                </a>
+                
+                <a target="_blank" href="/articles/">
+                    
+                    <i class="fas fa-archive"></i>
+                    
+                   文章归档 
+                </a>
+                
+
+                
+            </div>
+         </div>
+    </div>
+</nav>
+
+<script lang="javascript">
+    
+    function toggle_search_box() {
+        let search_box = document.getElementById('search-query');
+        let computedStyle = window.getComputedStyle(search_box, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'block') {
+            search_box.setAttribute('style', 'display: none; width: 0px;');
+        } else {
+            search_box.setAttribute('style', 'display: block; width: 200px;');
+        }
+    }
+    
+    function toggle_nav_extend() {
+        let nav_left_extend = document.getElementById('nav-left-extend');
+        let extend_icon = nav_left_extend.children[0];
+        let nav_right = document.getElementById('nav-right');
+        let computedStyle = window.getComputedStyle(nav_right, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'flex') {
+            nav_right.setAttribute('style', 'display: none;');
+            extend_icon.setAttribute('style', 'font-size: 26px;');
+            extend_icon.setAttribute('class', 'czs-category-l');
+        } else {
+            extend_icon.setAttribute('class', 'czs-close-l');
+            extend_icon.setAttribute('style', 'font-size: 20px;padding: 1px 0 0 3px;');
+            nav_right.setAttribute('style', 'display: flex;');
+        }
+    }
+</script>
+        <main>
+            
+<div class="container mainarea post-shadow">
+    <article class="post-article">
+        <header class="article-header">
+            <div class="thumb">
+                <div>
+                    <h1>Elliptic Curve Cryptography: a gentle introduction (1)</h1>
+                    <div class="post-meta">
+                        <div>
+                            
+                            
+                            By terasum / <time>2017-06-12</time>
+                        </div>
+                        <div class="tags">
+                            
+                            <a href="/tags/blocachain/">blocachain</a>
+                            
+                            <a href="/tags/cryptography/">cryptography</a>
+                            
+                            <a href="/tags/ecc/">ecc</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="article-post" id="write">
+        <p>现在我们可以在<code>TLS</code>,<code>PGP</code>,<code>SSH</code>等应用中看到椭圆曲线加密系统的踪影，这三个应用几乎构建起了现代web应用和信息技术世界的基石，更不要说Bitcoin以及其他的加密货币。</p>
+<p>在ECC流行之前，几乎所有的公钥算法都是基于<code>RSA</code>,<code>DSA</code>以及<code>DH</code>，这些算法都是基于同余理论构建的。<code>RSA</code>以及其同类算法现在还是很流行，往往配合<code>ECC</code>一同使用，相对于<code>RSA</code>这种原理很容易被人理解，也很容易实现的算法而言，<code>ECC</code>的内部机理对大多数人而言似乎是一种未解之谜。</p>
+<p>我将会用这一系列的文章带领大家进入椭圆曲线加密的全新世界，我的目标不是详细地说明<code>ECC</code>的全部细节(这些在网上随手都能搜索到)，而是要提供一个简单易懂的教程说明什么是<code>ECC</code>，以及为什么它是安全的，当然我也不想花费大量的时间去进行数学证明。我将会提供一些有用的样例然后用一些生动的动态交互工具和脚本去展现它们。</p>
+<p>特别地，这里有些点事我将要提及的：</p>
+<p>为了理解这里都在说些什么，你需要预先理解一些理论：几何和现代代数，并且需要了解对称加密和非对称加密算法，最后你需要对什么是<code>easy</code>的问题，什么是<code>hard</code>的问题有一个清晰的认识。</p>
+<p>准备好了吗？让我们开始吧！</p>
+<h2 id="椭圆曲线-elliptic-curves">
+    <a href="#%e6%a4%ad%e5%9c%86%e6%9b%b2%e7%ba%bf-elliptic-curves" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    椭圆曲线 （Elliptic Curves）
+</h2>
+<p>首先，从什么是椭圆曲线（Elliptic Curver）开始，Wolfram MathWorld给了一个完整<a href="http://mathworld.wolfram.com/EllipticCurve.html">定义</a>: 但是我们不玩这个，简单来说，椭圆曲线就是一个可以通过等式：
+$$
+y^2 = x^3 + ax + b
+$$</p>
+<p>描述的点集。</p>
+<p>其中$4a^3+27b^2 \neq 0$</p>
+<blockquote>
+<p>因为需要排除掉 <a href="https://en.wikipedia.org/wiki/Singularity_mathematics">singular curves</a> 也称奇异曲线。</p>
+</blockquote>
+<p>上述的等式叫做椭圆曲线_Weierstrass normal form_</p>
+<p><img loading="lazy" 
+    src="http://chenquanme.oss-cn-shanghai.aliyuncs.com/blog/z1y3c.png" 
+    alt="curve1" 
+     /></p>
+<blockquote>
+<p>上图是不同椭圆曲线的形状（ b=1, a从2变化到-3 ）</p>
+</blockquote>
+<p><img loading="lazy" 
+    src="http://chenquanme.oss-cn-shanghai.aliyuncs.com/blog/odzzh.png" 
+    alt="singularities" 
+     /></p>
+<blockquote>
+<p>singularities 曲线:</p>
+<p>左边, a curve with a cusp（尖点）:$y^2=x^3$</p>
+<p>右边, a curve with a self-intersection（自交）$y^2 = x^3 - 3x + 2$上述两者均为不合法的椭圆曲线</p>
+</blockquote>
+<p>根据不同的a和b，椭圆曲线可能在平面上展现出不同的形状，很明显，椭圆曲线是关于x轴对称的。</p>
+<p>在我们的设计当中，我们还需要一个_无穷点_ <a href="https://en.wikipedia.org/wiki/Point_at_infinity">Point at infinity</a>（或者称为理想点），现在我们用符号 <code>0</code> 作为作为我们的无穷点。</p>
+<p>我们将上面的椭圆曲线的定义再明确一下，并加入刚刚的无穷点，我们可以得到如下的公式：</p>
+<p>$$
+\lbrace (x, y) \in \mathbb{R}^{2} \mid y^{2}=x^{3}+a x+b, 4 a^{3}+27 b^{2} \neq 0 \rbrace\cup\lbrace0\rbrace
+$$</p>
+<h2 id="群group">
+    <a href="#%e7%be%a4group" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    群（Group）
+</h2>
+<p>群(Goup)在数学上的定义是能够进行所谓“加法”的二元运算的一种集合，通常我们将这种运算用符号<code>+</code>来表示。如果集合$\mathbb{G}$想要成为一个”群”,它必须有以下四个属性：</p>
+<ol>
+<li>闭包（<strong>closure</strong>）律:如果<code>a</code>和<code>b</code>都是集合$\mathbb{G}$的成员，那么<code>a+b</code>也是集合的$\mathbb{G}$成员；</li>
+<li>结合律（<strong>associativity</strong> $(a+b)+c=a+(b+c)$</li>
+<li>需要存在一个孤立点（<strong>identity element</strong>）<code>0</code> 满足$a+0=0+a=a$</li>
+<li>每个元素都有一个相反数，例如所有的元素<code>a</code>都存在这样的元素<code>b</code>使得$a+b=0$。</li>
+</ol>
+<p>如果这个群还满足：</p>
+<ol start="5">
+<li>交换律(<strong>commutativity</strong>): $a+b = b + a$</li>
+</ol>
+<p>这个群就被称为 <em>abelian group</em> 。</p>
+<p>按照我们对加法的传统理解，我们可以得出以下结论：整数集合$\mathbb{Z}$是一个群(而且是一个阿贝尔群(abelian group))，但是自然数集合$\mathbb{N}$不是一个群，它不满足第四条属性。</p>
+<p>群可以说是非常的nice,因为如果我们证明了上述四条属性的正确性，那么我们可以免费得到一堆有用的属性，例如如果一个独立元素是唯一的那么其一定有一个相反元素也是唯一的，换句话说，对任意的元素a都存在唯一的元素b使得$a+b=0$当然我们也可以写作$b=-a$，不管是直接的还是间接的，这些定理都将在后面的内容中起到非常重要的作用。</p>
+<h2 id="椭圆曲线的群律the-group-law-for-elliptic-curves">
+    <a href="#%e6%a4%ad%e5%9c%86%e6%9b%b2%e7%ba%bf%e7%9a%84%e7%be%a4%e5%be%8bthe-group-law-for-elliptic-curves" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    椭圆曲线的群律(The group law for elliptic curves)
+</h2>
+<p>我们可以在椭圆曲线上找到一个群，这个可以描述为：</p>
+<ul>
+<li>群中的所有元素都是椭圆曲线上的点。</li>
+<li>孤立点是无穷``。</li>
+<li>其中点<code>P</code>的相反数是另一个相对于X轴对称的点。</li>
+<li>加法遵从以下规则：给出三个在一条直线上的非零点<code>P</code>,<code>Q</code>,<code>R</code>，三个点之和$P+Q+R=0$。</li>
+</ul>
+<p><img loading="lazy" 
+    src="http://chenquanme.oss-cn-shanghai.aliyuncs.com/blog/37jyw.png" 
+    alt="three-aligned-points" 
+     /></p>
+<blockquote>
+<p>三个点之和为0</p>
+</blockquote>
+<p>需要注意的是最后一条规则，我们仅仅需要三个点，这三个点需要在一条直线上，但是不需要关心他们的顺序，也就是说，如果<code>P</code>,<code>Q</code>，<code>R</code>在一条直线上，那么：$P+(Q+R)=Q+(P+R)=R+(P+Q)=\cdots=0$</p>
+<p>显然，我们的 <code>+</code> 运算符同时满足结合律（<strong>associative</strong>）和交换律（<strong>commutative</strong>），这其实是个阿贝尔群。</p>
+<p>到此为止，一切都很棒！但是，我们到底应该怎么去计算两个任意点的和呢？</p>
+<h2 id="几何加法">
+    <a href="#%e5%87%a0%e4%bd%95%e5%8a%a0%e6%b3%95" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    几何加法
+</h2>
+<p>多亏了阿贝尔群的定理，我们可以得到下列的结果：$P+Q+R=0\ or\ P+Q=R$。利用这个等式，我们可以利用几何方法去计算<code>P</code>和<code>Q</code>两个点的和：如果我们画一条穿过<code>P</code>点和<code>Q</code>点的直线，这条直线将会和椭圆曲线相交于第三个点<code>R</code>(这其实隐含在P,Q,R在一条直线上这个前提中).如果我们取<code>R</code>的相反数<code>-R</code>，这个就是我们要的 <code>P+Q</code>的结果。</p>
+<p><img loading="lazy" 
+    src="http://chenquanme.oss-cn-shanghai.aliyuncs.com/blog/ehxpo.png" 
+    alt="point-addition" 
+     /></p>
+<blockquote>
+<p>画一条穿过<code>P</code>点和<code>Q</code>点的线，这条线将会穿过点<code>R</code>,而<code>R</code>的对称点<code>-R</code>就是<code>P+Q</code>的结果。</p>
+</blockquote>
+<p>这个几何方法是行得通的，但是我们还是需要细化一下，尤其是我们需要回答几个问题：</p>
+<ul>
+<li>
+<p>如果<code>P=0</code>或者<code>Q=0</code>?显然我们没有办法画出一条线(因为0不在xy平面上)，但是我们的定义是0是我们的孤立点，<code>P+0=P</code>以及<code>Q+0=Q</code>，这个对任意的<code>P</code>和<code>Q</code>都成立。</p>
+</li>
+<li>
+<p>如果<code>P = -Q</code>?在这种情况下，穿过两点的直线是垂直的，而且不会与椭圆曲线相交于第三个点，但是因为P是Q的相反元素，我们有$P+Q=P+(-P)=0$这条定理。</p>
+</li>
+<li>
+<p>如果<code>P = Q</code>？在这种情况下，可以画出无数条穿过两点的现，这样让事情变得有点复杂，所以我们考虑一种简化情况，$Q'\neq P$，如果<code>Q'</code>无限接近P,将会发生什么？</p>
+</li>
+</ul>
+<p><img loading="lazy" 
+    src="http://chenquanme.oss-cn-shanghai.aliyuncs.com/blog/ln5de.gif" 
+    alt="animation-point-doubling" 
+     /></p>
+<blockquote>
+<p>随着两个点越来越接近，这条线渐渐变为了椭圆曲线的切线</p>
+</blockquote>
+<p>随着<code>Q'</code>无限趋近于<code>P</code>，穿过<code>p</code>和<code>Q'</code>的线渐渐变成了曲线的切线，换句话说，我们可以说<code>p + p = -R</code>，其中<code>R</code>是曲线和曲线在<code>P</code>点的切线的交点。</p>
+<ul>
+<li>
+<p>如果<code>P≠Q</code>但是恰好又没有第三个点<code>R</code>怎么办？这种情况其实很像上面的那种情况，实际上这种情况其实就是经过<code>P，Q</code>两点的直线恰好是曲线的切线。
+<img loading="lazy" 
+    src="http://chenquanme.oss-cn-shanghai.aliyuncs.com/blog/hfilp.gif" 
+    alt="animation-tangent-line" 
+     /></p>
+<blockquote>
+<p>如果我们的直线交于两点，换句话说，这条直线是曲线的切线，显然,最终结果是两点中的某一点的对称点。</p>
+</blockquote>
+<p>我们假设<code>P</code>是切点，在上面的情况中，我们可以得到<code>P+P=-Q</code>，可以转变为:<code>P+Q=-P</code>，如果，在另一种情况下，<code>Q</code>是切点，正确的等式将会变为<code>P+Q=-Q</code>。</p>
+</li>
+</ul>
+<h2 id="代数加法algebraic-addition">
+    <a href="#%e4%bb%a3%e6%95%b0%e5%8a%a0%e6%b3%95algebraic-addition" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    代数加法(Algebraic addition)
+</h2>
+<p>如果我们让计算机做上述的点加运算，我们需要将上述的几何加法转变为算术加法，将上面的规则转换为用一组公式来描述看上去非常简单，实际上确是非常乏味的，因为它要求解三次方程。所以我们跳过无聊的部分，直接给出结果。</p>
+<p>首先我们先排除烦人的特殊情况。我们已经知道<code>P+(-P)=0</code>，而且我们也知道<code>P+0=0+P=P</code>，所以在我们的公式中，我们仅仅考虑<strong>非零</strong>,<strong>非对称</strong>的两个点，$P=\left(x_{P}, y_{P}\right)$ 和$Q=\left(x_{Q}, y_{Q}\right)$。</p>
+<p>如果<code>P</code>和<code>Q</code>是不同的<code>(x_P≠x_Q)</code>，那么穿过这两点的线的斜率是：</p>
+<p>$$
+m=\frac{y_{P}-y_{Q}}{x_{P}-x_{Q}}
+$$</p>
+<p>这条直线和椭圆曲线的交点是第三点<code>R(x_R,y_R)</code></p>
+<p>$$
+x_{R}=m^{2}-x_{P}-x_{Q}
+\newline
+y_{R}=y_{P}+m\left(x_{R}-x_{P}\right)
+$$</p>
+<p>或者，相等地：</p>
+<p>$$
+y_{R}=y_{Q}+m\left(x_{R}-x_{Q}\right)
+$$</p>
+<p>因此，$\left(x_{P}, y_{P}\right)+\left(x_{Q}, y_{Q}\right)=\left(x_{R},-y_{R}\right)$(请注意符号并谨记 <code>P+Q=-R</code>)</p>
+<p>如果我们想要检查这个结果是否是正确的，我们需要检查<code>R</code>是否在曲线上，以及<code>P</code>,<code>Q</code>,<code>R</code>是否在一条直线上。检查三个点是否在一条直线上比较琐碎。但是检查<code>R</code>是否在曲线上还是比较简单的，我们需要解三次方程，当然还是很无趣。</p>
+<p>所以我们换种方式，我们用例子来验证一下，根据我们的<a href="https://cdn.rawgit.com/andreacorbellini/ecc/920b29a/interactive/reals-add.html">visual tool</a>，给出P = (1,2)和Q = (3,4)，这两个点都是在曲线:$y^2=x^3-7x+10$上的，这两点的和是<code>P+Q=-R=(-3,2)</code>,让我们看看等式是否成立：
+$$
+\begin{aligned} m &amp;=\frac{y_{P}-y_{Q}}{x_{P}-x_{Q}}=\frac{2-4}{1-3}=1 \newline x_{R} &amp;=m^{2}-x_{P}-x_{Q}=1^{2}-1-3=-3 \newline y_{R} &amp;=y_{P}+m\left(x_{R}-x_{P}\right)=2+1 \cdot(-3-1)=-2 \newline &amp;=y_{Q}+m\left(x_{R}-x_{Q}\right)=4+1 \cdot(-3-3)=-2 \end{aligned}
+$$
+确实是正确的。</p>
+<p>我们注意到，这些等式在<code>P</code>点或是<code>Q</code>点是切点的时候也是work的。</p>
+<p>让我们试试<code>P=（-1，4）Q=(1,2)</code></p>
+<p>$$
+\begin{aligned} m &amp;=\frac{y_{P}-y_{Q}}{x_{P}-x_{Q}}=\frac{4-2}{-1-1}=-1 \newline x_{R} &amp;=m^{2}-x_{P}-x_{Q}=(-1)^{2}-(-1)-1=1 \newline y_{R} &amp;=y_{P}+m\left(x_{R}-x_{P}\right)=4+-1 \cdot(1-(-1))=2 \end{aligned}
+$$</p>
+<p>我们通过可视化工具<a href="https://cdn.rawgit.com/andreacorbellini/ecc/920b29a/interactive/reals-add.html">visual tool</a>也可以得到同样的结果。</p>
+<p><strong>P=Q的情况需要稍稍特殊对待</strong>：求$x_R和y_R$的方程和上面是一样的，但是对于$x_P=x_Q$这种情况，我们需要换一个求斜率的公式：
+$$
+m=\frac{3 x_{P}^{2}+a}{2 y_{P}}
+$$</p>
+<p>注意到，就像我们所期待的，这个用来计算m的表达式是由以下公式派生的第一个式子：</p>
+<p>$$
+y_{P}=\pm \sqrt{x_{P}^{3}+a x_{P}+b}
+$$</p>
+<p>为了证明这个结果的有效性，只需要证明<code>R</code>是否是曲线上的点，以及经过<code>P</code>和<code>R</code>两点的是否与曲线有且仅有两个焦点。但是我们不去证明这点，我们还是通过一个例子来说明，降低难度：</p>
+<p><code>P=Q=(1,2)</code></p>
+<p>$$
+\begin{aligned}
+m &amp;=\frac{3 x_{P}^{2}+a}{2 y_{P}}=\frac{3 \cdot 1^{2}-7}{2 \cdot 2}=-1 \newline
+x_{R} &amp;=m^{2}-x_{P}-x_{Q}=(-1)^{2}-1-1=-1 \newline
+y_{R} &amp;=y_{P}+m\left(x_{R}-x_{P}\right)=2+(-1) \cdot(-1-1)=4
+\end{aligned}
+$$</p>
+<p>我们已经知道答案的情况下$P+P=-R=(-1,-4)$，这是<a href="Correct(https://cdn.rawgit.com/andreacorbellini/ecc/920b29a/interactive/reals-add.html?px=1&amp;py=2&amp;qx=1&amp;qy=2)">正确的</a> (就不要纠结是怎么预先得到答案的，原作者为了降低难度，简单示例了一下，想要了解更多，点击链接即可，译者注)</p>
+<h2 id="标量乘法scalar-multiplication">
+    <a href="#%e6%a0%87%e9%87%8f%e4%b9%98%e6%b3%95scalar-multiplication" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    标量乘法(Scalar multiplication)
+</h2>
+<p>在加法的基础上，我们可以定义一个新的操作：标量乘法（<strong>scalar multiplication</strong>）,可以表示为：</p>
+<p>$$
+n P=\underbrace{P+P+\cdots+P}_{n \text { times }}
+$$</p>
+<p>其中<code>n</code>是自然数，我也写了一个可视化工具用来演示<strong>标量乘法</strong>，你当然也可以试试。</p>
+<p>就从公式上看，看上去计算nP需要<strong>n</strong>次加法运算，假设<strong>n</strong>拥有<strong>k</strong>个二进制数字，我们的算法复杂度将会是$O\left(2^{k}\right)$，当然这有点不太ok,但是实际上还有更加高效的算法。</p>
+<p>其中有一种算法叫做 <strong>double and add</strong>算法，这种算法的理论可以通过例子更好地进行解释。假设我们有一个数字<code>n = 151</code>，它的二进制值是：<code>10010111</code>。那么这个二进制值可以通过2的幂次和进行计算：</p>
+<p>$$
+\begin{aligned}
+151 &amp;=1 \cdot 2^{7}+0 \cdot 2^{6}+0 \cdot 2^{5}+1 \cdot 2^{4}+0 \cdot 2^{3}+1 \cdot 2^{2}+1 \cdot 2^{1}+1 \cdot 2^{0} \newline
+&amp;=2^{7}+2^{4}+2^{2}+2^{1}+2^{0}
+\end{aligned}
+$$</p>
+<p>（我们通过将n的每一位二进制数n乘以一个2的幂次）将n表示出来：</p>
+<p>也就是说，我们可以得到：</p>
+<p>$$
+151 \cdot P=2^{7} P+2^{4} P+2^{2} P+2^{1} P+2^{0} P
+$$</p>
+<p><em>double and add</em> 算法主要步骤如下：</p>
+<ul>
+<li>得到一个P</li>
+<li>将P乘以2所以我们得到2P</li>
+<li>将2P+P（为了得到$2^{1} P+2^{0} P$）</li>
+<li>再将$2^{1} P$乘以2得到$2^{2} P$</li>
+<li>将其相加得到$2^{2} P+2^{1} P+2^{0} P$</li>
+<li>将$2^{2} P$乘以2得到$2^{3} P$</li>
+<li>不要将$$2^{3} P$$执行相加步骤</li>
+<li>将$2^{3} P$乘以2得到$2^{4} P$</li>
+<li>将其加上我们的结果(所以我们得到了$2^{4} P+2^{2} P+2^{1} P+2^{0} P$)</li>
+<li>…</li>
+</ul>
+<p>最后，我们可以通过_double and add_算法计算出$151 \cdot P$的结果</p>
+<p>如果这还不够清楚，那么这里有一个python脚本实现了这个算法：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">bits</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="s2">&#34;&#34;&#34;
+</span><span class="s2">    Generates the binary digits of n, starting
+</span><span class="s2">    from the least significant bit.
+</span><span class="s2">
+</span><span class="s2">
+</span><span class="s2">    bits(151) -&gt; 1, 1, 1, 0, 1, 0, 0, 1
+</span><span class="s2">    &#34;&#34;&#34;</span>
+    <span class="k">while</span> <span class="n">n</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">n</span> <span class="o">&amp;</span> <span class="mi">1</span>
+        <span class="n">n</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span>
+
+<span class="k">def</span> <span class="nf">double_and_add</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="s2">&#34;&#34;&#34;
+</span><span class="s2">    Returns the result of n * x, computed using
+</span><span class="s2">    the double and add algorithm.
+</span><span class="s2">    &#34;&#34;&#34;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">addend</span> <span class="o">=</span> <span class="n">x</span>
+
+    <span class="k">for</span> <span class="n">bit</span> <span class="ow">in</span> <span class="n">bits</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">bit</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="n">addend</span>
+        <span class="n">addend</span> <span class="o">*=</span> <span class="mi">2</span>
+    
+    <span class="k">return</span> <span class="n">result</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如果<code>double</code>和<code>add</code>的复杂度均为_O(1)_那么这个算法的复杂度为_O(log n)_或者为_O(k)_如果这个bit的长度是确定的)，这非常棒。这比原来的_O(n)_算法好多了!</p>
+<h2 id="对数logarithm">
+    <a href="#%e5%af%b9%e6%95%b0logarithm" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    对数（Logarithm）
+</h2>
+<p>给定的_n_和<strong>P</strong>，我们至少能够在一个多项式时间内将_Q = nP_计算出来，但是如果反过来呢？<strong>如果我们预先知道Q和P然后需要算出n?<strong>这个问题就是典型的</strong>对数问题</strong>，我们将之称为”对数“而不是”除法“是为了整合其他的加密系统（同样的我们也用幂来取代乘法）。</p>
+<p>我并不知道任何用来解对数问题的”easy“算法，然而<a href="https://cdn.rawgit.com/andreacorbellini/ecc/920b29a/interactive/reals-mul.html?a=-3&amp;b=1&amp;px=0&amp;py=1">playing with multiplication</a> 展现了一些简单的模式。举例而言：现在有一个曲线$y^{2}=x^{3}-3 x+1$ 以及点 $P=(0,1)$。我们可以快速地验证是否正确。如果_n_是奇数,_nP_就在曲线的左半平面；如果n是偶数那么_nP_就在右半平面。如果我们做一些更加深入的实验，我们可能会找到更多的套路，最终能够带领我们写出一种能够在曲线上高效计算对数的算法。</p>
+<p>但是这里仍然存在很多对数问题：离散问题(the <em>discrete</em> logarithm)。如果我们减小我们椭圆曲线的域，那么<strong>纯量相乘仍然是”easy”的，而离散对数却是”hard”问题</strong>，这个对偶关系这正是椭圆曲线加密系统最重要的一块砖瓦。</p>
+<h2 id="待续">
+    <a href="#%e5%be%85%e7%bb%ad" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    待续
+</h2>
+<p>接下来我们将会讨论<strong>有限域(finite fields)<strong>以及</strong>离散对数问题</strong>，敬请期待。</p>
+<blockquote>
+<p>参考文献：<br>
+<a href="http://andrea.corbellini.name/2015/05/17/elliptic-curve-cryptography-a-gentle-introduction/">http://andrea.corbellini.name/2015/05/17/elliptic-curve-cryptography-a-gentle-introduction/</a></p>
+</blockquote>
+
+        </div>
+    </article>
+
+</div>
+
+ 
+<div class="container">
+
+    
+    <nav class="flex suggested">
+        
+        <a rel="prev" href="/posts/diving-in-puket-/" title="Previous post (older)">
+            <span>Previous</span>
+            普吉岛之旅 - 雨季去浮潜是怎样的体验
+            </a>
+        
+        
+        
+        <a rel="next" href="/posts/elliptic-curve-cryptography_a-gentle-introduction_2/" title="Next post (newer)">
+            <span>Next</span>
+            Elliptic Curve Cryptography: a gentle introduction (2)
+            </a> 
+        
+    </nav>
+    
+
+    
+</div>
+
+</main>
+
+
+        </main>
+        <footer class="footer flex">
+    <section class="container">
+        <nav class="footer-links">
+            
+            <a href="https://chainlark.com/">chainlark</a>
+            
+            <a href="/index.xml">RSS</a>
+            
+        </nav>
+    </section>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.js" integrity="sha512-0UbR6HN0dY8fWN9T7fF658896tsPgnbRREHCNq46J9/JSn8GonXDZmqtTc3qS879GM0zV49b9LPhdc/maKP8Kg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" integrity="sha512-Tn2m0TIpgVyTzzvmxLNuqbSJH3JP8jm+Cy3hvHrW7ndTDcJ1w5mBiksqDBb8GpE2ksktFvDB/ykZ0mDpsZj20w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+
+    (function(){
+        
+        
+        let images = $('img');
+        for (let img of images) {
+            $(img).featherlight($(img));
+        }
+    })();
+    </script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css" integrity="sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js" integrity="sha384-YNHdsYkH6gMx9y3mRkmcJ2mFUjTd0qNQQvY9VYZgQd7DcN7env35GzlmFaZ23JGp" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js" integrity="sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl" crossorigin="anonymous"
+        onload="renderMathInElement(
+            document.querySelector('.article-post'), {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false},
+                    {left: '\\[', right: '\\]', display: true}
+                ]
+            }
+            );"></script>
+    <script defer src="/ts/features.882b72337b0ef8cf09fe2162c5a3e8bc2381c17b65e1c654a4fbd770d38fe420.js" data-enable-footnotes="false"></script>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8R697QBLL4"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-8R697QBLL4');
+    </script>
+</footer>
+    </body>
+</html>

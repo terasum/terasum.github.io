@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="theme-color" content="dark">
+    <title>Go 线程调度器 | CodeStack</title>
+
+    
+    
+    
+    <meta property="og:site_name" content="Hugo Tania is Amazing" />
+    <meta property="og:title" content="Go 线程调度器 | CodeStack"/>
+    <meta itemprop="name" content="Go 线程调度器 | CodeStack" />
+    <meta name="twitter:title" content="Go 线程调度器 | CodeStack" />
+    <meta name="application-name" content="Go 线程调度器 | CodeStack" />
+
+
+    <meta name="description" content="Hugo is Absurdly Fast!" />
+    <meta name="twitter:description" content="Hugo is Absurdly Fast!"/>
+    <meta itemprop="description" content="Hugo is Absurdly Fast!"/>
+    <meta property="og:description" content="Hugo is Absurdly Fast!" />
+
+    
+
+
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    
+    <link rel="stylesheet" href="/sass/main.min.0158e06e6beeec53cf25d2cb31334e3da41c26993a6f06151e34b499e132997a.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.gallery.min.css" integrity="sha512-B31/elyDKOSa2yGC1ALSAHkdlJ5FOhZJTNANGUFxWOnVMfKQmekRG2/sNdp6yJPrO7Ae9rlAxUlr0QjiJne01Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.css" integrity="sha512-56GJrpSgHk6Mc9Fltt+bQKcICJoEpxtvozXPA5n5OT0rfWiqGlJmJCI/vl16kctf/0XbBloh03vl7OF2xFnR8g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+</head>
+    <script>
+    (function() {
+        const colorSchemeKey = 'ThemeColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.userColorScheme = 'dark';
+        } else {
+            document.documentElement.dataset.userColorScheme = 'light';
+        }
+    })();
+</script>
+
+    <body class="dark">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-content flex">
+            <div id="nav-left" class="nav-left flex">
+                <a class="brand" href="/">
+                    
+                    <i class="fas fa-code"></i> 
+                    &nbsp; CodeStack
+                 </a>
+                 
+                 
+                 <a id="nav-left-extend" href="javascript:toggle_nav_extend();" class="nav-left-extend"><i class="czs-category-l"></i></a>
+            </div>
+
+            <div id="nav-right" class="nav-right flex">
+                
+                <a target="_blank" href="https://docker.chenquan.me/">
+                    
+                    <i class="fab fa-docker"></i>
+                    
+                   Docker 教程 
+                </a>
+                
+                <a target="_blank" href="/articles/">
+                    
+                    <i class="fas fa-archive"></i>
+                    
+                   文章归档 
+                </a>
+                
+
+                
+            </div>
+         </div>
+    </div>
+</nav>
+
+<script lang="javascript">
+    
+    function toggle_search_box() {
+        let search_box = document.getElementById('search-query');
+        let computedStyle = window.getComputedStyle(search_box, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'block') {
+            search_box.setAttribute('style', 'display: none; width: 0px;');
+        } else {
+            search_box.setAttribute('style', 'display: block; width: 200px;');
+        }
+    }
+    
+    function toggle_nav_extend() {
+        let nav_left_extend = document.getElementById('nav-left-extend');
+        let extend_icon = nav_left_extend.children[0];
+        let nav_right = document.getElementById('nav-right');
+        let computedStyle = window.getComputedStyle(nav_right, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'flex') {
+            nav_right.setAttribute('style', 'display: none;');
+            extend_icon.setAttribute('style', 'font-size: 26px;');
+            extend_icon.setAttribute('class', 'czs-category-l');
+        } else {
+            extend_icon.setAttribute('class', 'czs-close-l');
+            extend_icon.setAttribute('style', 'font-size: 20px;padding: 1px 0 0 3px;');
+            nav_right.setAttribute('style', 'display: flex;');
+        }
+    }
+</script>
+        <main>
+            
+<div class="container mainarea post-shadow">
+    <article class="post-article">
+        <header class="article-header">
+            <div class="thumb">
+                <div>
+                    <h1>Go 线程调度器</h1>
+                    <div class="post-meta">
+                        <div>
+                            
+                            
+                            By terasum / <time>2017-08-19</time>
+                        </div>
+                        <div class="tags">
+                            
+                            <a href="/tags/go/">go</a>
+                            
+                            <a href="/tags/%E7%BA%BF%E7%A8%8B%E8%B0%83%E5%BA%A6/">线程调度</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="article-post" id="write">
+        <p>在Go1.1版本中，加入了由Dmitry Vyukov贡献的新的调度器。新的调度器能够动态地调整Go程序的并发性能，而且表现非常出色。因此我想写篇文章介绍一下这个调度器。</p>
+<p>这篇博客里面大多数东西都已经被包含在了<a href="https://docs.google.com/document/d/1TTj4T2JO42uD5ID9e89oa0sLKhJYD0Y_kqxDv3I3XMw">原始设计文档</a>中了，这个文档的内容相当详实，但是过于技术化了。</p>
+<p>虽然有关新调度器所有东西都在那个设计文档中，但这篇博客有图片配图了，所以比设计文档清晰易懂多了。</p>
+<h2 id="go运行时为什么需要调度器">
+    <a href="#go%e8%bf%90%e8%a1%8c%e6%97%b6%e4%b8%ba%e4%bb%80%e4%b9%88%e9%9c%80%e8%a6%81%e8%b0%83%e5%ba%a6%e5%99%a8" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    Go运行时为什么需要调度器？
+</h2>
+<p>在我们开始研究新调度器之前，我们首先需要理解为什么需要调度器。既然操作系统已经能够为我们调度线程了，我们为什么又创造了一个用户实现的调度器？</p>
+<p>POSIX的线程API是对现有Unix进程模型在逻辑上的一个强大大的扩展，使得线程得到了很多类似进程的控制能力。比如，线程有它自己的信号码，线程能够被赋予CPU affinity功能(就是指定线程只能在某个CPU上运行），线程能被添加到<a href="http://en.wikipedia.org/wiki/Cgroup">cgroups</a>中，线程所占用的的资源也能够查询。这些额外特性大大增加了Go 程序在创建goroutine 时所需要的开销，是在线程多达100000的时候尤其明显。</p>
+<p>另外一个问题是，操作系统无法针对Go的设计模型给出很好的调度决策。比如，当运行一次垃圾收集的时候，Go的垃圾收集器要求所有线程都被暂停，并且要求内存要处于一致状态（consistent state）。这就要求所有等待所有正在运行的线程到同时达到一个一致点，而我们事先知道在这个一致点内存是一致的。</p>
+<p>当很多被调度的线程分散在随机点（random point）上时，你不得不等待他们中的大多数到达一致状态才能进行垃圾回收。而Go调度器却能够只在内存一致的时候进行调度，这就意味着我们只需要等待在一个CPU核心中的活跃线程达到一致即可。</p>
+<h2 id="来看看里面的各个角色our-cast-of-characters">
+    <a href="#%e6%9d%a5%e7%9c%8b%e7%9c%8b%e9%87%8c%e9%9d%a2%e7%9a%84%e5%90%84%e4%b8%aa%e8%a7%92%e8%89%b2our-cast-of-characters" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    来看看里面的各个角色（Our Cast of Characters）
+</h2>
+<p>目前有三个常见的线程模型。一个是N：1的，即多个用户空间线程运行在一个OS线程上。这个模型可以很快的进行上下文切换，但是不能利用多核系统（multi-core systems)的优势。另一个模型是1：1的，即可执行程序的一个线程匹配一个OS线程。这个模型能够利用机器上的所有核心的优势，但是上下文切换非常慢，因为它需要进行系统内核调用。</p>
+<p>Go试图通过M：N的调度器去获取这两种模型的全部优势。它在任意数目的OS线程上调用任意数目的goroutines。你可以快速进行上下文切换，并且还能利用你系统上所有的核心的优势。这个模型主要的缺点是它增加了调度器的复杂性。</p>
+<p>为了完成调度任务，Go调度器使用了三个实体：</p>
+<p><a href="http://www.chenquan.me/wp-content/uploads/2017/08/goscheduler.png"><img loading="lazy" src="http://www.chenquan.me/wp-content/uploads/2017/08/goscheduler.png" alt="" width="929" height="213" class="aligncenter size-full wp-image-259" srcset="https://www.chenquan.me/wp-content/uploads/2017/08/goscheduler.png 929w, https://www.chenquan.me/wp-content/uploads/2017/08/goscheduler-300x69.png 300w, https://www.chenquan.me/wp-content/uploads/2017/08/goscheduler-768x176.png 768w" sizes="(max-width: 929px) 100vw, 929px" /></a></p>
+<p>三角形表示OS线程，它是由OS管理的可执行程序的一个线程，而且工作起来特别像你的标准POSIX线程。在运行时代码里，它被成为<strong>M</strong>，即机器（machine）。</p>
+<p>圆形表示一个goroutine。它包括栈、指令指针以及对于调度goroutines很重要的其它信息，比如阻塞它的任何channel。在运行时代码里，它被称为G。</p>
+<p>矩形表示调度上下文。你可以把它看作是一个在单线程上进行线程调度的自定义版本。它是让我们从N:1调度器转到M:N调度器的重要部分。在运行时代码里，它被叫做<strong>P</strong>，即处理器（processor）。这部分将会进行较为详细的介绍。</p>
+<p><a href="http://www.chenquan.me/wp-content/uploads/2017/08/goscheduler2.png"><img loading="lazy" src="http://www.chenquan.me/wp-content/uploads/2017/08/goscheduler2.png" alt="" width="1203" height="1016" class="aligncenter size-full wp-image-260" srcset="https://www.chenquan.me/wp-content/uploads/2017/08/goscheduler2.png 1203w, https://www.chenquan.me/wp-content/uploads/2017/08/goscheduler2-300x253.png 300w, https://www.chenquan.me/wp-content/uploads/2017/08/goscheduler2-768x649.png 768w, https://www.chenquan.me/wp-content/uploads/2017/08/goscheduler2-1024x865.png 1024w" sizes="(max-width: 1203px) 100vw, 1203px" /></a></p>
+<p>我们可以从上面的图里看到两个线程（<strong>M</strong>），每个线程都拥有一个上下文（<strong>P</strong>），每个线程都正在运行一个goroutine（<strong>G</strong>）。为了运行goroutines，一个线程必须拥有一个上下文。</p>
+<p>上下文的数目在启动时被设置为环境变量<code>GOMAXPROCS</code>的值或者通过运行时函数<code>GOMAXPROCS()</code>来设置。通常，在你的程序执行时它不会发生变化。上下文的数目被固定的意思是，只有<code>GOMAXPROCS</code>个上下文正在任意时刻上运行Go代码。我们可以使用它调整Go进程的调用使其适合于一个单独的计算机，比如一个4核的PC中可以在4个线程上运行Go代码。</p>
+<p>外部的灰色goroutines没在运行，但是已经准备好被调度了。它们被安排成一个叫做runqueue的列表。当一个goroutine执行一个go 语句的时候，goroutine就被添加到runqueue的末端。一旦一个上下文已经运行一个goroutine到了一个点上，它就会把一个goroutine从它的runqueue给pop出来，设置栈和指令指针并且开始运行这个goroutine。</p>
+<p>为了降低mutex竞争，每一个上下文都有它自己的运行队列。在Go调度器的早期版本中，Go的调度器只有一个全全局的运行队列，并且只有一个互斥锁(mutex)来保护它。这样的设计在32核的多CPU核机器上进行性能压榨时往往会得到较差的表现。</p>
+<p>只要有goroutine在运行，调度器就能够以一个稳定的状态运行。然而还是有一些情况能够改变这种状态。</p>
+<h2 id="系统调用细节">
+    <a href="#%e7%b3%bb%e7%bb%9f%e8%b0%83%e7%94%a8%e7%bb%86%e8%8a%82" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    系统调用细节
+</h2>
+<p>你可能想问，为什么一定要有上下文？我们能不能去掉上下文而把运行队列直接放到线程上运行？不可以，上下文存在的意义是，如果一个正在运行的线程因为一些原因需要阻塞，我们可以将其挂起并将线程上下文移交给别的线程。</p>
+<p>另一种需要阻塞的情况是，在进行系统调用的时候。因为一个线程在进行系统调用的时候不能既执行代码又进行阻塞等待（注：一个<strong>M</strong>控制多个<strong>G</strong>,在系统调用的时候不允许其中的某个<strong>G</strong>阻塞，而另一个<strong>G</strong>运行，因为系统调用必须是原子性的）。因此我们需要将该上下文冻结以便调度。</p>
+<p><a href="http://www.chenquan.me/wp-content/uploads/2017/08/goscheduler3.png"><img loading="lazy" src="http://www.chenquan.me/wp-content/uploads/2017/08/goscheduler3.png" alt="" width="2127" height="1604" class="aligncenter size-full wp-image-262" srcset="https://www.chenquan.me/wp-content/uploads/2017/08/goscheduler3.png 2127w, https://www.chenquan.me/wp-content/uploads/2017/08/goscheduler3-300x226.png 300w, https://www.chenquan.me/wp-content/uploads/2017/08/goscheduler3-768x579.png 768w, https://www.chenquan.me/wp-content/uploads/2017/08/goscheduler3-1024x772.png 1024w" sizes="(max-width: 2127px) 100vw, 2127px" /></a></p>
+<p>从上图我们能够看出，一个线程放弃了它的上下文以便让别的的线程可以运行<code>G0</code>。调度器确保预先有足够的线程来运行所有的上下文。上图中的<strong>M1</strong> 可能是仅仅为了能够处理系统调用而创建的，也可能来自一个线程池。这个处于系统调用中的线程将会一直持有导致这次系统调用这的goroutine，因为从技术层面上来说，它仍然在执行，尽管可能阻塞在OS里了。</p>
+<p>当这个系统调用返回的时候，这个线程必须获取一个上下文来运行这个返回的goroutine。较为常见的操作是从其它线程中“偷取”一个上下文。如果“偷取”不成功，它就会把它的goroutine放回到一个全局运行队列中，然后把自己放回到线程池中然后进入睡眠状态。</p>
+<p>这个全局运行队列是各个上下文在运行完自己的本地运行队列后获取新goroutine的地方。上下文也会周期性的检查这个全局运行队列上的以获取goroutine。如果不这样做的话，全局运行队列上的goroutines由于饥渴可能导致无法执行而终止。</p>
+<p>Go程序要在多线程上运行就是因为要处理系统调用，哪怕<code>GOMAXPROCS</code>等于1。运行时使用调用系统调用的goroutines，而不是线程。</p>
+<h2 id="盗取工作">
+    <a href="#%e7%9b%97%e5%8f%96%e5%b7%a5%e4%bd%9c" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    盗取工作
+</h2>
+<p>系统的稳定状态改变的另外一种情况是，当一个上下文运行完要被调度的所有goroutines的时。如果各个上下文的运行队列里的goroutine的数目不均衡，将会改变调度器状态。上述的情况会导致会导致一个上下文在执行完它的运行队列后就结束了，尽管系统中仍然有许多goroutine要执行。因此为了能够一直运行Go代码，一个上下文能够从全局运行队列中获取goroutine，但是如果全局运行队列中也没有goroutine了，那么上下文就不得不从其它地方获取goroutine了。</p>
+<p><a href="http://www.chenquan.me/wp-content/uploads/2017/08/goscheduler4.png"><img loading="lazy" src="http://www.chenquan.me/wp-content/uploads/2017/08/goscheduler4.png" alt="" width="2786" height="1598" class="aligncenter size-full wp-image-261" srcset="https://www.chenquan.me/wp-content/uploads/2017/08/goscheduler4.png 2786w, https://www.chenquan.me/wp-content/uploads/2017/08/goscheduler4-300x172.png 300w, https://www.chenquan.me/wp-content/uploads/2017/08/goscheduler4-768x441.png 768w, https://www.chenquan.me/wp-content/uploads/2017/08/goscheduler4-1024x587.png 1024w" sizes="(max-width: 2786px) 100vw, 2786px" /></a></p>
+<p>这里的“其它地方”指的是就是其它的上下文！当一个上下文完成自己的全部任务后，它就会尝试“盗取”另一个上下文运行队列中一半的工作量。这将确保每个上下文总是有活干，同时也能够保证所有的线程都处于最大的负荷。</p>
+<h2 id="展望">
+    <a href="#%e5%b1%95%e6%9c%9b" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    展望
+</h2>
+<p>关于调度器还有许多细节，像<code>cgo</code>线程、<code>LockOSThread()</code>函数以及与系统与网络<code>poller</code>的整合。这些已经超过这篇文章的要探讨的范围了，但是仍然值得去深入研究。在Go运行时库里，仍然有大量有意思的创建工作要做。</p>
+<blockquote>
+<p>原文 <a href="http://morsmachine.dk/go-scheduler">Daniel Morsing</a><br>
+翻译 <a href="http://www.chenquan.me/?p=258">Chen Quan</a></p>
+</blockquote>
+<p>Releated articles:</p>
+<ul>
+<li><a href="http://morsmachine.dk/causalprof">Causal Profiling for Go</a></li>
+<li><a href="http://morsmachine.dk/error-handling">Effective error handling in Go.</a></li>
+<li><a href="http://morsmachine.dk/netpoller">The Go netpoller</a></li>
+</ul>
+
+        </div>
+    </article>
+
+</div>
+
+ 
+<div class="container">
+
+    
+    <nav class="flex suggested">
+        
+        <a rel="prev" href="/posts/functional-programming-by-haskell-js-golang/" title="Previous post (older)">
+            <span>Previous</span>
+            从Haskell、JS、go看函数式编程
+            </a>
+        
+        
+        
+        <a rel="next" href="/posts/golang-gc-algorithm-3-colors/" title="Next post (newer)">
+            <span>Next</span>
+            Go实时GC——三色算法理论与实践
+            </a> 
+        
+    </nav>
+    
+
+    
+</div>
+
+</main>
+
+
+        </main>
+        <footer class="footer flex">
+    <section class="container">
+        <nav class="footer-links">
+            
+            <a href="https://chainlark.com/">chainlark</a>
+            
+            <a href="/index.xml">RSS</a>
+            
+        </nav>
+    </section>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.js" integrity="sha512-0UbR6HN0dY8fWN9T7fF658896tsPgnbRREHCNq46J9/JSn8GonXDZmqtTc3qS879GM0zV49b9LPhdc/maKP8Kg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" integrity="sha512-Tn2m0TIpgVyTzzvmxLNuqbSJH3JP8jm+Cy3hvHrW7ndTDcJ1w5mBiksqDBb8GpE2ksktFvDB/ykZ0mDpsZj20w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+
+    (function(){
+        
+        
+        let images = $('img');
+        for (let img of images) {
+            $(img).featherlight($(img));
+        }
+    })();
+    </script>
+    <script defer src="/ts/features.882b72337b0ef8cf09fe2162c5a3e8bc2381c17b65e1c654a4fbd770d38fe420.js" data-enable-footnotes="false"></script>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8R697QBLL4"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-8R697QBLL4');
+    </script>
+</footer>
+    </body>
+</html>

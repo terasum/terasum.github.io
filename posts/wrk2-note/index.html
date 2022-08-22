@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="theme-color" content="dark">
+    <title>WRK2 http benchmark 快速笔记 | CodeStack</title>
+
+    
+    
+    
+    <meta property="og:site_name" content="Hugo Tania is Amazing" />
+    <meta property="og:title" content="WRK2 http benchmark 快速笔记 | CodeStack"/>
+    <meta itemprop="name" content="WRK2 http benchmark 快速笔记 | CodeStack" />
+    <meta name="twitter:title" content="WRK2 http benchmark 快速笔记 | CodeStack" />
+    <meta name="application-name" content="WRK2 http benchmark 快速笔记 | CodeStack" />
+
+
+    <meta name="description" content="Hugo is Absurdly Fast!" />
+    <meta name="twitter:description" content="Hugo is Absurdly Fast!"/>
+    <meta itemprop="description" content="Hugo is Absurdly Fast!"/>
+    <meta property="og:description" content="Hugo is Absurdly Fast!" />
+
+    
+
+
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    
+    <link rel="stylesheet" href="/sass/main.min.0158e06e6beeec53cf25d2cb31334e3da41c26993a6f06151e34b499e132997a.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.gallery.min.css" integrity="sha512-B31/elyDKOSa2yGC1ALSAHkdlJ5FOhZJTNANGUFxWOnVMfKQmekRG2/sNdp6yJPrO7Ae9rlAxUlr0QjiJne01Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.css" integrity="sha512-56GJrpSgHk6Mc9Fltt+bQKcICJoEpxtvozXPA5n5OT0rfWiqGlJmJCI/vl16kctf/0XbBloh03vl7OF2xFnR8g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+</head>
+    <script>
+    (function() {
+        const colorSchemeKey = 'ThemeColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.userColorScheme = 'dark';
+        } else {
+            document.documentElement.dataset.userColorScheme = 'light';
+        }
+    })();
+</script>
+
+    <body class="dark">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-content flex">
+            <div id="nav-left" class="nav-left flex">
+                <a class="brand" href="/">
+                    
+                    <i class="fas fa-code"></i> 
+                    &nbsp; CodeStack
+                 </a>
+                 
+                 
+                 <a id="nav-left-extend" href="javascript:toggle_nav_extend();" class="nav-left-extend"><i class="czs-category-l"></i></a>
+            </div>
+
+            <div id="nav-right" class="nav-right flex">
+                
+                <a target="_blank" href="https://docker.chenquan.me/">
+                    
+                    <i class="fab fa-docker"></i>
+                    
+                   Docker 教程 
+                </a>
+                
+                <a target="_blank" href="/articles/">
+                    
+                    <i class="fas fa-archive"></i>
+                    
+                   文章归档 
+                </a>
+                
+
+                
+            </div>
+         </div>
+    </div>
+</nav>
+
+<script lang="javascript">
+    
+    function toggle_search_box() {
+        let search_box = document.getElementById('search-query');
+        let computedStyle = window.getComputedStyle(search_box, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'block') {
+            search_box.setAttribute('style', 'display: none; width: 0px;');
+        } else {
+            search_box.setAttribute('style', 'display: block; width: 200px;');
+        }
+    }
+    
+    function toggle_nav_extend() {
+        let nav_left_extend = document.getElementById('nav-left-extend');
+        let extend_icon = nav_left_extend.children[0];
+        let nav_right = document.getElementById('nav-right');
+        let computedStyle = window.getComputedStyle(nav_right, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'flex') {
+            nav_right.setAttribute('style', 'display: none;');
+            extend_icon.setAttribute('style', 'font-size: 26px;');
+            extend_icon.setAttribute('class', 'czs-category-l');
+        } else {
+            extend_icon.setAttribute('class', 'czs-close-l');
+            extend_icon.setAttribute('style', 'font-size: 20px;padding: 1px 0 0 3px;');
+            nav_right.setAttribute('style', 'display: flex;');
+        }
+    }
+</script>
+        <main>
+            
+<div class="container mainarea post-shadow">
+    <article class="post-article">
+        <header class="article-header">
+            <div class="thumb">
+                <div>
+                    <h1>WRK2 http benchmark 快速笔记</h1>
+                    <div class="post-meta">
+                        <div>
+                            
+                            
+                            By terasum / <time>2019-01-11</time>
+                        </div>
+                        <div class="tags">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="article-post" id="write">
+        <p>首先需要克隆 wrk2 仓库的代码:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">git clone https://github.com/giltene/wrk2.git
+</code></pre></td></tr></table>
+</div>
+</div><p>编译安装</p>
+<pre><code>make &amp;&amp; sudo make install
+</code></pre>
+<p>注意:</p>
+<p>在macos下编译需要修改一行代码，我的系统版本为<code>10.14</code> Mojave则在<code>deps/luajit/src/Makefile</code>文件<code>293</code>行<br>
+修改为相应的系统版本号：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># export MACOSX_DEPLOYMENT_TARGET=10.4</span>
+<span class="nb">export</span> <span class="nv">MACOSX_DEPLOYMENT_TARGET</span><span class="o">=</span>10.14
+</code></pre></td></tr></table>
+</div>
+</div><p>安装完毕之后，就可以进行压力测试了。</p>
+<h2 id="编写压测lua脚本">
+    <a href="#%e7%bc%96%e5%86%99%e5%8e%8b%e6%b5%8blua%e8%84%9a%e6%9c%ac" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    编写压测lua脚本
+</h2>
+<p>以post测试为例,编写如下lua脚本：</p>
+<p><code>post.lua</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-lua" data-lang="lua"><span class="n">wrk.method</span> <span class="o">=</span> <span class="s2">&#34;POST&#34;</span>
+<span class="n">wrk.body</span>   <span class="o">=</span> <span class="s2">&#34;{</span><span class="se">\&#34;</span><span class="s2">jsonrpc</span><span class="se">\&#34;</span><span class="s2">:</span><span class="se">\&#34;</span><span class="s2">2.0</span><span class="se">\&#34;</span><span class="s2">, </span><span class="se">\&#34;</span><span class="s2">method</span><span class="se">\&#34;</span><span class="s2">: </span><span class="se">\&#34;</span><span class="s2">node_getNodeStates</span><span class="se">\&#34;</span><span class="s2">, </span><span class="se">\&#34;</span><span class="s2">id</span><span class="se">\&#34;</span><span class="s2">: 1}&#34;</span>
+<span class="n">wrk.headers</span><span class="p">[</span><span class="s2">&#34;Content-type&#34;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&#34;application/json&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="压力测试">
+    <a href="#%e5%8e%8b%e5%8a%9b%e6%b5%8b%e8%af%95" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    压力测试
+</h2>
+<p>wrk拥有如下选项：</p>
+<pre><code>Usage: wrk &lt;options&gt; &lt;url&gt;
+  Options:
+    -c, --connections &lt;N&gt;  需要保持的连接数量
+    -d, --duration    &lt;T&gt;  测试持续的时间
+    -t, --threads     &lt;N&gt;  需要使用的线程数量
+
+    -s, --script      &lt;S&gt;  需要加载的lua脚本
+    -H, --header      &lt;H&gt;  添加请求头
+    -L  --latency          打印延迟统计
+    -U  --u_latency        打印不正确的延迟统计
+        --timeout     &lt;T&gt;  连接/请求超时时间
+    -B, --batch_latency    统计整个批量时间
+                           (正式对应的每一个op)
+    -v, --version          打印版本细节
+    -R, --rate        &lt;T&gt;  TPS [必填参数]
+</code></pre>
+<p>简单测试命令:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">./wrk -t10 -c10 -d30s -R50 -L --script<span class="o">=</span>post.lua http://localhost:8081
+</code></pre></td></tr></table>
+</div>
+</div>
+        </div>
+    </article>
+
+</div>
+
+ 
+<div class="container">
+
+    
+    <nav class="flex suggested">
+        
+        <a rel="prev" href="/posts/chaos-testing-by-pubma/" title="Previous post (older)">
+            <span>Previous</span>
+            使用 pubma 对区块链网络进行混沌测试
+            </a>
+        
+        
+        
+        <a rel="next" href="/posts/pbft-key-points/" title="Next post (newer)">
+            <span>Next</span>
+            PBFT算法关键要点详叙
+            </a> 
+        
+    </nav>
+    
+
+    
+</div>
+
+</main>
+
+
+        </main>
+        <footer class="footer flex">
+    <section class="container">
+        <nav class="footer-links">
+            
+            <a href="https://chainlark.com/">chainlark</a>
+            
+            <a href="/index.xml">RSS</a>
+            
+        </nav>
+    </section>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.js" integrity="sha512-0UbR6HN0dY8fWN9T7fF658896tsPgnbRREHCNq46J9/JSn8GonXDZmqtTc3qS879GM0zV49b9LPhdc/maKP8Kg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" integrity="sha512-Tn2m0TIpgVyTzzvmxLNuqbSJH3JP8jm+Cy3hvHrW7ndTDcJ1w5mBiksqDBb8GpE2ksktFvDB/ykZ0mDpsZj20w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+
+    (function(){
+        
+        
+        let images = $('img');
+        for (let img of images) {
+            $(img).featherlight($(img));
+        }
+    })();
+    </script>
+    <script defer src="/ts/features.882b72337b0ef8cf09fe2162c5a3e8bc2381c17b65e1c654a4fbd770d38fe420.js" data-enable-footnotes="false"></script>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8R697QBLL4"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-8R697QBLL4');
+    </script>
+</footer>
+    </body>
+</html>

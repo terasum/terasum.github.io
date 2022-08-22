@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="theme-color" content="dark">
+    <title>如何用GN编译V8引擎 | CodeStack</title>
+
+    
+    
+    
+    <meta property="og:site_name" content="Hugo Tania is Amazing" />
+    <meta property="og:title" content="如何用GN编译V8引擎 | CodeStack"/>
+    <meta itemprop="name" content="如何用GN编译V8引擎 | CodeStack" />
+    <meta name="twitter:title" content="如何用GN编译V8引擎 | CodeStack" />
+    <meta name="application-name" content="如何用GN编译V8引擎 | CodeStack" />
+
+
+    <meta name="description" content="Hugo is Absurdly Fast!" />
+    <meta name="twitter:description" content="Hugo is Absurdly Fast!"/>
+    <meta itemprop="description" content="Hugo is Absurdly Fast!"/>
+    <meta property="og:description" content="Hugo is Absurdly Fast!" />
+
+    
+
+
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    
+    <link rel="stylesheet" href="/sass/main.min.0158e06e6beeec53cf25d2cb31334e3da41c26993a6f06151e34b499e132997a.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.gallery.min.css" integrity="sha512-B31/elyDKOSa2yGC1ALSAHkdlJ5FOhZJTNANGUFxWOnVMfKQmekRG2/sNdp6yJPrO7Ae9rlAxUlr0QjiJne01Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.css" integrity="sha512-56GJrpSgHk6Mc9Fltt+bQKcICJoEpxtvozXPA5n5OT0rfWiqGlJmJCI/vl16kctf/0XbBloh03vl7OF2xFnR8g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+</head>
+    <script>
+    (function() {
+        const colorSchemeKey = 'ThemeColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.userColorScheme = 'dark';
+        } else {
+            document.documentElement.dataset.userColorScheme = 'light';
+        }
+    })();
+</script>
+
+    <body class="dark">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-content flex">
+            <div id="nav-left" class="nav-left flex">
+                <a class="brand" href="/">
+                    
+                    <i class="fas fa-code"></i> 
+                    &nbsp; CodeStack
+                 </a>
+                 
+                 
+                 <a id="nav-left-extend" href="javascript:toggle_nav_extend();" class="nav-left-extend"><i class="czs-category-l"></i></a>
+            </div>
+
+            <div id="nav-right" class="nav-right flex">
+                
+                <a target="_blank" href="https://docker.chenquan.me/">
+                    
+                    <i class="fab fa-docker"></i>
+                    
+                   Docker 教程 
+                </a>
+                
+                <a target="_blank" href="/articles/">
+                    
+                    <i class="fas fa-archive"></i>
+                    
+                   文章归档 
+                </a>
+                
+
+                
+            </div>
+         </div>
+    </div>
+</nav>
+
+<script lang="javascript">
+    
+    function toggle_search_box() {
+        let search_box = document.getElementById('search-query');
+        let computedStyle = window.getComputedStyle(search_box, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'block') {
+            search_box.setAttribute('style', 'display: none; width: 0px;');
+        } else {
+            search_box.setAttribute('style', 'display: block; width: 200px;');
+        }
+    }
+    
+    function toggle_nav_extend() {
+        let nav_left_extend = document.getElementById('nav-left-extend');
+        let extend_icon = nav_left_extend.children[0];
+        let nav_right = document.getElementById('nav-right');
+        let computedStyle = window.getComputedStyle(nav_right, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'flex') {
+            nav_right.setAttribute('style', 'display: none;');
+            extend_icon.setAttribute('style', 'font-size: 26px;');
+            extend_icon.setAttribute('class', 'czs-category-l');
+        } else {
+            extend_icon.setAttribute('class', 'czs-close-l');
+            extend_icon.setAttribute('style', 'font-size: 20px;padding: 1px 0 0 3px;');
+            nav_right.setAttribute('style', 'display: flex;');
+        }
+    }
+</script>
+        <main>
+            
+<div class="container mainarea post-shadow">
+    <article class="post-article">
+        <header class="article-header">
+            <div class="thumb">
+                <div>
+                    <h1>如何用GN编译V8引擎</h1>
+                    <div class="post-meta">
+                        <div>
+                            
+                            
+                            By terasum / <time>2018-05-12</time>
+                        </div>
+                        <div class="tags">
+                            
+                            <a href="/tags/javascript/">javascript</a>
+                            
+                            <a href="/tags/v8/">v8</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="article-post" id="write">
+        <p>在v8引擎的6.5版本以上，google采用了<code>GN+Ninja</code>的编译组合，因此本文主要是基于<code>GN+Ninjia</code>的编译方式进行说明。</p>
+<h2 id="获取源码">
+    <a href="#%e8%8e%b7%e5%8f%96%e6%ba%90%e7%a0%81" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    获取源码
+</h2>
+<p>在官方文档中，还特别提示了避免HFS环境下的unicode问题，需要额外配置一下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">$ git config --global core.precomposeUnicode <span class="nb">true</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>现在v8在github上面有源码镜像，你只需要<code>git clone</code>下来即可。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">$ git clone git@github.com:v8/v8.git
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="获取依赖">
+    <a href="#%e8%8e%b7%e5%8f%96%e4%be%9d%e8%b5%96" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    获取依赖
+</h2>
+<h3 id="depot_tools">
+    <a href="#depot_tools" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    depot_tools
+</h3>
+<p>首先<code>git clone</code>如下的仓库：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">$ git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+</code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>Note: 国内用户可以<code>clone</code>github上面的镜像代码：<br>
+<code>git clone git@github.com:cybertk/depot_tools.git</code></p>
+</blockquote>
+<p>然后将<code>depot_tools</code>加入你的<code>PATH</code>环境变量中(通常会加到<code>.bashrc</code>或者<code>.zshrc</code>中)：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$PATH</span><span class="s2">:/path/to/depot_tools&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="gclient">
+    <a href="#gclient" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    gclient
+</h3>
+<p>取得<code>depot_tools</code>之后，需要取得大量编译依赖，google提供了一个比较方便的工具<code>gclient</code>来获取依赖。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">gclient sync
+</code></pre></td></tr></table>
+</div>
+</div><p>尴尬的一点在于，由于众所周知的原因，依赖下载十分缓慢。现在我给出一些解决方案：</p>
+<p><strong>方案A: 设置代码镜像</strong><br>
+在获取到的v8代码中，第一级目录下有一个<code>DEPS</code>文件,通过修改其中的代码源实现加速：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">$ vim DEPS
+</code></pre></td></tr></table>
+</div>
+</div><p>内容如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="nb">vars</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s1">&#39;build_for_node&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+  <span class="s1">&#39;checkout_instrumented_libraries&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+  <span class="s1">&#39;chromium_url&#39;</span><span class="p">:</span> <span class="s1">&#39;https://chromium.googlesource.com&#39;</span><span class="p">,</span>
+  <span class="s1">&#39;download_gcmole&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+  <span class="s1">&#39;download_jsfunfuzz&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+  <span class="s1">&#39;download_mips_toolchain&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>将<code>chromium_url</code>的值修改为:<code>https://source.codeaurora.org/quic/lc</code></p>
+<blockquote>
+<p>Note: 请注意，这个chromium源码镜像并不全，没有python相关的库，但是大部分库都有，可以先把大部分代码下载下来，再使用代理把剩下的下载下来。</p>
+</blockquote>
+<p><strong>方案B: 设置代理</strong></p>
+<p>这是根治的方法，至于代理是如何设置本文不涉及。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">export</span> <span class="nv">http_proxy</span><span class="o">=</span>127.0.0.1:1080 
+<span class="nb">export</span> <span class="nv">https_proxy</span><span class="o">=</span>127.0.0.1:1080
+</code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>Note：请注意<code>http_proxy</code>一定要小写。</p>
+</blockquote>
+<h2 id="编译初始化">
+    <a href="#%e7%bc%96%e8%af%91%e5%88%9d%e5%a7%8b%e5%8c%96" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    编译初始化
+</h2>
+<p>v8使用<a href="https://ninja-build.org/">Ninja</a>作为编译工具，同时使用<a href="https://chromium.googlesource.com/chromium/src/+/lkcr/tools/gn/docs/quick_start.md">GN</a>来生成<code>.ninja</code>文件。</p>
+<p>使用GN可以生成不同平台的编译配置文件：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">gn gen out.gn/x64.release
+</code></pre></td></tr></table>
+</div>
+</div><p>当然你也可以在生成编译配置的时候传入一些参数:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">gn gen out.gn/foo --args<span class="o">=</span><span class="s1">&#39;is_debug=false target_cpu=&#34;x64&#34; v8_target_cpu=&#34;arm64&#34; use_goma=true&#39;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>使用如下参数加速编译：</p>
+<ol>
+<li><code>is_debug = false</code> 编译成<code>release</code>版本</li>
+<li><code>is_component_build = true</code> 编译成动态链接库而不是很大的可执行文件</li>
+<li><code>symbol_level = 0</code> 将所有的debug符号放在一起，可以加速二次编译，并加速链接过程</li>
+<li>可以使用<code>ccache</code>加速编译过程，<a href="https://chromium.googlesource.com/chromium/src/+/lkgr/docs/ccache_mac.md">安装ccache</a>, 可以传入参数<code>cc_wrapper=&quot;ccache&quot;</code>,<a href="https://chromium.googlesource.com/chromium/src/+/lkgr/docs/ccache_mac.md">参考这里</a></li>
+<li>使用<a href="https://chromium.googlesource.com/chromium/src/+/lkgr/docs/jumbo.md">jumbo</a></li>
+</ol>
+<p>编译选项参考<a href="https://chromium.googlesource.com/chromium/src/+/lkgr/docs/mac_build_instructions.md">chromium编译方式</a></p>
+<p>例如我的编译生成命令是：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">gn gen out.gn/x64.release --args<span class="o">=</span><span class="s1">&#39;is_debug=false is_component_build=true symbol_level=0 cc_wrapper=&#34;ccache&#34; target_cpu=&#34;x64&#34; &#39;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>或者你可以使用 <code>gn args out/x64.yourdir</code> 这样的方式配置编译选项文件，如果你想编译一个简单的静态库，你可以用如下参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text">is_component_build = false
+is_debug = false
+libcpp_is_static = false
+symbol_level = 1
+treat_warnings_as_errors = false
+use_custom_libcxx = false
+use_sysroot = false
+v8_deprecation_warnings = false
+v8_embedder_string = &#34;-v8_Your_Define_String&#34;
+v8_enable_gdbjit = false
+v8_enable_i18n_support = false
+v8_enable_test_features = false
+v8_experimental_extra_library_files = []
+v8_extra_library_files = []
+v8_imminent_deprecation_warnings = false
+v8_monolithic = true
+v8_static_library = false
+v8_target_cpu = &#34;x64&#34;
+v8_untrusted_code_mitigations = false
+v8_use_external_startup_data = false
+v8_use_snapshot = true
+</code></pre></td></tr></table>
+</div>
+</div><p>请注意，官方wiki文档中使用的<code>tools/dev/v8gen.py x64.release</code>一直由于缺少什么文件导致无法运行，如果你也遇到本问题，请参考本文。</p>
+<h2 id="编译">
+    <a href="#%e7%bc%96%e8%af%91" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    编译
+</h2>
+<p>编译完整的V8代码（假设是x64.relrease）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">ninja -C out.gn/x64.release
+</code></pre></td></tr></table>
+</div>
+</div><p>如果想编译特定目标，比如<code>d8</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">ninja -C out.gn/x64.release d8
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="生成开发项目">
+    <a href="#%e7%94%9f%e6%88%90%e5%bc%80%e5%8f%91%e9%a1%b9%e7%9b%ae" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    生成开发项目
+</h2>
+<p>如果想使用xcode进行开发，你可以这样做：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">gn gen out/gn --ide<span class="o">=</span>xcode
+</code></pre></td></tr></table>
+</div>
+</div><p>然后用<code>xcode</code>打开即可</p>
+<pre tabindex="0"><code>open out/gn/ninja/all.xcworkspace
+</code></pre><h2 id="有关-xcode-调试代码的说明">
+    <a href="#%e6%9c%89%e5%85%b3-xcode-%e8%b0%83%e8%af%95%e4%bb%a3%e7%a0%81%e7%9a%84%e8%af%b4%e6%98%8e" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    有关 xcode 调试代码的说明
+</h2>
+<p>有朋友反馈上述编译得到的 xcode 项目调试时无法看到源码, 该朋友的解决方案是如下：</p>
+<p>原因：</p>
+<p>在 xcode 的设置里面, 断点的标记形式, 是以绝对路径的形式的, 而 v8/chrome 默认的配置 (配置文件: compiler.gni) 会删掉绝对路径的符号, 这样与 xcode 就无法找到对应符号, 所以看不到源码。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"># If the platform uses stripped absolute paths by default, then we don&#39;t expose
+# it as a configuration option. If this is causing problems, please file a bug.
+if (strip_absolute_paths_from_debug_symbols_default) {
+  strip_absolute_paths_from_debug_symbols = true
+} else {
+  declare_args() {
+    strip_absolute_paths_from_debug_symbols = false
+  }
+}
+</code></pre></td></tr></table>
+</div>
+</div><p>参考这个链接： <a href="https://groups.google.com/a/chromium.org/g/chromium-dev/c/kE1HeGL4mj0/m/TOKsRsyTEwAJ">https://groups.google.com/a/chromium.org/g/chromium-dev/c/kE1HeGL4mj0/m/TOKsRsyTEwAJ</a>.</p>
+<p>gn 编译时添加参数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">gn gen out/Default --args<span class="o">=</span><span class="s2">&#34;strip_absolute_paths_from_debug_symbols=false”
+</span></code></pre></td></tr></table>
+</div>
+</div><p>这样就可以让 xcode 调试的时候看到到项目的源代码了。</p>
+        </div>
+    </article>
+
+</div>
+
+ 
+<div class="container">
+
+    
+    <nav class="flex suggested">
+        
+        <a rel="prev" href="/posts/lodash-source-code-analysis-3/" title="Previous post (older)">
+            <span>Previous</span>
+            Lodash 源码分析（三）Array
+            </a>
+        
+        
+        
+        <a rel="next" href="/posts/vimrc-configuration/" title="Next post (newer)">
+            <span>Next</span>
+            寻觅了很久的 .vimrc
+            </a> 
+        
+    </nav>
+    
+
+    
+</div>
+
+</main>
+
+
+        </main>
+        <footer class="footer flex">
+    <section class="container">
+        <nav class="footer-links">
+            
+            <a href="https://chainlark.com/">chainlark</a>
+            
+            <a href="/index.xml">RSS</a>
+            
+        </nav>
+    </section>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.js" integrity="sha512-0UbR6HN0dY8fWN9T7fF658896tsPgnbRREHCNq46J9/JSn8GonXDZmqtTc3qS879GM0zV49b9LPhdc/maKP8Kg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" integrity="sha512-Tn2m0TIpgVyTzzvmxLNuqbSJH3JP8jm+Cy3hvHrW7ndTDcJ1w5mBiksqDBb8GpE2ksktFvDB/ykZ0mDpsZj20w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+
+    (function(){
+        
+        
+        let images = $('img');
+        for (let img of images) {
+            $(img).featherlight($(img));
+        }
+    })();
+    </script>
+    <script defer src="/ts/features.882b72337b0ef8cf09fe2162c5a3e8bc2381c17b65e1c654a4fbd770d38fe420.js" data-enable-footnotes="false"></script>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8R697QBLL4"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-8R697QBLL4');
+    </script>
+</footer>
+    </body>
+</html>

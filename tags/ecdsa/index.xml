@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ecdsa on CodeStack</title>
+    <link>https://chenquan.me/tags/ecdsa/</link>
+    <description>Recent content in ecdsa on CodeStack</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 15 Jun 2017 16:10:28 +0000</lastBuildDate><atom:link href="https://chenquan.me/tags/ecdsa/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Elliptic Curve Cryptography: a gentle introduction (4)</title>
+      <link>https://chenquan.me/posts/elliptic-curve-cryptography_a-gentle-introduction_4/</link>
+      <pubDate>Thu, 15 Jun 2017 16:10:28 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/elliptic-curve-cryptography_a-gentle-introduction_4/</guid>
+      <description>椭圆曲线加密：安全性以及RSA对比  原标题：Elliptic Curve Cryptography: breaking security and a comparison with RSA 这篇文章是ECC：优雅入门系列的第四篇文章，我们已经在前面的文章中知道了一个椭圆曲线上的离散对数离散对数问题是如何在保障加密安全的过程中扮演重要角色的。但是，如果你还记得的话，我们曾经提到说目前还没有严格的数学证明来证明计算离散对数的复杂性:我们相信这件事情是“困难”的，但是我们并不确定。在这篇文章的开篇，我们将尝试去解释在目前的技术能力下，完成这件事情是多么地“困难”。 然后，在这篇文章的第二部分，我们将尝试去回答这样的问题，为什么我们需要椭圆曲线？RSA（或者其他基于模运算的加密系统）不是也挺好的吗？ 攻破离散对数问题 我们将会在下文中看到两个最为有效的用来计算椭圆曲线上的离散对数的算法：baby-step,giant-step算法，以及Pollard&#39;s方法。 在开始之前，我还是简单提醒一下，所谓的离散对数问题就是给定两个点P和Q，找到这样的证书x使得满足式子 $Q = xP$。其中的点是椭圆曲线子群中的点，这个椭圆曲线应该拥有基点G和阶n。
+Baby-step,giant-step 在描述这个算法的细节之前，我们先快速地看一下这个问题：我们始终能够写出这样的整数x使得$x = am+b$，其中a,m,b是三个任意整数。举例来说，我们可以写出 $10 = 2\cdot 3+4$。 根据上面的规则，我们可以给出如下的等式来描述离散对数问题：
+$$Q = xP \ Q = (am +b)P \ Q = amP + bP \ Q - amp = bP$$
+“baby-step,giant-step”其实是一个二分算法。不同于暴力破解( brute-force attack)(通过枚举所有有可能的点xP得到我们需要的Q)，我们可以&amp;quot;稍微&amp;quot;地减少计算量，通过计算bP和Q-amP直到我们找到相似值。这个算法的具体步骤如下：
+ 计算 $m = \lceil \sqrt{n} \rceil$ 对于所有的$b$属于$0,&amp;hellip;,m$计算$bP$并将结果存储到hash表中. 对于所有的$a$属于$0,&amp;hellip;,m$: 计算$amP$ 计算$Q - amP$ 检查这个hash表并观察是否存在这样的点使得$Q - amP = bP$ 如果这样的点存在，那么我们就找到了这样的x 满足$x = am +b$  就像你看到的一样，我们计算点$bP$的时候步进非常小，就像baby走路一样，系数b慢慢增加($1P,2P,3P,&amp;hellip;$)。然后，在这个算法的第二部分，我们计算$amP$的时候步进又很大，因为系数am的变化规律是($1mP,2mP,3mP,&amp;hellip;$，其中m是一个大整数)。  baby-step,giant-step算法：通过小步进初始化一些点在hashmap中进行存储，然后我们计算大步进并比较新的点是否在hashmap中能够被找到，计算离散对数相当于是一个重新排序的事情。 为了能够理解这个算法是怎么工作的，首先我们先忘记点$bP$是如何缓存的，而是考虑等式 $Q = amP + bP$。看看如下的步骤： - 当$a=0$的时候我们看看$Q$是否等于$bP$，其中$b$是$0$到$m$之间的某个整数。那么在实际上我们就是在比较$Q$和$0P$到$mP$之间是否相等。 - 当$a = 1$ 时，我们检查$Q$是否等于$mP + bP$。其中这里的$Q$就相当于同 $mP$到$2mP$之间的值比较。 - 当$a=2$我们需要比较$Q$和$2mP$和$3mP$之间的点。 - .</description>
+    </item>
+    
+    <item>
+      <title>Elliptic Curve Cryptography: a gentle introduction (3)</title>
+      <link>https://chenquan.me/posts/elliptic-curve-cryptography_a-gentle-introduction_3/</link>
+      <pubDate>Thu, 15 Jun 2017 15:54:41 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/elliptic-curve-cryptography_a-gentle-introduction_3/</guid>
+      <description>这篇文章是系列文章ECC：优雅入门中的第三篇文章。
+在之前的文章中我们知道了什么是椭圆曲线以及我们定义了一些群律为了能够在椭圆曲线上做一些数学运算。然后我们将椭圆曲线重新在一个素数的有限模整数域中进行描述。在这次重新描述过程中，我们知道了椭圆曲线是如何生成一个循环子群的，以及我们介绍了一些基本的概念：基点(base point)，阶(order)和辅因子(cofactor)。
+最后，我们了解了在有限域上的标量乘法是一个“简单”的问题，但是反过来的离散对数问题却是一个“困难”的问题。现在我们一起看看这些东西是如何应用到加密算法中的。
+主要参数(Domain parameters) 我们的椭圆曲线算法将会在一个定义在有限域上的的椭圆曲线的子群中运行。因此我们需要如下的几个参数： - 素数P 描述了有限域的大小。 - 系数a和b 用于描述椭圆曲线的方程。 - 基点G用于生成我们的子群 - 阶n ，子群的阶 - 辅因子h ，子群的辅因子 一言以蔽之，我们算法中所需要的主要参数是一个6元组(p,a,b,G,n,h)。
+随机曲线 当我们说离散对数问题是一个“困难的问题”时，其实并不完全正确。这里有一些椭圆曲线是非常脆弱的，这些椭圆曲线能够被一些具有特殊目的的算法快速解决。例如，所有的曲线满足 $p = hn$ (这种曲线的有限域的阶和椭圆曲线的阶相同)能够被Smart&#39;s attack轻而易举地攻破,这个攻击方式能够在多项式时间内将离散对数问题解决。 现在，假设我给你一些曲线的主要参数。这里就会存在一个问题，就是可能我已经发现了一些脆弱的能够被轻而易举地攻破的曲线，但是没有其它人知道，而且我能够建立一个“”快速”的算法，很快地得到我刚刚给你的离散对数的答案。那么我该如何说服你相信我，或者说我并不知道任何的弱点呢？也就是说我该如何证明，这个曲线是安全的（在某种意义上说，这不能被我以特殊的目的攻击）？
+为了能够解决这类问题，我们常常会增加一个主要参数：种子S（seed S）。这是一个随机数用来生成系数a和b，或者是基点G，或者两者。这些参数通过对S计算hash生成。Hash，众所周知，非常容易计算，但是逆运算是非常&amp;quot;困难&amp;quot;的。  通过种子生成一个随机曲线的示意图：一个随机数的hash是用来计算曲线的不同参数的。 如果我们想要作弊，通过主要参数中得到随机种子，我们需要解决一个&#34;hard&#34;问题：hash逆推 一个通过种子生成的曲线被称为通过随机验证。这个利用hash生成参数的理论被称为&#34;nothing up mu sleeve&#34;,这个理论被广泛应用在密码学中。 这个技巧能够提供一些保障，保证这个曲线不是被作者精心设计的隐藏的脆弱的。实际上，如果我给你一个曲线和以和种子，它就意味着我不能够任意地选择参数a和b,而你也相对的可以肯定这个曲线不能够被我利用特定的目的攻击。而这个“相对的”的原因我将在下一篇文章中进行解释。 一个用于生成和检查随机曲线的标准算法已经在ANSI X.9.62中进行描述，这个算法是基于SHA-1。如果你对这个感兴趣，你可以阅读a specification by SECG了解生成可信的随机曲线算法（搜索 &amp;ldquo;Verifiably Random Curves and Base Point Generators&amp;rdquo;）。
+我写了一个简单的python脚本用于验证所有的随机曲线，这个脚本是基于OpenSSL的。我非常建议你去看看。
+椭圆曲线加密(Elliptic Curve Cryptography) 我们在前面花了很多时间，但是最后我们还是到这一节了！废话不多说，简单粗暴： 1. 私钥是一个随机的整数，从${1,...,n-1}$中选择(其中n 是子群的阶)。 2. 公钥是一个点H满足条件H = dG(其中G是这个子群的基点) 看到了嘛？如果我们知道d和G（以及其他的主要参数），找到最终的H是很&amp;quot;简单&amp;quot;的。但是如果我们知道H和G，找到私钥d是困难的，因为这需要我们解决一个离散对数问题。
+现在我们将介绍两个基于上述条件的公钥加密算法：ECDH(Elliptic curve Diffie-Hellman)用于加密，另一个是ECDSA(Elliptic Curve Digital Signature Algorithm)用于数字签名。</description>
+    </item>
+    
+    <item>
+      <title>Elliptic Curve Cryptography: a gentle introduction (2)</title>
+      <link>https://chenquan.me/posts/elliptic-curve-cryptography_a-gentle-introduction_2/</link>
+      <pubDate>Wed, 14 Jun 2017 15:14:45 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/elliptic-curve-cryptography_a-gentle-introduction_2/</guid>
+      <description>这篇文章是ECC:优雅入门系列的第二篇文章
+在前面的文章中，我们已经知道了椭圆曲线是如何在实数域内定义一个群的。特别地我们已经定义了一种点加的规则:给定三个齐次的点，它们的和为0 $(P+Q+R=0)$。我们已经通过一个几何方法和一种代数方法来描述计算点的加法。
+然后我们介绍了一个扩展标量乘法$(nP = P+P+…+P)$我们也找到了一种较为简单的计算标量乘法的”简便“算法:double and add。
+现在我们将我们的椭圆曲线严格限制到有限域（finiite fields）中，而不是在实数域中，我们看看会有什么变化。
+p的整数模域(The field of integers modulo p) 首先，有限域，是一个有限数字元素的集合。一个有限域的例子就是p的证书模。其中p是一个素数。这通常会被称为$\mathbb{Z}/p,GF(p)$ 或者$\mathbb{F}_p$。我们会在后面用到这些符号。 在域中我们有两个双目运算，加法($+$)和乘法( $\times$ )。这两者都是闭集，满足结合律以及交换律。对于这两个操作，存在这样的唯一元素，有且仅有唯一的相反元素。最终，乘法可以分配到加法中：$ x\times (y+z) = x \times y+x \times z $。
+这个p的整数模域包括了所有的从0到p-1的整数。加法和乘法也都能够在模运算中表现良好，这里有$\mathbb{F}_{23}$的一些样例操作：
+ 加法 $(18 + 9)\mod 23 = 4$ 减法 $(7 - 14)\mod 23 = 16$ 乘法 $4\cdot7\mod 23 = 5$ 相反加 $-5\mod 23 = 18$  特别地: $(5+(-5))\mod 23 = (5+18)\mod 23 = 0$   相反幂 $9^{-1} \mod 23 = 18$  特别地： $9\cdot9^{-1}\mod 23 = 9 \cdot 18\ mod\ 23 = 1$    如果这些等式对你来说不是很熟悉，那么你可能需要恶补一下有关模运算的有关知识，你可以到可汗学院学习一下。 前已经阐明，p 的模整数是一个域，并且其拥有的所有属性都已经列出。需要注意的是，p 必须是素数，这点非常重要。4的模整数就不是一个域：2没有相反幂（例如，等式 $2\cdot x\mod 4 = 1$没有解）</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>git on CodeStack</title>
+    <link>https://chenquan.me/tags/git/</link>
+    <description>Recent content in git on CodeStack</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sun, 16 Apr 2017 14:34:58 +0000</lastBuildDate><atom:link href="https://chenquan.me/tags/git/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>一个成功的git分支模型</title>
+      <link>https://chenquan.me/posts/a-successful-git-branch-model/</link>
+      <pubDate>Sun, 16 Apr 2017 14:34:58 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/a-successful-git-branch-model/</guid>
+      <description>在这篇文章中我将介绍一些在过去一年中（无论是工作还是个人项目中）较为成功的开发模型，这里不会介绍很多项目的细节，仅仅是介绍分支策略和发布管理。
+整个模型都是专注于Git 作为一个源代码版本管理工具进行的。
+   Why git  尽管Git和中央源代码管理系统之间的优劣讨论从未停止过，期间的争论也很激烈，但是作为一个开发者，我更习惯用Git作为我的版本管理工具，Git彻底改变了开发者合并和分支的思维习惯。在传统的CVS/Subversion系统中 ，合并分支是一件非常恐怖的事情，你需要非常小心。
+但是在Git中，这些行为变得非常地简单并且安全，这几乎变成了程序员每天工作流中的核心部分。就拿书来说，讲CVS/Subversion系统的书中，分支和合并几乎是在后面的章节中进行介绍的（为高级用户准备的）但是在几乎所有介绍Git的书中，分支和合并的内容都放到了前三章作为基础内容进行介绍。
+   Decentrailzed but centrailzed  （标题我译为分布且集中，但是好像并不是很恰当）
+在我们的日常工作中，工作较好的模型是存在一个中心化的truth”（可信）仓库，需要注意的是，这个仓库仅仅是在逻辑上被设置为一个中央仓库（因为Git是一个DVCS&amp;lt;分布式版本控制系统&amp;gt;，它在技术层面并没有一个实际意义上的中央仓库）我们将这个“中央”仓库称为origin，几乎所有的Giter都对这个名字非常熟悉。
+所有的开发者都从origin 拉取代码，并将修改push到origin仓库中。除了到中央仓库push-pull之外，开发者还可以从其他的子团队分支中拉取代码。举例来说，在开发一个非常重大的feature的时候，可能会有多个开发者共同合作，很多时候push到“中央”仓库可能还太早，这个时候这些子团队分支就起到作用了。就像上图所示，这些子团队分支就像Alice-Bob，Alice-David和Clair-David子团队分支。
+从技术上来说，让Alice 定义一个新的名叫Bob的远程分支，并将其指向Bob的仓库，并不需要多少成本，反之亦然。
+   The main branches  （主分支策略）
+这个开发模型在很大程度上是由现有的模型演变而来，就像下图所示。核心仓库有两个无限生命周期的分支：
+ master develop  在origin仓库的master分支相信对所有的Git user一定非常熟悉，与master分支同时存在的分支并行发展，被称为develop分支。
+我们通常将origin/master分支作为源代码的HEAD，并将其标记为production-ready（可供发布）状态。
+我们把origin/develop分支作标记为最新开发进度的HEAD，所有在develop分支上所做的改变都将体现在下个发布版本中。有的人将这个分支为“集成分支”，很多自动化的预发布版本都是从这个分支编译而来。
+当develop分支上的源代码达到了一个可以发布的点的时候，所有的变更都将以某种方式合并回master并将打上一个发布tag。当然具体是怎么做的将在今后进行讨论。
+因此，每次将变更合并到master就意味着新的生成版本发。所以这件事需要非常严格地进行审核，从理论上讲，我们可以在每次commit到maser分支的时候，用git hooks进行自动化编译，并自动化地将我们的软件发布到我们的生产服务器。
+   Supporting branches  除了main分支和develop分支，我们的开发模型还拥有很多支持分支来帮助团队成员之间进行协作，这些分支可以方便跟踪新特性，为生产发布做准备和快速热修复产品中的问题。不像前面提到的主要分支，这些分支最终都会本删除，所以这些分支的生命周期是有限的。
+支持分支主要分为以下三类：
+ Feature branches Release branches Hotfix branches  这些分支都有其自身的目标，并遵守相应严格的规则去确定哪个分支是其的源分支，那些分支是其需要合并进入的分支。
+实际上从技术层面这些分支和普通分支一样并不是特殊的分支。这些分支的分类取决于我们如何去使用它。这些分支实际上就是普通的Git分支。
+   Feature branches  可能检出的分支：</description>
+    </item>
+    
+  </channel>
+</rss>

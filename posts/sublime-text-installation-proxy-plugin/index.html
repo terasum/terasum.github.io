@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="theme-color" content="dark">
+    <title>Sublime Text 安装配置，代理设置，插件管理 | CodeStack</title>
+
+    
+    
+    
+    <meta property="og:site_name" content="Hugo Tania is Amazing" />
+    <meta property="og:title" content="Sublime Text 安装配置，代理设置，插件管理 | CodeStack"/>
+    <meta itemprop="name" content="Sublime Text 安装配置，代理设置，插件管理 | CodeStack" />
+    <meta name="twitter:title" content="Sublime Text 安装配置，代理设置，插件管理 | CodeStack" />
+    <meta name="application-name" content="Sublime Text 安装配置，代理设置，插件管理 | CodeStack" />
+
+
+    <meta name="description" content="Hugo is Absurdly Fast!" />
+    <meta name="twitter:description" content="Hugo is Absurdly Fast!"/>
+    <meta itemprop="description" content="Hugo is Absurdly Fast!"/>
+    <meta property="og:description" content="Hugo is Absurdly Fast!" />
+
+    
+
+
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    
+    <link rel="stylesheet" href="/sass/main.min.0158e06e6beeec53cf25d2cb31334e3da41c26993a6f06151e34b499e132997a.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.gallery.min.css" integrity="sha512-B31/elyDKOSa2yGC1ALSAHkdlJ5FOhZJTNANGUFxWOnVMfKQmekRG2/sNdp6yJPrO7Ae9rlAxUlr0QjiJne01Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.css" integrity="sha512-56GJrpSgHk6Mc9Fltt+bQKcICJoEpxtvozXPA5n5OT0rfWiqGlJmJCI/vl16kctf/0XbBloh03vl7OF2xFnR8g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+</head>
+    <script>
+    (function() {
+        const colorSchemeKey = 'ThemeColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.userColorScheme = 'dark';
+        } else {
+            document.documentElement.dataset.userColorScheme = 'light';
+        }
+    })();
+</script>
+
+    <body class="dark">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-content flex">
+            <div id="nav-left" class="nav-left flex">
+                <a class="brand" href="/">
+                    
+                    <i class="fas fa-code"></i> 
+                    &nbsp; CodeStack
+                 </a>
+                 
+                 
+                 <a id="nav-left-extend" href="javascript:toggle_nav_extend();" class="nav-left-extend"><i class="czs-category-l"></i></a>
+            </div>
+
+            <div id="nav-right" class="nav-right flex">
+                
+                <a target="_blank" href="https://docker.chenquan.me/">
+                    
+                    <i class="fab fa-docker"></i>
+                    
+                   Docker 教程 
+                </a>
+                
+                <a target="_blank" href="/articles/">
+                    
+                    <i class="fas fa-archive"></i>
+                    
+                   文章归档 
+                </a>
+                
+
+                
+            </div>
+         </div>
+    </div>
+</nav>
+
+<script lang="javascript">
+    
+    function toggle_search_box() {
+        let search_box = document.getElementById('search-query');
+        let computedStyle = window.getComputedStyle(search_box, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'block') {
+            search_box.setAttribute('style', 'display: none; width: 0px;');
+        } else {
+            search_box.setAttribute('style', 'display: block; width: 200px;');
+        }
+    }
+    
+    function toggle_nav_extend() {
+        let nav_left_extend = document.getElementById('nav-left-extend');
+        let extend_icon = nav_left_extend.children[0];
+        let nav_right = document.getElementById('nav-right');
+        let computedStyle = window.getComputedStyle(nav_right, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'flex') {
+            nav_right.setAttribute('style', 'display: none;');
+            extend_icon.setAttribute('style', 'font-size: 26px;');
+            extend_icon.setAttribute('class', 'czs-category-l');
+        } else {
+            extend_icon.setAttribute('class', 'czs-close-l');
+            extend_icon.setAttribute('style', 'font-size: 20px;padding: 1px 0 0 3px;');
+            nav_right.setAttribute('style', 'display: flex;');
+        }
+    }
+</script>
+        <main>
+            
+<div class="container mainarea post-shadow">
+    <article class="post-article">
+        <header class="article-header">
+            <div class="thumb">
+                <div>
+                    <h1>Sublime Text 安装配置，代理设置，插件管理</h1>
+                    <div class="post-meta">
+                        <div>
+                            
+                            
+                            By terasum / <time>2016-08-25</time>
+                        </div>
+                        <div class="tags">
+                            
+                            <a href="/tags/ide/">ide</a>
+                            
+                            <a href="/tags/sublime/">sublime</a>
+                            
+                            <a href="/tags/%E7%BC%96%E8%BE%91%E5%99%A8/">编辑器</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="article-post" id="write">
+        <p>我一直想写一篇文章，用来说明如何按照我自己的喜好来进行Sublime Text(目前版本是V3)的安装和设置。<br>
+这篇文章更多的是为我自己写的一篇指南，以免未来的什么时候我忘记了。如果这篇文章能够帮到你，那就更棒啦！</p>
+<h2 id="步骤1-下载并且安装">
+    <a href="#%e6%ad%a5%e9%aa%a41-%e4%b8%8b%e8%bd%bd%e5%b9%b6%e4%b8%94%e5%ae%89%e8%a3%85" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    步骤1: 下载并且安装
+</h2>
+<p>你可以从以下链接下载最新版本：</p>
+<ul>
+<li><a href="http://www.sublimetext.com/2">Sublime Text 2</a></li>
+<li><a href="http://www.sublimetext.com/3">Sublime Text 3</a></li>
+</ul>
+<p>目前我使用的版本是<code>ST3 build 3065</code> 更新于2014年8月29日</p>
+<blockquote>
+<p><a href="http://www.chenquan.me">译者</a> 用的版本是<code>st3 build 3083</code></p>
+</blockquote>
+<h2 id="步骤2-安装package-control-插件管理工具">
+    <a href="#%e6%ad%a5%e9%aa%a42-%e5%ae%89%e8%a3%85package-control-%e6%8f%92%e4%bb%b6%e7%ae%a1%e7%90%86%e5%b7%a5%e5%85%b7" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    步骤2: 安装Package Control (插件管理工具)
+</h2>
+<p>如果想安装其他的插件，需要先安装这个Package Control 插件，请遵照这个链接中的安装教程：</p>
+<p><a href="https://sublime.wbond.net/installation">Package Control Install</a></p>
+<p>注意：如果你在使用代理，可能需要手动下载并安装这个包，安装完成之后，需要重启下sublime text (出于安全因素的考虑)</p>
+<p><a href="http://www.chenquan.me">译者</a> ：<br>
+由于考虑到国内不一定能打开安装链接，我把安装代码贴在下面，请在st3中按快捷键’ctrl+`’然后再弹出的输入框中输入以下代码并回车（2015/8/25）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">urllib.request</span><span class="o">,</span><span class="nn">os</span><span class="o">,</span><span class="nn">hashlib</span><span class="p">;</span> <span class="n">h</span> <span class="o">=</span> <span class="s1">&#39;eb2297e1a458f27d836c04bb0cbaf282&#39;</span> <span class="o">+&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">/</span><span class="n">blockquote</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span>
+<span class="s1">&#39;d0e7a3098092775ccb37ca9d6b2e4b7d&#39;</span><span class="p">;</span> <span class="n">pf</span> <span class="o">=</span> <span class="s1">&#39;Package Control.sublime-package&#39;</span><span class="p">;</span>
+<span class="n">ipp</span> <span class="o">=</span> <span class="n">sublime</span><span class="o">.</span><span class="n">installed_packages_path</span><span class="p">();</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">install_opener</span><span class="p">(</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">build_opener</span><span class="p">(</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">ProxyHandler</span><span class="p">())</span> <span class="p">);</span>
+<span class="n">by</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span> <span class="s1">&#39;http://packagecontrol.io/&#39;</span> <span class="o">+</span> <span class="n">pf</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;%20&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">read</span><span class="p">();</span> <span class="n">dh</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">by</span><span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">();</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error validating download (got </span><span class="si">%s</span><span class="s1"> instead of </span><span class="si">%s</span><span class="s1">), please try manual install&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dh</span><span class="p">,</span> <span class="n">h</span><span class="p">))</span> <span class="k">if</span> <span class="n">dh</span> <span class="o">!=</span> <span class="n">h</span> <span class="k">else</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="n">ipp</span><span class="p">,</span> <span class="n">pf</span><span class="p">),</span> <span class="s1">&#39;wb&#39;</span> <span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">by</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p><strong>更新</strong>: 这个脚本是每天更新的，复制过去脚本会失效，请用上面的安装链接践行安装。（2017-04-01）</p>
+</blockquote>
+<h2 id="步骤2附-package-control的代理设置">
+    <a href="#%e6%ad%a5%e9%aa%a42%e9%99%84-package-control%e7%9a%84%e4%bb%a3%e7%90%86%e8%ae%be%e7%bd%ae" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    步骤2（附）: Package Control的代理设置
+</h2>
+<p>如果你需要在代理环境中使用<code>Sublime Text</code> ，那么你需要配置一下代理来让<code>Package Control</code> 正常工作。</p>
+<p>将以下代码加入到<br>
+<code>Preferences &gt; Package Settings &gt; Package Control &gt; Settings – User</code><br>
+中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="c1">//proxy settings
+</span><span class="c1"></span><span class="s2">&#34;http_proxy&#34;</span><span class="err">:</span> <span class="s2">&#34;your.proxy.fqdn:80&#34;</span><span class="err">,</span>
+<span class="s2">&#34;https_proxy&#34;</span><span class="err">:</span> <span class="s2">&#34;your.proxy.fqdn:80&#34;</span><span class="err">,</span>
+<span class="s2">&#34;proxy_username&#34;</span><span class="err">:</span> <span class="s2">&#34;my_username&#34;</span><span class="err">,</span>
+<span class="s2">&#34;proxy_password&#34;</span><span class="err">:</span> <span class="s2">&#34;my_password&#34;</span><span class="err">,</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>注意:</strong><br>
+你可能需要修改80端口为别的你代理的端口（比如8080）， 你可以在IE的代理设置中找到这个端口 (<a href="http://chenquan.me">译者</a>用的是ss，视实际情况而定)。</p>
+<p>完成之后，<strong>重启下Sublime Text</strong></p>
+<h2 id="步骤3-安装sublime-text的插件">
+    <a href="#%e6%ad%a5%e9%aa%a43-%e5%ae%89%e8%a3%85sublime-text%e7%9a%84%e6%8f%92%e4%bb%b6" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    步骤3: 安装Sublime Text的插件
+</h2>
+<p>现在，你可以安装所有能让Sublime Text更酷的插件! 以下的步骤是安装所有插件需要的步骤：</p>
+<ol>
+<li><code>Cmd+shift+P (OSX) / Ctrl+Shift+P (Win/Linux)</code></li>
+<li>输入：Install Packsge</li>
+<li>搜索你需要的插件名称</li>
+<li>按回车进行安装</li>
+</ol>
+<h3 id="我在sublime-text中使用的插件有">
+    <a href="#%e6%88%91%e5%9c%a8sublime-text%e4%b8%ad%e4%bd%bf%e7%94%a8%e7%9a%84%e6%8f%92%e4%bb%b6%e6%9c%89" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    我在Sublime Text中使用的插件有：
+</h3>
+<ul>
+<li>CSS Comb</li>
+<li>Emmet<sub>1</sub></li>
+<li>Emmet CSS Snippets</li>
+<li>FileDiffs (only on Windows machines)</li>
+<li>Gist</li>
+<li>Predawn<sub>2</sub></li>
+<li>PowerShell</li>
+<li>SASS</li>
+<li>SCSS</li>
+<li>Sidebar Enhancements</li>
+<li>SublimeLinter</li>
+<li>VBDotNet</li>
+<li>vbScript</li>
+<li>WordPress</li>
+</ul>
+<blockquote>
+<p><strong>1</strong>: To use Emmet you need PyV8 installed. By default when installing Emmet, PyV8 will attempt to download and install automatically. If it doesn’t you an download it from here <a href="https://github.com/emmetio/pyv8-binaries">Emmet PyV8</a>.<br>
+如果想要使用emmet插件需要安装PyV8依赖，一般情况下可以自动安装完成，如果它傲娇了，请务必点击上面的链接下载自行安装。</p>
+<p><strong>2</strong>: You must install Predawn prior to configuring User Settings in Step 5 below (otherwise the settings in the Colour Scheme &amp; Theme section will fail).<br>
+For more information about PreDawn and the options available have a look here <a href="https://github.com/jamiewilson/predawn">Predawn GitHub</a><br>
+如果你想要更改颜色主题，请一定要按照步骤5中的用户配置进行相应配置。</p>
+</blockquote>
+<h2 id="步骤4-编辑asp页面以包含aspx-文件">
+    <a href="#%e6%ad%a5%e9%aa%a44-%e7%bc%96%e8%be%91asp%e9%a1%b5%e9%9d%a2%e4%bb%a5%e5%8c%85%e5%90%abaspx-%e6%96%87%e4%bb%b6" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    步骤4: 编辑asp页面以包含aspx 文件
+</h2>
+<blockquote>
+<p>由于这部分并不重要，是作者自己个人的偏好，并没有普遍性，所以不翻译了</p>
+</blockquote>
+<h2 id="步骤5-sublime-text的用户设置">
+    <a href="#%e6%ad%a5%e9%aa%a45-sublime-text%e7%9a%84%e7%94%a8%e6%88%b7%e8%ae%be%e7%bd%ae" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    步骤5: Sublime Text的用户设置：
+</h2>
+<p>想要改变<code>SublimeText</code>的默认设置，你需要把你的个人设置添加到<code>User Settings</code>文件中，你可以在<code>Preferences &amp;gt; Settings – User</code>找到并编辑这个文件：</p>
+<p>下面的是我自己添加的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="c1">// Colour Scheme &amp; Theme (for ST3)
+</span><span class="c1"></span>
+<span class="s2">&#34;color_scheme&#34;</span><span class="err">:</span> <span class="s2">&#34;Packages/User/predawn (SL).tmTheme&#34;</span><span class="err">,</span>
+<span class="s2">&#34;theme&#34;</span><span class="err">:</span> <span class="s2">&#34;predawn-DEV.sublime-theme&#34;</span><span class="err">,</span>
+
+<span class="c1">// Typography
+</span><span class="c1"></span>
+<span class="s2">&#34;font_face&#34;</span><span class="err">:</span> <span class="s2">&#34;Source Code Pro&#34;</span><span class="err">,</span>
+<span class="s2">&#34;font_size&#34;</span><span class="err">:</span> <span class="mi">13</span><span class="err">,</span>
+<span class="s2">&#34;font_options&#34;</span><span class="err">:</span> <span class="p">[</span><span class="s2">&#34;no_round&#34;</span><span class="p">]</span><span class="err">,</span>
+<span class="s2">&#34;highlight_line&#34;</span><span class="err">:</span> <span class="kc">true</span><span class="err">,</span>
+<span class="s2">&#34;caret_extra_width&#34;</span><span class="err">:</span> <span class="mi">1</span><span class="err">,</span>
+<span class="s2">&#34;caret_style&#34;</span><span class="err">:</span> <span class="s2">&#34;phase&#34;</span><span class="err">,</span>
+<span class="s2">&#34;tab_size&#34;</span><span class="err">:</span> <span class="mi">2</span><span class="err">,</span>
+<span class="s2">&#34;translate_tabs_to_spaces&#34;</span><span class="err">:</span> <span class="kc">true</span><span class="err">,</span>
+<span class="s2">&#34;word_wrap&#34;</span><span class="err">:</span> <span class="kc">false</span><span class="err">,</span>
+
+<span class="c1">// Whitespace, Matching, Copy &amp; Auto-Complete
+</span><span class="c1"></span>
+<span class="s2">&#34;copy_with_empty_selection&#34;</span><span class="err">:</span> <span class="kc">false</span><span class="err">,</span>
+<span class="s2">&#34;drag_text&#34;</span><span class="err">:</span> <span class="kc">false</span><span class="err">,</span>
+<span class="s2">&#34;match_brackets_content&#34;</span><span class="err">:</span> <span class="kc">false</span><span class="err">,</span>
+<span class="s2">&#34;match_selection&#34;</span><span class="err">:</span> <span class="kc">false</span><span class="err">,</span>
+<span class="s2">&#34;match_tags&#34;</span><span class="err">:</span> <span class="kc">false</span><span class="err">,</span>
+<span class="s2">&#34;translate_tabs_to_spaces&#34;</span><span class="err">:</span> <span class="kc">true</span><span class="err">,</span>
+<span class="s2">&#34;trim_trailing_white_space_on_save&#34;</span><span class="err">:</span> <span class="kc">true</span><span class="err">,</span>
+
+<span class="c1">// Interface &amp; Behavior
+</span><span class="c1"></span>
+<span class="s2">&#34;close_windows_when_empty&#34;</span><span class="err">:</span> <span class="kc">false</span><span class="err">,</span>
+<span class="s2">&#34;draw_minimap_border&#34;</span><span class="err">:</span> <span class="kc">true</span><span class="err">,</span>
+<span class="s2">&#34;enable_tab_scrolling&#34;</span><span class="err">:</span> <span class="kc">false</span><span class="err">,</span>
+<span class="s2">&#34;hot_exit&#34;</span><span class="err">:</span> <span class="kc">false</span><span class="err">,</span>
+<span class="s2">&#34;overlay_scroll_bars&#34;</span><span class="err">:</span> <span class="s2">&#34;enabled&#34;</span><span class="err">,</span>
+<span class="s2">&#34;open_files_in_new_window&#34;</span><span class="err">:</span> <span class="kc">false</span><span class="err">,</span>
+<span class="s2">&#34;preview_on_click&#34;</span><span class="err">:</span> <span class="kc">false</span><span class="err">,</span>
+<span class="s2">&#34;remember_open_files&#34;</span><span class="err">:</span> <span class="kc">false</span><span class="err">,</span>
+<span class="s2">&#34;scroll_past_end&#34;</span><span class="err">:</span> <span class="kc">true</span><span class="err">,</span>
+<span class="s2">&#34;scroll_speed&#34;</span><span class="err">:</span> <span class="mf">5.0</span><span class="err">,</span>
+<span class="s2">&#34;show_full_path&#34;</span><span class="err">:</span> <span class="kc">false</span><span class="err">,</span>
+
+<span class="c1">// Other Settings
+</span><span class="c1"></span>
+<span class="s2">&#34;ignored_packages&#34;</span><span class="err">:</span>
+<span class="p">[</span>
+<span class="s2">&#34;Vintage&#34;</span>
+<span class="p">]</span><span class="err">,</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>注意:上面的是Sublime Text 3的设置，如果你正在使用ST2你需要把Colour Scheme &amp; Theme 部分修改成下面的</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="c1">//Colour Scheme Theme (for ST2)
+</span><span class="c1"></span><span class="s2">&#34;theme&#34;</span><span class="err">:</span> <span class="s2">&#34;predawn.sublime-theme&#34;</span><span class="err">,</span>
+<span class="s2">&#34;color_scheme&#34;</span><span class="err">:</span> <span class="s2">&#34;Packages/Predawn/predawn.tmTheme&#34;</span><span class="err">,</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="步骤6-改变sublime-text的图标">
+    <a href="#%e6%ad%a5%e9%aa%a46-%e6%94%b9%e5%8f%98sublime-text%e7%9a%84%e5%9b%be%e6%a0%87" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    步骤6: 改变Sublime Text的图标
+</h2>
+<p>现在有很多的<code>Sublime Text</code>的炫酷图标，我也把我自己的改掉了，你可以按照下面的步骤进行修改：</p>
+<p><strong>Mac OSX</strong></p>
+<p>略(有兴趣请大家翻原文看)</p>
+<p><strong>Windows8</strong></p>
+<ol>
+<li>把新的图标拷贝到安装目录下(我的是<code>D:\SublimeText3\</code>)</li>
+<li>右键点击 <code>Sublime Text.exe</code></li>
+<li>点击创建快捷方式</li>
+<li>重命名快捷方式</li>
+<li>右键点击快捷方式并选择属性</li>
+<li>选择快捷方式栏</li>
+<li>点击更改图标</li>
+<li>选择新的图标</li>
+<li>点击<code>ok</code></li>
+<li>右键点击快捷方式并放到开始中</li>
+</ol>
+<pre><code>&gt; 尼玛简直太感动太详细了，我居然翻译完了。。。）
+</code></pre>
+<h2 id="步骤7-安装sublime-text-的许可">
+    <a href="#%e6%ad%a5%e9%aa%a47-%e5%ae%89%e8%a3%85sublime-text-%e7%9a%84%e8%ae%b8%e5%8f%af" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    步骤7: 安装Sublime Text 的许可
+</h2>
+<p><strong>土豪请随意购买许可。</strong></p>
+<p>原文是教你如何购买许可的，当然这没啥意思，所以我找了几个许可大家随意取用(土豪请务必购买正版，请支持正版)：</p>
+<pre tabindex="0"><code>    —– BEGIN LICENSE —–
+    Andrew Weber
+    Single User License
+    EA7E-855605
+    813A03DD 5E4AD9E6 6C0EEB94 BC99798F
+    942194A6 02396E98 E62C9979 4BB979FE
+    91424C9D A45400BF F6747D88 2FB88078
+    90F5CC94 1CDC92DC 8457107A F151657B
+    1D22E383 A997F016 42397640 33F41CFC
+    E1D0AE85 A0BBD039 0E9C8D55 E1B89D5D
+    5CDB7036 E56DE1C0 EFCC0840 650CD3A6
+    B98FC99C 8FAC73EE D2B95564 DF450523
+    —— END LICENSE ——
+    —– BEGIN LICENSE —–
+    K-20
+    Single User License
+    EA7E-940129
+    3A099EC1 C0B5C7C5 33EBF0CF BE82FE3B
+    EAC2164A 4F8EC954 4E87F1E5 7E4E85D6
+    C5605DE6 DAB003B4 D60CA4D0 77CB1533
+    3C47F579 FB3E8476 EB3AA9A7 68C43CD9
+    8C60B563 80FE367D 8CAD14B3 54FB7A9F
+    4123FFC4 D63312BA 141AF702 F6BBA254
+    B094B9C0 FAA4B04C 06CC9AFC FD412671
+    82E3AEE0 0F0FAAA7 8FA773C9 383A9E18
+    —— END LICENSE ——
+    —– BEGIN LICENSE —–
+    J2TeaM
+    2 User License
+    EA7E-940282
+    45CB0D8F 09100037 7D1056EB A1DDC1A2
+    39C102C5 DF8D0BF0 FC3B1A94 4F2892B4
+    0AEE61BA 65758D3B 2EED551F A3E3478C
+    C1C0E04E CA4E4541 1FC1A2C1 3F5FB6DB
+    CFDA1551 51B05B5D 2D3C8CFE FA8B4285
+    051750E3 22D1422A 7AE3A8A1 3B4188AC
+    346372DA 37AA8ABA 6EB30E41 781BC81F
+    B5CA66E3 A09DBD3A 3FE85BBD 69893DBD
+    —— END LICENSE ——
+</code></pre><blockquote>
+<p><a href="http://blog.sina.com.cn/s/blog_68e267e10102v76h.html">注册码来源</a></p>
+</blockquote>
+
+        </div>
+    </article>
+
+</div>
+
+ 
+<div class="container">
+
+    
+    <nav class="flex suggested">
+        
+        
+        
+        <a rel="next" href="/posts/a-successful-git-branch-model/" title="Next post (newer)">
+            <span>Next</span>
+            一个成功的git分支模型
+            </a> 
+        
+    </nav>
+    
+
+    
+</div>
+
+</main>
+
+
+        </main>
+        <footer class="footer flex">
+    <section class="container">
+        <nav class="footer-links">
+            
+            <a href="https://chainlark.com/">chainlark</a>
+            
+            <a href="/index.xml">RSS</a>
+            
+        </nav>
+    </section>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.js" integrity="sha512-0UbR6HN0dY8fWN9T7fF658896tsPgnbRREHCNq46J9/JSn8GonXDZmqtTc3qS879GM0zV49b9LPhdc/maKP8Kg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" integrity="sha512-Tn2m0TIpgVyTzzvmxLNuqbSJH3JP8jm+Cy3hvHrW7ndTDcJ1w5mBiksqDBb8GpE2ksktFvDB/ykZ0mDpsZj20w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+
+    (function(){
+        
+        
+        let images = $('img');
+        for (let img of images) {
+            $(img).featherlight($(img));
+        }
+    })();
+    </script>
+    <script defer src="/ts/features.882b72337b0ef8cf09fe2162c5a3e8bc2381c17b65e1c654a4fbd770d38fe420.js" data-enable-footnotes="false"></script>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8R697QBLL4"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-8R697QBLL4');
+    </script>
+</footer>
+    </body>
+</html>

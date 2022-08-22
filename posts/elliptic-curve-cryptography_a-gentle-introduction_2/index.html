@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="theme-color" content="dark">
+    <title>Elliptic Curve Cryptography: a gentle introduction (2) | CodeStack</title>
+
+    
+    
+    
+    <meta property="og:site_name" content="Hugo Tania is Amazing" />
+    <meta property="og:title" content="Elliptic Curve Cryptography: a gentle introduction (2) | CodeStack"/>
+    <meta itemprop="name" content="Elliptic Curve Cryptography: a gentle introduction (2) | CodeStack" />
+    <meta name="twitter:title" content="Elliptic Curve Cryptography: a gentle introduction (2) | CodeStack" />
+    <meta name="application-name" content="Elliptic Curve Cryptography: a gentle introduction (2) | CodeStack" />
+
+
+    <meta name="description" content="Hugo is Absurdly Fast!" />
+    <meta name="twitter:description" content="Hugo is Absurdly Fast!"/>
+    <meta itemprop="description" content="Hugo is Absurdly Fast!"/>
+    <meta property="og:description" content="Hugo is Absurdly Fast!" />
+
+    
+
+
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    
+    <link rel="stylesheet" href="/sass/main.min.0158e06e6beeec53cf25d2cb31334e3da41c26993a6f06151e34b499e132997a.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.gallery.min.css" integrity="sha512-B31/elyDKOSa2yGC1ALSAHkdlJ5FOhZJTNANGUFxWOnVMfKQmekRG2/sNdp6yJPrO7Ae9rlAxUlr0QjiJne01Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.css" integrity="sha512-56GJrpSgHk6Mc9Fltt+bQKcICJoEpxtvozXPA5n5OT0rfWiqGlJmJCI/vl16kctf/0XbBloh03vl7OF2xFnR8g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+</head>
+    <script>
+    (function() {
+        const colorSchemeKey = 'ThemeColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.userColorScheme = 'dark';
+        } else {
+            document.documentElement.dataset.userColorScheme = 'light';
+        }
+    })();
+</script>
+
+    <body class="dark">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-content flex">
+            <div id="nav-left" class="nav-left flex">
+                <a class="brand" href="/">
+                    
+                    <i class="fas fa-code"></i> 
+                    &nbsp; CodeStack
+                 </a>
+                 
+                 
+                 <a id="nav-left-extend" href="javascript:toggle_nav_extend();" class="nav-left-extend"><i class="czs-category-l"></i></a>
+            </div>
+
+            <div id="nav-right" class="nav-right flex">
+                
+                <a target="_blank" href="https://docker.chenquan.me/">
+                    
+                    <i class="fab fa-docker"></i>
+                    
+                   Docker 教程 
+                </a>
+                
+                <a target="_blank" href="/articles/">
+                    
+                    <i class="fas fa-archive"></i>
+                    
+                   文章归档 
+                </a>
+                
+
+                
+            </div>
+         </div>
+    </div>
+</nav>
+
+<script lang="javascript">
+    
+    function toggle_search_box() {
+        let search_box = document.getElementById('search-query');
+        let computedStyle = window.getComputedStyle(search_box, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'block') {
+            search_box.setAttribute('style', 'display: none; width: 0px;');
+        } else {
+            search_box.setAttribute('style', 'display: block; width: 200px;');
+        }
+    }
+    
+    function toggle_nav_extend() {
+        let nav_left_extend = document.getElementById('nav-left-extend');
+        let extend_icon = nav_left_extend.children[0];
+        let nav_right = document.getElementById('nav-right');
+        let computedStyle = window.getComputedStyle(nav_right, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'flex') {
+            nav_right.setAttribute('style', 'display: none;');
+            extend_icon.setAttribute('style', 'font-size: 26px;');
+            extend_icon.setAttribute('class', 'czs-category-l');
+        } else {
+            extend_icon.setAttribute('class', 'czs-close-l');
+            extend_icon.setAttribute('style', 'font-size: 20px;padding: 1px 0 0 3px;');
+            nav_right.setAttribute('style', 'display: flex;');
+        }
+    }
+</script>
+        <main>
+            
+<div class="container mainarea post-shadow">
+    <article class="post-article">
+        <header class="article-header">
+            <div class="thumb">
+                <div>
+                    <h1>Elliptic Curve Cryptography: a gentle introduction (2)</h1>
+                    <div class="post-meta">
+                        <div>
+                            
+                            
+                            By terasum / <time>2017-06-14</time>
+                        </div>
+                        <div class="tags">
+                            
+                            <a href="/tags/cryptography/">cryptography</a>
+                            
+                            <a href="/tags/ecc/">ecc</a>
+                            
+                            <a href="/tags/ecdsa/">ecdsa</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="article-post" id="write">
+        <p><strong>这篇文章是ECC:优雅入门系列的第二篇文章</strong></p>
+<p>在前面的文章中，我们已经知道了椭圆曲线是如何在实数域内定义一个群的。特别地我们已经定义了一种<a href="http://andrea.corbellini.name/2015/05/17/elliptic-curve-cryptography-a-gentle-introduction/#group-law">点加</a>的规则:给定三个齐次的点，它们的和为0 $(P+Q+R=0)$。我们已经通过一个几何方法和一种代数方法来描述计算点的加法。</p>
+<p>然后我们介绍了一个扩展标量乘法$(nP = P+P+…+P)$我们也找到了一种较为简单的计算标量乘法的”简便“算法:<strong>double and add</strong>。</p>
+<p><strong>现在我们将我们的椭圆曲线严格限制到有限域（finiite fields）中</strong>，而不是在实数域中，我们看看会有什么变化。</p>
+<h2>p的整数模域(The field of integers modulo p)</h2>
+首先，有限域，是一个有限数字元素的集合。一个有限域的例子就是p的证书模。其中p是一个素数。这通常会被称为$\mathbb{Z}/p,GF(p)$ 或者$\mathbb{F}_p$。我们会在后面用到这些符号。
+<p>在域中我们有两个双目运算，加法($+$)和乘法( $\times$ )。这两者都是闭集，满足结合律以及交换律。对于这两个操作，存在这样的唯一元素，有且仅有唯一的相反元素。最终，乘法可以分配到加法中：$ x\times (y+z) = x \times y+x \times z $。</p>
+<p>这个<em>p</em>的整数模域包括了所有的从0到p-1的整数。加法和乘法也都能够在模运算中表现良好，这里有$\mathbb{F}_{23}$的一些样例操作：</p>
+<ul>
+ 	<li>加法 $(18 + 9)\mod 23 = 4$</li>
+ 	<li>减法 $(7 - 14)\mod 23 = 16$</li>
+ 	<li>乘法 $4\cdot7\mod 23 = 5$</li>
+ 	<li>相反加 $-5\mod 23 = 18$
+<ul>
+ 	<li>特别地: $(5+(-5))\mod 23 = (5+18)\mod 23 = 0$</li>
+</ul>
+</li>
+ 	<li>相反幂 $9^{-1} \mod 23 = 18$
+<ul>
+ 	<li>特别地： $9\cdot9^{-1}\mod 23 = 9 \cdot 18\ mod\ 23  = 1$</li>
+</ul>
+</li>
+</ul>
+如果这些等式对你来说不是很熟悉，那么你可能需要恶补一下有关模运算的有关知识，你可以到<a href="https://www.khanacademy.org/computing/computer-science/cryptography/modarithmetic/a/what-is-modular-arithmetic">可汗学院</a>学习一下。
+<p>前已经阐明，<em>p</em> 的模整数是一个域，并且其拥有的所有属性都已经列出。需要注意的是，<em>p</em> 必须是素数，这点非常重要。4的模整数就不是一个域：2没有相反幂（例如，等式 $2\cdot x\mod 4 = 1$没有解）</p>
+<h2>模<em>p</em>的除法（division modulo p）</h2>
+我们马上就要在$\mathbb{F}_p$上定义椭圆曲线，但是在做这件事之前，我们需要对在$\mathbb{F}_p$的上的除法有一个清晰的认识，我们可以简单地认为:$x/y=x\cdot y^{-1}$，或者，简而言之，x除以y就等于x乘以y的相反幂，这个事实没有什么特别的，但是它给了我们最简单的得到除法结果的方法：<strong>找到一个数的相反幂，然后做一次简单的乘法。</strong>
+<p>计算相反幂有一个”挺简单“的方法，那就是采用<a href="http://en.wikipedia.org/wiki/Extended_Euclidean_algorithm">&quot;<strong>extended Euclidean 算法</strong>&quot;</a>，这个算法的时间复杂度是$O(log_p)$（或者$O(k)$，如果考虑到位长度）在最差的情况下。</p>
+<p>我不会展开对&quot;<strong>extended Euclidean</strong>&ldquo;算法的讲解，因为这和我们的主题无关，但我在这里提供了一个能够工作的python实现代码：</p>
+<pre><code class="python">def extended_euclidean_algorithm(a, b):
+    """
+    Returns a three-tuple (gcd, x, y) such that
+    a * x + b * y == gcd, where gcd is the greatest
+    common divisor of a and b.
+
+    This function implements the extended Euclidean
+    algorithm and runs in O(log b) in the worst case.
+    """
+    s, old_s = 0, 1
+    t, old_t = 1, 0
+    r, old_r = b, a
+    
+    while r != 0:
+        quotient = old_r // r
+        old_r, r = r, old_r - quotient * r
+        old_s, s = s, old_s - quotient * s
+        old_t, t = t, old_t - quotient * t
+    
+    return old_r, old_s, old_t
+
+
+def inverse_of(n, p):
+    """
+    Returns the multiplicative inverse of
+    n modulo p.
+
+    This function returns an integer m such that
+    (n * m) % p == 1.
+    """
+    gcd, x, y = extended_euclidean_algorithm(n, p)
+    assert (n * x + p * y) % p == gcd
+    
+    if gcd != 1:
+        # Either n is 0, or p is not a prime number.
+        raise ValueError(
+            '{} has no multiplicative inverse '
+            'modulo {}'.format(n, p))
+    else:
+        return x % p
+</code></pre>
+<h2>$\mathbb{F}_p$上的椭圆曲线(Elliptic curves in $\mathbb{F}_p$)</h2>
+现在我们已经先把所有需要的先修知识都进行说明了，现在我们可以把椭圆曲线转移到$\mathbb{F}_p$上了。在前文我们提到点集的描述是：
+<p>$
+{(x,y) \in \mathbb{R}^2\ | y^2 \ =x^3 + ax + b , 4a^3 + 27b^2 ≠ 0 } \cup {0}
+$</p>
+<p>现在变成：</p>
+<p>$
+{ (x,y) \in (\mathbb{F}_p)^2\ | \ y^2\equiv x^3 + ax + b (\mod p), 4a^3+27b^2 \not\equiv(\mod p) } \cup {0}
+$</p>
+<p>其中0依旧认为是无限远的点，以及a和b是在$\mathbb{F}_p$上的两个整数。
+<img src="http://andrea.corbellini.name/images/elliptic-curves-mod-p.png" alt="elliptic-curves-mod-p"></p>
+<blockquote>
+  曲线 $y^2 \equiv x^3−7x+10(\mod p)$ 其中点 $p=19,97,127,487$。
+需要注意的是，对于所有的$x$，当$y=p/2$,至多存在两个点。</blockquote>
+<img src="http://andrea.corbellini.name/images/singular-mod-p.png" alt="singular-mod-p">
+<blockquote>
+  曲线 $y^2\equiv x^3(\mod 29)$ 是singler的，它有三个点在$(0,0)$。这不是一条有效的椭圆曲线。</blockquote>
+前面描述的是连续的曲线，在xy平面上没有相交点，而且我们也可以证明，就算将其放到我们的有限域中，椭圆曲线在域$\mathbb{F}_p$依旧是一个阿贝拉群(abelian group)。
+<h2>点加(Point addition)</h2>
+明显地，我们需要将我们的加法的定义改变一下，为了能够让它在域$\mathbb{F}_p$也能够工作得很好。在实数域下，我们称三个齐次的点之和为零($P+Q+R=0$)。我们可以保留这个定义，但是在$\mathbb{F}_p$上，怎么样的三个点是齐次的呢？
+<strong>如果有一条直线可以穿过三个点，那么我们可以将三个点称为齐次的</strong>，现在，我们当然不能和在$\mathbb{R}$一样定义。我们可以这样说，在$\mathbb{F}_p$上的直线是一个点的集合$(x,y)$，这个点集满足条件$ax+by+c\equiv 0 (\mod p)$（这其实是一个标准的直线方程，我们就是加了"$(\mod p)$"而已。
+<img src="http://andrea.corbellini.name/images/point-addition-mod-p.png" alt="Point addition for elliptic curves in Z/p">
+<blockquote>
+  在曲线$y^2 \equiv x^3− x + 3(\mod 127)$, 其中 $P=(16,20)$以及 $Q=(41,120)$上的点加. 注意，直线$ y \equiv 4x+83(mod127)$是如何“重复”地在平面中相连的。</blockquote>
+给定前提，现在在一个群中，点加仍然有如下我们已知的属性：
+<ul>
+ 	<li>$Q+0=0+Q=Q$ (这个由唯一元素(identity)定义可得)。</li>
+ 	<li>给定一个非零点$Q$, 其相反数$−Q$是一个拥有相同的横坐标但是具有相反的纵坐标的点。或者如果你愿意的话，$-Q = （x_Q,-y_Q \mod p）$ 例如，一个曲线在域$\mathbb{F}_{29}$上，有这样的一点$Q=(2,5)$ ,那么其相反点$-Q=(2,-5\mod 29)=(2,24)$</li>
+ 	<li>同样的，$P+(-P)=0$（从相反元素的定义可得）</li>
+</ul>
+<h2>代数和(Algebraic sum)</h2>
+<strong>用代数方法计算点加和的方法和前文其实相同</strong>，除了我们需要在末尾加上 $\mod p$ 的修饰语。因此，给定 $P = (x_p,y_p),Q=(x_Q,y_Q)$ 和 $R = (x_R,y_R)$ ，我们可以通过下面的式子计算$P+Q=-R$
+<p>$$
+x_R = (m^2-x_P-x_Q)\mod p \
+y_R = [y_P + m(x_R -x_P)]\mod p \
+= [y_Q + m(x_R -x_Q)]\mod p
+$$</p>
+<p>如果 $P\neq Q$,斜率m可以通过如下公式得到：</p>
+<p>$$ m=(y_P - y_Q)(x_P-x_Q)^{-1}\mod p$$</p>
+<p>如果$P=Q$,我们有：</p>
+<p>$$ m=(3x_p^2+a) \cdot (2y_p)^{-1} \mod p$$</p>
+<p>这个公式并没有多大的变化并不是巧合，实际上这些公式在所有的域中都适用，有限域或者无限域（除了$\mathbb{F}_2$和$\mathbb{F}_3$,这两个是特殊情况）。现在我感觉我需要提供一些证明，但是问题是，证明这个群法则需要用到一些比较复杂的数学概念。然而我找到了一个只用到了一些基础的概念的证明<a href="http://math.rice.edu/~friedl/papers/AAELLIPTIC.PDF"> proof from Stefan Friedl</a>，如果你对证明这个公式为什么对几乎所有的域都适用感兴趣的话，可以阅读它。</p>
+<p>回到我们的主题——我们不会说明几何方法：因为这中间存在一些问题。举例来说，在前面的文章中说，我们计算$P+P$我们需要得到曲线上在点P上的切线。但是在不连续的域上，再”切线“的概念就没有什么意义了，我们可以花点时间去解决它们，但是可能会比较复杂，并且不太实用。</p>
+<p>但是，你可以通过<a href="https://cdn.rawgit.com/andreacorbellini/ecc/920b29a/interactive/modk-add.html">交互工具</a>这个我为了点加专门写的小程序来了解更多。</p>
+<h2>椭圆曲线的阶（The order of an elliptic curve group）</h2>
+我们知道定义在有限域中的椭圆曲线具有有限个点，一个非常重要的问题待我们去解决：到底有多少点？
+首先，我们把群里的点的个数称为群的阶（order）。
+<p>将x所有从0到p-1的可能值都试一下并不是用来计算点的个数的可行办法，以因为这需要O(p)步，如果p是一个大素数，那么这是一个&quot;hard&quot;问题。</p>
+<p>幸运的是，我们又一个更快地计算群的阶数的算法：<a href="https://en.wikipedia.org/wiki/Schoof%27s_algorithm">Schoof&rsquo;s 算法</a>，我们不想陷入这个算法的细节——我们只需要知道它能够在多项式时间内把阶数算出来，这就够了。</p>
+<h2>标量乘法和循环子群(Scalar multiplication and cyclic subgroups)</h2>
+<p>在实数域中，乘法可以定位为：
+$$\underbrace{P+P+\cdots+P}_{n\ times}$$
+然后，我们可以继续采用<a href="http://andrea.corbellini.name/2015/05/17/elliptic-curve-cryptography-a-gentle-introduction/#double-and-add"><strong>double and add algorithm</strong></a>来计算乘法，总计时间复杂度为$O(log_n)$，(或者$O(k)$其中k是n的bit位数)。我也写了一个<a href="https://cdn.rawgit.com/andreacorbellini/ecc/920b29a/interactive/modk-mul.html">交互工具</a>用于演示这个过程。
+在$\mathbb{F}_p$上的椭圆曲线的乘法是具有一些有趣的属性。我们拿曲线$y^2\equiv x^3 +2x +3 (\mod 97)$和其上的点$P=(3,6)$。然后我们<a href="https://cdn.rawgit.com/andreacorbellini/ecc/920b29a/interactive/modk-mul.html">计算</a>一下P的乘法。
+<img src="http://andrea.corbellini.name/images/cyclic-subgroup.png" alt="Cyclic subgroup"></p>
+<blockquote>
+  点 $P=(3,6)$ 倍数只有五个独立的点$(0, P, 2P, 3P, 4P)$ 这是一个不断循环的环。从中可以非常简单地看出在椭圆曲线上的标量乘法和模代数运算中加法的相似性。</blockquote>
+<ul>
+ 	<li>0P=0</li>
+ 	<li>1P=(3,6)</li>
+ 	<li>2P=(80,10)</li>
+ 	<li>3P=(80,87)</li>
+ 	<li>4P=(3,91)</li>
+ 	<li>5P=0</li>
+ 	<li>6P=(3,6)</li>
+ 	<li>7P=(80,10)</li>
+ 	<li>8P=(80,87)</li>
+ 	<li>9P=(3,91)</li>
+ 	<li>...</li>
+</ul>
+从这里我们可以很快的看出两个特点：
+1. P的倍数只有五种，其他在椭圆曲线上的点不会出现。
+2. 他们是“重复的环”。
+<p>我们可以得出如下结论</p>
+<ul>
+ 	<li>5kP=0</li>
+ 	<li>(5k+1)P=P</li>
+ 	<li>(5k+2)P=2P</li>
+ 	<li>(5k+3)P=3P</li>
+ 	<li>(5k+4)P=4P</li>
+</ul>
+适用任意的整数k。注意到这五个等式可以被“压缩”到一个等式，这要用到模运算符号：
+<p>$$kP=(k \mod 5)P$$。</p>
+<p>不仅仅是这些，我们也可以快速地验证：<strong>这五个点在一个闭集中</strong>。换句话说，不管我们是加上0,2P,3P或者4P,得到的结果都是这五个点钟的某一个。再重复一遍，其它的椭圆曲线上的点将不会出现在结果中。</p>
+<p>这个结论其实适用于所有的点，不仅仅是点P = (3,6)。实际上我们可以通过一个公式来描述通用的P :</p>
+<p>$$
+nP+mP = \underbrace{P + \cdots + P}<em>{n \ times } + \underbrace{ P+ \cdots + P}</em>{ m \times} = (n+m) P
+$$</p>
+<p>这个公式可以描述为：<strong>如果我们将两个P的倍数相加，我们将会得到一个P的倍数</strong>，（例如，P的倍数是加法闭集的）。这点就足证明<strong>P的倍数是一个有椭圆曲线上的点形成的群的循环子群</strong></p>
+<p>“子群”是另一个群的子集，一个“循环子群”是一个所有的元素会循环重现的子群，就像我们前面展示的例子一样。那么这个点<strong>P</strong>就被称为这个循环子群的<strong>生成者</strong>(generator)或者<strong>基点</strong>(base point)。</p>
+<p>循环子群是ECC和其它加密系统的基石。在下一篇文章中将会进行更加详细的解释。</p>
+<h2>子群的阶(Subgroup order)</h2>
+我们可以问问我们自己<strong>由点P生成的子群的阶是多少</strong>（或者，相等的，P的阶是多少），为了回答这个问题，我们不能够采用前面提到的Schoof算法。因为这个算法只适用于椭圆曲线整个群中，而不能够在子群中工作。在解决这个问题之前，我们先修一点额外的知识:
+<ul>
+ 	<li>目前，我们定义了一个群的阶就是这个群中点的个数。这个定义还是有效的，但是在循环子群中，我们需要给一个新的等价定义：<strong>点P的阶是一个最下的能够让等式nP=0的正整数</strong>。实际上，如果你看到前面的例子，我们的子群包括5个点，而且我们有$5P=0$。</li>
+ 	<li>P的阶在<a href="https://en.wikipedia.org/wiki/Lagrange%27s_theorem_(group_theory)">Lagrange's theorem</a>中有详细阐述，主要的意思是：<strong>子群的阶是父群的阶的一个因数</strong>，换句话说，如果一个椭圆曲线包括N个点，那么它的一个子群就包括n个点，而且，n是N的一个因数。</li>
+</ul>
+上面的两条特性结合起来我们能够找出一个基于点P的子群的阶：
+1. 利用Schoof算法计算椭圆曲线的阶N
+2. 找到所有N的因数
+3. 对于所有N的的因数n，计算nP
+4. 找到最小能够让$nP=0$成立的n，这就是子群的阶。
+<p>举一个例子：对于曲线$$y^2 = x^3 - x + 3$$是在域$\mathbb{F}_{37}$上的曲线，它具有阶$N=42$，它的子群可能有如下的阶：n = 1,2,3,6,7,21或者42。如果我们尝试$P = (2,3)$，我们可以看到$P\neq0,2P\neq0,&hellip;,7P=0$,因此点P的阶就是$n=7$。</p>
+<p>需要注意的是：<strong>一定要是最小的因数，而不是随意的一个</strong>。如果我们随便找一个，我们发现$n=14$也是成立的，但是只是P的一个倍数。</p>
+<p>另一个例子：椭圆曲线定义在$\mathbb{F}_{29}$上，形式为$y^2 = x^3 - x + 1$，它的阶为 $N = 37$,这是一个素数。它的子群只可能有阶1或者37。正如你猜测的，当$n=1$时，子群只包括一个无穷点，当$n=N$子群包括所有椭圆曲线上的点。</p>
+<h2>找到一个基点(Finding a base point)</h2>
+在我们的ECC算法中，我们需要一个高阶的子群。所以通常地，我们会选择一个椭圆曲线，并计算它的阶(N)，选择一个大因数作为子群的阶(n)最后我们再去找一个合适的基点。也就是说，我们不会先选择一个基点再计算它的阶数，而是用相反的方式，先选择一个合适的阶然后在寻找相应的基点。那么我们是怎么做到的呢？
+<p>首先，我们需要加点料。Lagrange定理可以推出$h=N/n$一定是一个整数（因为n是N的一个因数）。这个h有一个名字叫做<strong>子群辅因子</strong>。
+现在对于椭圆曲线上的任意一点我们有NP=0。这是因为N是所有候选n的倍数。利用辅因子的定义，我们可以得出如下的定理：</p>
+<p>$$n(hP) = 0$$</p>
+<p>现在假设 n 是一个素数（具体原因会在下一篇文章中解释，我们比较钟爱素数阶）。分析一下上面的公式，然后我们给出 $G = hP$，这个公式可以得到一个阶为n的子群（除了 $G = hP = 0$，这个时候子群的阶为1)。</p>
+<p>根据这个我们可以给出算法的大纲：</p>
+<ol>
+ 	<li>计算椭圆曲线的阶N</li>
+ 	<li>选择一个合适的子群阶n,为了算法能够工作，这个数必须是一个素数且必须是N的一个因数。</li>
+ 	<li>计算辅因子 $h = N/n$</li>
+ 	<li>在曲线上选择一个随意的点P</li>
+ 	<li>计算$G = hP$</li>
+ 	<li>如果G是0,那么重复第4步。直到我们找到一个子群的基点 能够让这个子群的阶为n以及其辅因子为h。</li>
+</ol>
+注意这个算法只能够在n为素数的时候工作，如果n不是素数，那么G的阶将会是n的一个因数。
+<h2>离散对数(Discrete logarithm)</h2>
+正如我们在连续的椭圆曲线中讨论的，<strong>如果我们已知P和Q，那么如何知道这样的k使得$Q = kP$？</strong>
+<p>这个问题就是我们将要讨论的椭圆曲线上的<strong>椭圆曲线问题</strong>，这被称为&quot;hard&quot;的问题，目前还没有能够利用经典计算机在多项式时间内计算出来的算法。但是也没有能够证明该难度的数学证明。</p>
+<p>这个离散对数问题也在其他加密系统中有相当的应用，例如数字签名算法( Digital Signature Algorithm ,DSA)，Diffie-Hellman密钥交换算法和ElGamal算法——他们用相同的算法绝非偶然。不同的是，在我们的离散对数系统中需要将模运算代替原来的标量乘法，那么离散对数问题就可以用下面的问题描述：我们已知a和b，是否能够求得这样的k使得$b = a^k \mod p$?</p>
+<p>这些问题都是“离散的”，因为他们限制在有限域（更加精确的，循环子群）中，并且也是“对数”的，因为它和通常的对数算法相似。</p>
+<p>那么是什么让ECC这么青睐离散对数问题呢？就现在而言，主要原因是：在椭圆曲线上的离散对数问题是&quot;harder&quot;的，相对于其它相似的应用在密码学中的问题而言。同其它加密系统相比，在相同的安全级别上，它可以节约整数k的位数。更多的细节我们会在第四篇文章中进行阐述。</p>
+<h2>未完待续</h2>
+下一篇文章将是这个系列的第三篇文章，它将介绍ECC算法：包括密钥对生成，ECDH和ECDSA。这将是这个系列中最有趣的一篇，不要错过！
+<blockquote>
+转载请注明<a href="http://www.chenquan.me/archives/106">出处</a>
+</blockquote>
+        </div>
+    </article>
+
+</div>
+
+ 
+<div class="container">
+
+    
+    <nav class="flex suggested">
+        
+        <a rel="prev" href="/posts/elliptic-curve-cryptography_a-gentle-introduction_1/" title="Previous post (older)">
+            <span>Previous</span>
+            Elliptic Curve Cryptography: a gentle introduction (1)
+            </a>
+        
+        
+        
+        <a rel="next" href="/posts/elliptic-curve-cryptography_a-gentle-introduction_3/" title="Next post (newer)">
+            <span>Next</span>
+            Elliptic Curve Cryptography: a gentle introduction (3)
+            </a> 
+        
+    </nav>
+    
+
+    
+</div>
+
+</main>
+
+
+        </main>
+        <footer class="footer flex">
+    <section class="container">
+        <nav class="footer-links">
+            
+            <a href="https://chainlark.com/">chainlark</a>
+            
+            <a href="/index.xml">RSS</a>
+            
+        </nav>
+    </section>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.js" integrity="sha512-0UbR6HN0dY8fWN9T7fF658896tsPgnbRREHCNq46J9/JSn8GonXDZmqtTc3qS879GM0zV49b9LPhdc/maKP8Kg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" integrity="sha512-Tn2m0TIpgVyTzzvmxLNuqbSJH3JP8jm+Cy3hvHrW7ndTDcJ1w5mBiksqDBb8GpE2ksktFvDB/ykZ0mDpsZj20w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+
+    (function(){
+        
+        
+        let images = $('img');
+        for (let img of images) {
+            $(img).featherlight($(img));
+        }
+    })();
+    </script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css" integrity="sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js" integrity="sha384-YNHdsYkH6gMx9y3mRkmcJ2mFUjTd0qNQQvY9VYZgQd7DcN7env35GzlmFaZ23JGp" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js" integrity="sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl" crossorigin="anonymous"
+        onload="renderMathInElement(
+            document.querySelector('.article-post'), {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false},
+                    {left: '\\(', right: '\\)', display: false},
+                    {left: '\\[', right: '\\]', display: true}
+                ]
+            }
+            );"></script>
+    <script defer src="/ts/features.882b72337b0ef8cf09fe2162c5a3e8bc2381c17b65e1c654a4fbd770d38fe420.js" data-enable-footnotes="false"></script>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8R697QBLL4"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-8R697QBLL4');
+    </script>
+</footer>
+    </body>
+</html>

@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="theme-color" content="dark">
+    <title>从Haskell、JS、go看函数式编程 | CodeStack</title>
+
+    
+    
+    
+    <meta property="og:site_name" content="Hugo Tania is Amazing" />
+    <meta property="og:title" content="从Haskell、JS、go看函数式编程 | CodeStack"/>
+    <meta itemprop="name" content="从Haskell、JS、go看函数式编程 | CodeStack" />
+    <meta name="twitter:title" content="从Haskell、JS、go看函数式编程 | CodeStack" />
+    <meta name="application-name" content="从Haskell、JS、go看函数式编程 | CodeStack" />
+
+
+    <meta name="description" content="Hugo is Absurdly Fast!" />
+    <meta name="twitter:description" content="Hugo is Absurdly Fast!"/>
+    <meta itemprop="description" content="Hugo is Absurdly Fast!"/>
+    <meta property="og:description" content="Hugo is Absurdly Fast!" />
+
+    
+
+
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    
+    <link rel="stylesheet" href="/sass/main.min.0158e06e6beeec53cf25d2cb31334e3da41c26993a6f06151e34b499e132997a.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.gallery.min.css" integrity="sha512-B31/elyDKOSa2yGC1ALSAHkdlJ5FOhZJTNANGUFxWOnVMfKQmekRG2/sNdp6yJPrO7Ae9rlAxUlr0QjiJne01Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.css" integrity="sha512-56GJrpSgHk6Mc9Fltt+bQKcICJoEpxtvozXPA5n5OT0rfWiqGlJmJCI/vl16kctf/0XbBloh03vl7OF2xFnR8g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+</head>
+    <script>
+    (function() {
+        const colorSchemeKey = 'ThemeColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.userColorScheme = 'dark';
+        } else {
+            document.documentElement.dataset.userColorScheme = 'light';
+        }
+    })();
+</script>
+
+    <body class="dark">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-content flex">
+            <div id="nav-left" class="nav-left flex">
+                <a class="brand" href="/">
+                    
+                    <i class="fas fa-code"></i> 
+                    &nbsp; CodeStack
+                 </a>
+                 
+                 
+                 <a id="nav-left-extend" href="javascript:toggle_nav_extend();" class="nav-left-extend"><i class="czs-category-l"></i></a>
+            </div>
+
+            <div id="nav-right" class="nav-right flex">
+                
+                <a target="_blank" href="https://docker.chenquan.me/">
+                    
+                    <i class="fab fa-docker"></i>
+                    
+                   Docker 教程 
+                </a>
+                
+                <a target="_blank" href="/articles/">
+                    
+                    <i class="fas fa-archive"></i>
+                    
+                   文章归档 
+                </a>
+                
+
+                
+            </div>
+         </div>
+    </div>
+</nav>
+
+<script lang="javascript">
+    
+    function toggle_search_box() {
+        let search_box = document.getElementById('search-query');
+        let computedStyle = window.getComputedStyle(search_box, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'block') {
+            search_box.setAttribute('style', 'display: none; width: 0px;');
+        } else {
+            search_box.setAttribute('style', 'display: block; width: 200px;');
+        }
+    }
+    
+    function toggle_nav_extend() {
+        let nav_left_extend = document.getElementById('nav-left-extend');
+        let extend_icon = nav_left_extend.children[0];
+        let nav_right = document.getElementById('nav-right');
+        let computedStyle = window.getComputedStyle(nav_right, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'flex') {
+            nav_right.setAttribute('style', 'display: none;');
+            extend_icon.setAttribute('style', 'font-size: 26px;');
+            extend_icon.setAttribute('class', 'czs-category-l');
+        } else {
+            extend_icon.setAttribute('class', 'czs-close-l');
+            extend_icon.setAttribute('style', 'font-size: 20px;padding: 1px 0 0 3px;');
+            nav_right.setAttribute('style', 'display: flex;');
+        }
+    }
+</script>
+        <main>
+            
+<div class="container mainarea post-shadow">
+    <article class="post-article">
+        <header class="article-header">
+            <div class="thumb">
+                <div>
+                    <h1>从Haskell、JS、go看函数式编程</h1>
+                    <div class="post-meta">
+                        <div>
+                            
+                            
+                            By terasum / <time>2017-08-12</time>
+                        </div>
+                        <div class="tags">
+                            
+                            <a href="/tags/haskell/">haskell</a>
+                            
+                            <a href="/tags/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/">函数式编程</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="article-post" id="write">
+        <p>本文就是我在学习函数式编程的过程当中自己体悟到的一些东西，这里将用go,JavaScript以及Haskell三种语言来分析函数式编程的一些奥秘。JavaScript由于具有的一些优势能够让我们可以实现函数式编程，而go作为一种强类型语言，虽然灵活性又稍有欠缺，但是也能够完成一些高阶函数的实现，Haskell语言作为正统的函数式编程语言，为了解释说明问题，作为对比参照。</p>
+<h2 id="正文">
+    <a href="#%e6%ad%a3%e6%96%87" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    正文
+</h2>
+<p>函数式编程也算是经常看到了，它的一些优势包括：</p>
+<ol>
+<li>不包括赋值语句(assignment statement),一个变量一旦初始化，就无法被修改(immutable)</li>
+<li>无副作用，函数除了计算结果，将不会产生任何副作用</li>
+<li>因为无副作用，所以任何表达式在任何时候都能够evaluate</li>
+</ol>
+<p>虽然上面的优势看看上去好像很厉害的样子，但是，到底厉害在哪里呢？我们可以通过下面的例子进行说明：</p>
+<p><strong>求和函数</strong></p>
+<p><em>Haskell</em></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-haskell" data-lang="haskell"><span class="nf">sum</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="c1">-- 6</span>
+<span class="c1">-- sum 的实现其实是</span>
+<span class="nf">foldr</span> <span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="mi">0</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在Haskell中<code>flodr</code>的函数定义是：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-haskell" data-lang="haskell"><span class="nf">foldr</span> <span class="ow">::</span> <span class="kt">Foldable</span> <span class="n">t</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="p">(</span><span class="n">a</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">b</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">b</span><span class="p">)</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">b</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">t</span> <span class="n">a</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">b</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>函数实现是:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-haskell" data-lang="haskell"><span class="c1">-- if the list is empty, the result is the initial value z; else</span>
+<span class="c1">-- apply f to the first element and the result of folding the rest</span>
+<span class="nf">foldr</span> <span class="n">f</span> <span class="n">z</span> <span class="kt">[]</span>     <span class="ow">=</span> <span class="n">z</span> 
+<span class="nf">foldr</span> <span class="n">f</span> <span class="n">z</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="n">f</span> <span class="n">x</span> <span class="p">(</span><span class="n">foldr</span> <span class="n">f</span> <span class="n">z</span> <span class="n">xs</span><span class="p">)</span> 
+</code></pre></td></tr></table>
+</div>
+</div><p>这是一个递归实现，在函数式编程中，递归定义是十分常见的。</p>
+<p><code>foldr</code>函数其实做了这样的事情：<code>foldr</code>接受三个参数，第一个参数是函数<code>f</code>，第二个参数是初始值<code>z</code>,第三个参数是一个列表。如果列表为空则返回初始化值<code>z</code>，否则递归调用 <code>foldr</code>,需要说明的是函数<code>f</code>的类型是接受两个参数，返回一个值，两个参数类型都应该和<code>z</code>相同（强类型语言中）。</p>
+<p>在Haskell中我们能够看到一个列表能够这样被求和，那么在JavaScript中，我们是如何实现<code>sum</code>函数的呢？</p>
+<p><em>JavaScript</em></p>
+<p>首先我们实现js版本的<code>foldr</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">foldr</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span><span class="nx">z</span><span class="p">,</span><span class="nx">list</span><span class="p">){</span>
+  <span class="c1">//为了简洁起见，把类型判断省略了
+</span><span class="c1"></span>  <span class="c1">// Object.prototype,toString.call(list) === &#39;[object Array]&#39; 
+</span><span class="c1"></span>  <span class="k">if</span><span class="p">(</span><span class="nx">list</span> <span class="o">===</span> <span class="kc">null</span> <span class="o">||</span> <span class="nx">list</span><span class="p">.</span><span class="nx">length</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span>
+    <span class="k">return</span> <span class="nx">z</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="c1">//这里的shift会改变参数的状态，会造成副作用
+</span><span class="c1"></span>  <span class="c1">//return f(list.shift(),foldr(f,z,list));
+</span><span class="c1"></span>  <span class="c1">//改用如下写法
+</span><span class="c1"></span>  <span class="k">return</span> <span class="nx">f</span><span class="p">(</span><span class="nx">list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="nx">foldr</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span><span class="nx">z</span><span class="p">,</span><span class="nx">list</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">)));</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>然后我们再实现js版本的<code>(+)</code>:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">add</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span><span class="p">){</span>
+  <span class="k">return</span> <span class="nx">a</span><span class="o">+</span><span class="nx">b</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>那么我们的<code>sum</code>就变成：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">sum</span><span class="p">(</span><span class="nx">list</span><span class="p">){</span>
+  <span class="k">return</span> <span class="nx">foldr</span><span class="p">(</span><span class="nx">add</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="nx">list</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>最后我们的js版的<code>sum</code>也可以这样用了：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">];</span>
+<span class="nx">sum</span><span class="p">(</span><span class="nx">a</span><span class="p">);</span> <span class="c1">// 6
+</span></code></pre></td></tr></table>
+</div>
+</div><p>像js这样的弱类型的语言较为灵活，函数<code>f</code>可以任意实现，对于<code>foldr</code>函数也能够在多种数据类型之间复用，那么对于像go这样的强类型语言，结果又是怎么样的呢？</p>
+<p><em>go</em></p>
+<p>同样地，我们实现以下go版本的<code>foldr</code>:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">foldr</span><span class="p">(</span><span class="nx">f</span> <span class="kd">func</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">int</span><span class="p">,</span><span class="nx">z</span> <span class="kt">int</span><span class="p">,</span><span class="nx">list</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span><span class="kt">int</span><span class="p">{</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">{</span>
+        <span class="k">return</span> <span class="nx">z</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nf">f</span><span class="p">(</span><span class="nx">list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="nf">foldr</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span><span class="nx">z</span><span class="p">,</span><span class="nx">list</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>go因为有数组切片，所以使用起来较为简单，但是go又是强类型的语言，所以在声明函数的时候必须要把类型声明清楚。</p>
+<p>再实现一下<code>f</code>函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">add</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">int</span><span class="p">{</span>
+    <span class="k">return</span> <span class="nx">a</span><span class="o">+</span><span class="nx">b</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>依葫芦画瓢我们可以得到go版本的<code>sum</code>函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">sum</span><span class="p">(</span><span class="nx">list</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="kt">int</span><span class="p">{</span>
+    <span class="k">return</span> <span class="nf">foldr</span><span class="p">(</span><span class="nx">add</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="nx">list</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以看出来好像套路都差不多，真正在调用的时候是这样的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">(){</span>
+    <span class="nx">a</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">}</span>
+    <span class="nf">sum</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="c1">// 6
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在Haskell中是没有循环的，因为循环可以通过递归实现，在上文我们实现的<code>sum</code>函数中，也没有用到任何循环语句，这和我们原来的编程思维有所不同，刚开始我学写求和函数的时候，都是从<code>for</code>,<code>while</code>开始的，但是函数式给我打开了新世界的大门。</p>
+<p>有了上面的基础，我们发现在函数式编程中，代码的重用非常便利：</p>
+<p><strong>求积函数</strong></p>
+<p><em>javaScript</em></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">muti</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span><span class="p">){</span>
+  <span class="k">return</span> <span class="nx">a</span><span class="o">*</span><span class="nx">b</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">product</span><span class="p">(</span><span class="nx">list</span><span class="p">){</span>
+  <span class="k">return</span> <span class="nx">foldr</span><span class="p">(</span><span class="nx">muti</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="nx">list</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><em>go</em></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">muti</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">int</span><span class="p">{</span>
+    <span class="k">return</span> <span class="nx">a</span><span class="o">*</span><span class="nx">b</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">product</span><span class="p">(</span><span class="nx">list</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="kt">int</span><span class="p">{</span>
+    <span class="k">return</span> <span class="nf">foldr</span><span class="p">(</span><span class="nx">muti</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="nx">list</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><em>Haskell</em></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-haskell" data-lang="haskell"><span class="nf">foldr</span> <span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="mi">1</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span> 
+<span class="c1">-- 24</span>
+<span class="c1">-- or </span>
+<span class="c1">-- product 是Haskell预定义的函数</span>
+<span class="nf">myproduct</span> <span class="n">xs</span> <span class="ow">=</span> <span class="n">foldr</span> <span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="mi">1</span> <span class="n">xs</span>
+<span class="c1">-- myproduct [1,2,3,4]  </span>
+</code></pre></td></tr></table>
+</div>
+</div><p>还有很多例如 <code>anyTrue</code>、<code>allTrue</code>的例子,以下仅给出js实现：</p>
+<p><strong>anyTure</strong></p>
+<p><em>JavaScript</em></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">or</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span><span class="p">){</span>
+  <span class="k">return</span> <span class="nx">a</span> <span class="o">||</span> <span class="nx">b</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">anyTrue</span><span class="p">(</span><span class="nx">list</span><span class="p">){</span>
+  <span class="k">return</span> <span class="nx">foldr</span><span class="p">(</span><span class="nx">or</span><span class="p">,</span><span class="kc">false</span><span class="p">,</span><span class="nx">list</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>调用：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">let</span> <span class="nx">b</span> <span class="o">=</span> <span class="p">[</span><span class="kc">true</span><span class="p">,</span><span class="kc">false</span><span class="p">,</span><span class="kc">true</span><span class="p">];</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">anyTrue</span><span class="p">(</span><span class="nx">b</span><span class="p">));</span> <span class="c1">// true
+</span></code></pre></td></tr></table>
+</div>
+</div><p><strong>allTure</strong></p>
+<p><em>JavaScript</em></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">and</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span><span class="p">){</span>
+  <span class="k">return</span> <span class="nx">a</span> <span class="o">&amp;&amp;</span> <span class="nx">b</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">allTrue</span><span class="p">(</span><span class="nx">list</span><span class="p">){</span>
+  <span class="k">return</span> <span class="nx">foldr</span><span class="p">(</span><span class="nx">and</span><span class="p">,</span><span class="kc">true</span><span class="p">,</span><span class="nx">list</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>调用:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">let</span> <span class="nx">b</span> <span class="o">=</span> <span class="p">[</span><span class="kc">true</span><span class="p">,</span><span class="kc">false</span><span class="p">,</span><span class="kc">true</span><span class="p">];</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">allTrue</span><span class="p">(</span><span class="nx">b</span><span class="p">));</span> <span class="c1">// false
+</span></code></pre></td></tr></table>
+</div>
+</div><p>当然我们可以看出来这个<code>flodr</code>函数贼好用，但是好像还是有点疑惑，它是怎么工作的呢？看了一圈，<code>flodr</code>就是一个递归函数，但其实在编程世界，它还有一个更加出名的名字——<code>reduce</code>。我们看看在js中是如何使用<code>reduce</code>实现sum函数的：</p>
+<p><strong>求和函数reduce版</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kr">const</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&#34;lodash&#34;</span><span class="p">);</span>
+<span class="nx">_</span><span class="p">.</span><span class="nx">reduce</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="kd">function</span><span class="p">(</span><span class="nx">sum</span><span class="p">,</span><span class="nx">n</span><span class="p">){</span>
+  <span class="k">return</span> <span class="nx">sum</span><span class="o">+</span><span class="nx">n</span><span class="p">;</span>
+<span class="p">});</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在<code>lodash</code>官方文档是这么定义的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">_</span><span class="p">.</span><span class="nx">reduce</span> <span class="nx">alias</span> <span class="nx">_</span><span class="p">.</span><span class="nx">foldl</span>
+<span class="nx">_</span><span class="p">.</span><span class="nx">reduceRight</span> <span class="nx">alias</span> <span class="nx">_</span><span class="p">.</span><span class="nx">foldr</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>好吧，我欺骗了你们，其实<code>foldr</code>应该对应<code>reduceRight</code>。</p>
+<p>那么<code>foldl</code>和<code>foldr</code>到底有什么不同呢？</p>
+<p>其实这两个函数的不同之处在于结合的方式不同，以求差为例：</p>
+<p><em>Haskell</em></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-haskell" data-lang="haskell"><span class="nf">foldr</span> <span class="p">(</span><span class="o">-</span><span class="p">)</span> <span class="mi">0</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="c1">-- 输出: 2</span>
+<span class="nf">foldl</span> <span class="p">(</span><span class="o">-</span><span class="p">)</span> <span class="mi">0</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="c1">-- 输出: -6</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>为什么两个输出是不同的呢？这个和结合方向有关:</p>
+<p><code>foldr (-) 0 [1,2,3]</code></p>
+<p>相当于：</p>
+<p><code>1-(2-(3-0)) = 2</code></p>
+<p>而</p>
+<p><code>foldl (-) 0 [1,2,3]</code></p>
+<p>相当于：</p>
+<p><code>((0-1)-2)-3) = -6</code></p>
+<p>结合方向对于求和结果而言是没有区别的，但是对于求差，就有影响了：</p>
+<p><em>JavaScript</em></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kr">const</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&#34;lodash&#34;</span><span class="p">);</span>
+<span class="c1">//reduce 相当于 foldl
+</span><span class="c1"></span><span class="nx">_</span><span class="p">.</span><span class="nx">reduce</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="kd">function</span><span class="p">(</span><span class="nx">sum</span><span class="p">,</span><span class="nx">n</span><span class="p">){</span>
+  <span class="k">return</span> <span class="nx">sum</span><span class="o">-</span><span class="nx">n</span><span class="p">;</span>
+<span class="p">});</span>
+<span class="c1">// 输出 -4
+</span></code></pre></td></tr></table>
+</div>
+</div><p>这个和说好的<code>-6</code>好像又不一样了，坑爹呢么不是？！这是因为，在<code>lodash</code>的实现中，<code>reduce</code>的初始值为数组的第一个元素,所以结果是<code>1-2-3 = -4</code>。</p>
+<p>那么我们看看<code>reduceRight == foldr</code>的结果：</p>
+<p><em>JavaScript</em></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kr">const</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&#34;lodash&#34;</span><span class="p">);</span>
+<span class="c1">//reduceRight 相当于 foldr
+</span><span class="c1"></span><span class="nx">_</span><span class="p">.</span><span class="nx">reduceRight</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="kd">function</span><span class="p">(</span><span class="nx">sum</span><span class="p">,</span><span class="nx">n</span><span class="p">){</span>
+  <span class="k">return</span> <span class="nx">sum</span><span class="o">-</span><span class="nx">n</span><span class="p">;</span>
+<span class="p">});</span>
+<span class="c1">// 输出 0
+</span></code></pre></td></tr></table>
+</div>
+</div><p>我们看到这个结果是``也算是预期结果，因为<code>3-2-1=0</code>。</p>
+<blockquote>
+<p>注：上文为了易于理解和行文连贯，加入了一些我自己的理解。需要说明的是，在Haskell中，<code>foldl1</code>函数应该是和JavaScript的<code>reduce</code>(lodash)函数是一致的，<code>foldl1</code>函数将会把列表的第一个元素作为初始值。</p>
+</blockquote>
+<p>现在我们总结一下<code>foldr</code>和<code>foldl</code>的一些思路：</p>
+<p>如果对列表<code>[3,4,5,6]</code>应用函数<code>f</code>初始值为<code>z</code>进行<code>foldr</code>的话，应该理解为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-haskell" data-lang="haskell"><span class="nf">f</span> <span class="mi">3</span> <span class="p">(</span><span class="n">f</span> <span class="mi">4</span> <span class="p">(</span><span class="n">f</span> <span class="mi">5</span> <span class="p">(</span> <span class="n">f</span> <span class="mi">6</span> <span class="n">z</span><span class="p">)))</span>
+<span class="c1">-- 当 f 为 +, z = 0 上式就变为：</span>
+<span class="mi">3</span> <span class="o">+</span> <span class="p">(</span><span class="mi">4</span> <span class="o">+</span> <span class="p">(</span><span class="mi">5</span> <span class="o">+</span> <span class="p">(</span><span class="mi">6</span> <span class="o">+</span> <span class="mi">0</span><span class="p">)))</span>
+<span class="c1">-- 前缀(+)形式则为：</span>
+<span class="p">(</span><span class="o">+</span><span class="p">)</span><span class="mi">3</span> <span class="p">((</span><span class="o">+</span><span class="p">)</span><span class="mi">4</span> <span class="p">((</span><span class="o">+</span><span class="p">)</span><span class="mi">5</span> <span class="p">((</span><span class="o">+</span><span class="p">)</span><span class="mi">6</span> <span class="mi">0</span><span class="p">)))</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如果对列表<code>[3,4,5,6]</code>应用函数<code>g</code>初始值为<code>z</code>进行<code>foldl</code>的话，应该理解为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-haskell" data-lang="haskell"><span class="nf">g</span><span class="p">(</span><span class="n">g</span> <span class="p">(</span><span class="n">g</span> <span class="p">(</span><span class="n">g</span> <span class="n">z</span> <span class="mi">3</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span> <span class="mi">5</span><span class="p">)</span> <span class="mi">6</span>
+<span class="c1">-- 当然我们也可以类似地把 g 设为 +, z = 0， 上式就变为：</span>
+<span class="p">(((</span><span class="mi">0</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span> <span class="o">+</span> <span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="mi">6</span>
+<span class="c1">-- 改成前缀形式</span>
+<span class="p">(</span><span class="o">+</span><span class="p">)((</span><span class="o">+</span><span class="p">)((</span><span class="o">+</span><span class="p">)((</span><span class="o">+</span><span class="p">)</span><span class="mi">0</span> <span class="mi">3</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span> <span class="mi">5</span><span class="p">)</span> <span class="mi">6</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>从上面的例子可以看出，左折叠(<code>foldl</code>)和右折叠(<code>foldr</code>)两者有一个很关键的区别，就是，左折叠无法处理无限列表，但是右折叠可以。</p>
+<p>前面我们说的都是用预定义的函数<code>+</code>,<code>-</code>,<code>*</code>…,（在函数式编程里，这些运算符其实也都是函数）用这些函数是为了能够让我们更加便于理解，现在我们看看用我们自己定义的函数呢？试试逆转一个列表：</p>
+<p><strong>reverse</strong></p>
+<p><em>Haskell</em></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-haskell" data-lang="haskell"><span class="nf">flip&#39;</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">b</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">c</span><span class="p">)</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">b</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">a</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">c</span>
+<span class="nf">flip&#39;</span> <span class="n">f</span> <span class="n">x</span> <span class="n">y</span><span class="ow">=</span> <span class="n">f</span> <span class="n">y</span> <span class="n">x</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上面的<code>flip'</code>函数的作用就是传入第一个参数是一个函数，然后将两个参数的顺序调换一下(<code>flip</code>是预定义函数)。</p>
+<p><em>Hasekll</em></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-haskell" data-lang="haskell"><span class="nf">foldr</span> <span class="n">flip&#39;</span> <span class="kt">[]</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>那么JavaScript的实现呢？</p>
+<p><em>JavaScript</em></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">flip</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">){</span>
+     <span class="k">return</span> <span class="nx">f</span><span class="p">(</span><span class="nx">b</span><span class="p">,</span><span class="nx">a</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//这个函数需要进行柯里化，否则无法在foldr中作为参数传入
+</span><span class="c1"></span><span class="kd">var</span> <span class="nx">flip_</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">curry</span><span class="p">(</span><span class="nx">flip</span><span class="p">);</span>
+
+<span class="kd">function</span> <span class="nx">cons</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span><span class="p">){</span>
+     <span class="k">return</span> <span class="nx">a</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="nx">b</span><span class="p">);</span>
+ <span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">reverse</span><span class="p">(</span><span class="nx">list</span><span class="p">){</span>
+  <span class="k">return</span> <span class="nx">foldr</span><span class="p">(</span><span class="nx">flip_</span><span class="p">(</span><span class="nx">cons</span><span class="p">),[],</span><span class="nx">list</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>调用结果又是怎么样的呢？</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">reverse</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]))</span>
+<span class="c1">// [ 3, 2, 1 ]
+</span></code></pre></td></tr></table>
+</div>
+</div><p>好了，现在我们好像又看到了一个新东西——<code>curry</code>，柯里化。简单地说，柯里化就是一个函数可以先接受一部分参数，然后返回一个接受剩下参数的函数。用上面的例子来说，<code>flip</code>函数在被柯里化之后得到的函数<code>flip_</code>，可以先接受第一个参数<code>cons</code>然后返回一个接受两个参数<code>a,b</code>的函数，也就是我们需要的连接函数。</p>
+<p>在go语言里面，实现curry是一个很麻烦的事情，因此go的函数式编程支持还是比较有限的。</p>
+<p>接着我们试试如何取得一个列表的长度，实现一个<code>length</code>函数：</p>
+<p><strong>length</strong></p>
+<p><em>Haskell</em></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-haskell" data-lang="haskell"><span class="c1">-- 先定义实现一个count 函数</span>
+<span class="nf">count</span> <span class="ow">::</span> <span class="n">a</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">b</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="n">c</span>
+<span class="nf">count</span> <span class="n">a</span> <span class="n">n</span> <span class="ow">=</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="c1">-- 再实现一个length函数</span>
+<span class="nf">length&#39;</span> <span class="ow">=</span> <span class="n">foldr</span> <span class="p">(</span><span class="n">count</span><span class="p">)</span> <span class="mi">0</span>
+<span class="c1">-- 再调用</span>
+<span class="nf">length&#39;</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+<span class="c1">-- 4</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><em>JavaScript</em></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="c1">//先定义一个count函数
+</span><span class="c1"></span><span class="kd">function</span> <span class="nx">count</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">n</span><span class="p">){</span>
+  <span class="k">return</span> <span class="nx">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//再实现length函数
+</span><span class="c1"></span><span class="kd">function</span> <span class="nx">length</span><span class="p">(</span><span class="nx">list</span><span class="p">){</span>
+  <span class="k">return</span> <span class="nx">foldr</span><span class="p">(</span><span class="nx">count</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="nx">list</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//调用
+</span><span class="c1"></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">length</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]));</span>
+<span class="c1">// 4
+</span></code></pre></td></tr></table>
+</div>
+</div><p>就是这么简单，好了，<code>reduce</code>我们讲完了，然后我们看看<code>map</code>,要知道<code>map</code>函数是怎么来的，我们要从一个比较简单的函数先入手，这个函数的功能是把整个列表的所有元素乘以2:</p>
+<p><strong>doubleall</strong></p>
+<p><em>haskell</em></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-haskell" data-lang="haskell"><span class="c1">-- 定义一个乘以2，并连接的函数</span>
+<span class="nf">doubleandcons</span> <span class="ow">::</span> <span class="n">a</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+<span class="nf">doubleandcons</span> <span class="n">x</span> <span class="n">y</span>  <span class="ow">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span> <span class="kt">:</span> <span class="n">y</span>
+
+<span class="nf">doubleall</span> <span class="n">x</span> <span class="ow">=</span> <span class="n">foldr</span> <span class="n">doubleandcons</span> <span class="kt">[]</span>
+
+<span class="c1">-- 调用</span>
+<span class="nf">doubleall</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="c1">-- 输出</span>
+<span class="c1">-- [2,4,6]</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p><em>JavaScript</em></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">doubleandcons</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">list</span><span class="p">){</span>
+  <span class="k">return</span> <span class="p">[</span><span class="nx">a</span> <span class="o">*</span> <span class="mi">2</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">list</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">doubleall</span><span class="p">(</span><span class="nx">list</span><span class="p">){</span>
+  <span class="k">return</span> <span class="nx">foldr</span><span class="p">(</span><span class="nx">doubleandcons</span><span class="p">,[],</span><span class="nx">list</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">//调用
+</span><span class="c1"></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">doubleall</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]));</span>
+<span class="c1">// [2,4,6]
+</span></code></pre></td></tr></table>
+</div>
+</div><p>再来看看go怎么写：</p>
+<p><em>go</em></p>
+<p>go 的尴尬之处在于，需要非常明确的函数定义，所以我们要重新写一个<code>foldr</code>函数，来接受第二个参数为列表的<code>f</code>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">foldr2</span><span class="p">(</span><span class="nx">f</span> <span class="kd">func</span><span class="p">(</span><span class="nx">a</span> <span class="kt">int</span><span class="p">,</span><span class="nx">b</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">[]</span><span class="kt">int</span><span class="p">,</span><span class="nx">z</span> <span class="p">[]</span><span class="kt">int</span><span class="p">,</span><span class="nx">list</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)[]</span><span class="kt">int</span><span class="p">{</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">{</span>
+        <span class="k">return</span> <span class="nx">z</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nf">f</span><span class="p">(</span><span class="nx">list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="nf">foldr2</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span><span class="nx">z</span><span class="p">,</span><span class="nx">list</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>然后我们再实现同上面相同的逻辑：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">doubleandcons</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span><span class="nx">list</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span>
+    <span class="k">return</span> <span class="nb">append</span><span class="p">([]</span><span class="kt">int</span><span class="p">{</span><span class="nx">n</span> <span class="o">*</span> <span class="mi">2</span><span class="p">},</span><span class="nx">list</span><span class="o">...</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">doubleall</span><span class="p">(</span><span class="nx">list</span> <span class="p">[]</span><span class="kt">int</span><span class="p">)</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span>
+    <span class="k">return</span> <span class="nf">foldr2</span><span class="p">(</span><span class="nx">doubleandcons</span><span class="p">,</span><span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="nx">list</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="c1">// doubleall([]int{1,2,3,4})
+</span><span class="c1">//[2 4 6 8]
+</span></code></pre></td></tr></table>
+</div>
+</div><p>go这门强类型编译语言虽然支持一定的函数式编程，但是使用起来还是有一定局限性的，起码代码复用上还是不如js的。</p>
+<p>接下来我们关注一下其中的<code>doubleandcons</code>函数，这个函数其实可以转换为这样的一个函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-haskell" data-lang="haskell"><span class="nf">fandcons</span> <span class="n">f</span> <span class="n">el</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="ow">=</span> <span class="p">(</span><span class="n">f</span> <span class="n">el</span><span class="p">)</span> <span class="kt">:</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+<span class="nf">double</span> <span class="n">el</span> <span class="ow">=</span> <span class="n">el</span> <span class="o">*</span> <span class="mi">2</span>
+<span class="c1">-- 只传入部分参数，柯里化</span>
+<span class="nf">doubleandcons</span> <span class="ow">=</span> <span class="n">fandcons</span> <span class="n">double</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>现在我们关注一下这里的<code>fandcons</code>,其实这里可以通用表述为<code>Cons·f</code>,这里的<code>·</code>称为函数组合。而函数组合有这样的操作：</p>
+<p class="ql-center-displayed-equation" style="line-height: 19px;">
+  <span class="ql-right-eqno"> &nbsp; </span><span class="ql-left-eqno"> &nbsp; </span><img loading="lazy" src="https://www.chenquan.me/wp-content/ql-cache/quicklatex.com-53a6772010af0af20be7c2a7d32c7adb_l3.png" height="19" width="119" class="ql-img-displayed-equation quicklatex-auto-format" alt="&#92;&#91;&#40;&#102;&#46;&#32;&#103;&#41;&#32;&#104;&#32;&#61;&#32;&#102;&#32;&#40;&#103;&#92;&#32;&#104;&#41;&#92;&#93;" title="Rendered by QuickLaTeX.com" />
+</p>
+<blockquote>
+<p>需要注意的是等号右边是函数调用。</p>
+</blockquote>
+<p>那么上面的我们的函数就可以表述为：</p>
+<p class="ql-center-displayed-equation" style="line-height: 19px;">
+  <span class="ql-right-eqno"> &nbsp; </span><span class="ql-left-eqno"> &nbsp; </span><img loading="lazy" src="https://www.chenquan.me/wp-content/ql-cache/quicklatex.com-8fdc4d8625fa3d001fa63ca681d12db9_l3.png" height="19" width="334" class="ql-img-displayed-equation quicklatex-auto-format" alt="&#92;&#91;&#102;&#97;&#110;&#100;&#99;&#111;&#110;&#115;&#92;&#32;&#102;&#92;&#32;&#101;&#108;&#32;&#61;&#32;&#40;&#67;&#111;&#110;&#115;&#46;&#102;&#41;&#32;&#92;&#32;&#101;&#108; &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#61;&#32;&#67;&#111;&#110;&#115;&#32;&#40;&#102;&#92;&#32;&#101;&#108;&#41;&#92;&#93;" title="Rendered by QuickLaTeX.com" />
+</p>
+<p>所以：</p>
+<p class="ql-center-displayed-equation" style="line-height: 19px;">
+  <span class="ql-right-eqno"> &nbsp; </span><span class="ql-left-eqno"> &nbsp; </span><img loading="lazy" src="https://www.chenquan.me/wp-content/ql-cache/quicklatex.com-4280572ae73a8bafe1b8ca2ce67b2cce_l3.png" height="19" width="437" class="ql-img-displayed-equation quicklatex-auto-format" alt="&#92;&#91;&#102;&#97;&#110;&#100;&#99;&#111;&#110;&#115;&#92;&#32;&#102;&#92;&#32;&#101;&#108;&#32;&#92;&#32;&#32;&#108;&#105;&#115;&#116;&#32;&#61;&#32;&#40;&#67;&#111;&#110;&#115;&#46;&#102;&#41;&#32;&#92;&#32;&#101;&#108;&#32;&#92;&#32;&#108;&#105;&#115;&#116;&#32;&#92; &#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#32;&#61;&#32;&#67;&#111;&#110;&#115;&#32;&#40;&#102;&#92;&#32;&#101;&#108;&#41;&#32;&#92;&#32;&#108;&#105;&#115;&#116;&#92;&#93;" title="Rendered by QuickLaTeX.com" />
+</p>
+<p>最终版本就是：</p>
+<p class="ql-center-displayed-equation" style="line-height: 19px;">
+  <span class="ql-right-eqno"> &nbsp; </span><span class="ql-left-eqno"> &nbsp; </span><img loading="lazy" src="https://www.chenquan.me/wp-content/ql-cache/quicklatex.com-33424f823ee504c1831390c896907fac_l3.png" height="19" width="285" class="ql-img-displayed-equation quicklatex-auto-format" alt="&#92;&#91;&#100;&#111;&#117;&#98;&#108;&#101;&#97;&#108;&#108;&#32;&#61;&#32;&#102;&#111;&#108;&#100;&#114;&#92;&#32;&#32;&#40;&#67;&#111;&#110;&#115;&#32;&#46;&#32;&#100;&#111;&#117;&#98;&#108;&#101;&#41;&#92;&#32;&#78;&#105;&#108;&#92;&#93;" title="Rendered by QuickLaTeX.com" />
+</p>
+<p>这里的<code>foldr(Cons.double)</code> 其实就是我们要的<code>map double</code>，那么我们的<code>map</code>的本来面目就是：</p>
+<p class="ql-center-displayed-equation" style="line-height: 19px;">
+  <span class="ql-right-eqno"> &nbsp; </span><span class="ql-left-eqno"> &nbsp; </span><img loading="lazy" src="https://www.chenquan.me/wp-content/ql-cache/quicklatex.com-cac081eb4ec9601af83027557a8fce55_l3.png" height="19" width="209" class="ql-img-displayed-equation quicklatex-auto-format" alt="&#92;&#91;&#109;&#97;&#112;&#32;&#61;&#32;&#102;&#111;&#108;&#100;&#114;&#92;&#32;&#40;&#67;&#111;&#110;&#115;&#46;&#102;&#41;&#92;&#32;&#78;&#105;&#108;&#92;&#93;" title="Rendered by QuickLaTeX.com" />
+</p>
+<blockquote>
+<p>这里的<code>Nil</code>是<code>foldr</code>函数的初始值。</p>
+</blockquote>
+<p>好了<code>map</code>已经现身了，让我们再仔细看看一个<code>map</code>函数应该怎么实现：</p>
+<p><strong>map</strong></p>
+<p><em>Haskell</em></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-haskell" data-lang="haskell"><span class="nf">fandcons</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span><span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="n">b</span><span class="p">)</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="n">a</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="p">[</span><span class="n">b</span><span class="p">]</span>
+<span class="nf">fandcons</span> <span class="n">f</span> <span class="n">x</span> <span class="n">y</span><span class="ow">=</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span><span class="p">)</span><span class="kt">:</span><span class="n">y</span>
+
+<span class="nf">map&#39;</span> <span class="ow">::</span> <span class="p">(</span><span class="n">a</span><span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span><span class="n">b</span><span class="p">)</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="p">[</span><span class="n">b</span><span class="p">]</span>
+<span class="nf">map&#39;</span> <span class="n">f</span> <span class="n">x</span> <span class="ow">=</span> <span class="n">foldr</span> <span class="p">(</span><span class="n">fandcons</span> <span class="n">f</span><span class="p">)</span> <span class="kt">[]</span> <span class="n">x</span>
+
+<span class="c1">-- 调用 </span>
+<span class="nf">map&#39;</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>  <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="c1">-- 输出 [2,4,6]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这里用了Haskell的lambda表达式，其实就是<code>f</code>的<code>double</code>实现。</p>
+<p>我们也看看js版本的实现：</p>
+<p><em>JavaScript</em></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">fandcons</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">el</span><span class="p">,</span> <span class="nx">list</span><span class="p">){</span>
+  <span class="k">return</span> <span class="p">[</span><span class="nx">f</span><span class="p">(</span><span class="nx">el</span><span class="p">)].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">list</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//需要柯里化
+</span><span class="c1"></span><span class="kd">var</span> <span class="nx">fandcons_</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">curry</span><span class="p">(</span><span class="nx">fandcons</span><span class="p">);</span>
+
+<span class="kd">function</span> <span class="nx">map</span><span class="p">(</span><span class="nx">f</span><span class="p">,</span> <span class="nx">list</span><span class="p">){</span>
+  <span class="k">return</span> <span class="nx">foldr</span><span class="p">(</span><span class="nx">fandcons_</span><span class="p">(</span><span class="nx">f</span><span class="p">),[],</span><span class="nx">list</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//调用
+</span><span class="c1"></span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">x</span><span class="p">){</span><span class="k">return</span> <span class="mi">2</span><span class="o">*</span><span class="nx">x</span><span class="p">},[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]));</span>
+<span class="c1">// 输出[ 2, 4, 6, 8 ]
+</span></code></pre></td></tr></table>
+</div>
+</div><p>这些需要柯里化的go我都不实现了，因为go实现柯里化比较复杂。</p>
+<p>最后我们再看看<code>map</code>的一些神奇的操作：</p>
+<p><strong>矩阵求和</strong></p>
+<p><strong>summatrix</strong></p>
+<p><em>Haskell</em></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-haskell" data-lang="haskell"><span class="nf">summatrix</span> <span class="ow">::</span> <span class="kt">Num</span> <span class="n">a</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="p">[[</span><span class="n">a</span><span class="p">]]</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">a</span>
+<span class="nf">summatrix</span> <span class="n">x</span> <span class="ow">=</span> <span class="n">sum</span> <span class="p">(</span><span class="n">map</span> <span class="n">sum</span> <span class="n">x</span><span class="p">)</span>
+
+<span class="c1">-- 调用</span>
+<span class="nf">summatrix</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]]</span>
+<span class="c1">-- 21</span>
+</code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>这里一定要显式声明 参数a的类型，因为sum函数要求Num类型的参数</p>
+</blockquote>
+<p><em>JavaScript</em></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">sum</span><span class="p">(</span><span class="nx">list</span><span class="p">){</span>
+  <span class="k">return</span> <span class="nx">foldr</span><span class="p">(</span><span class="nx">add</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="nx">list</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kd">function</span> <span class="nx">summatrix</span><span class="p">(</span><span class="nx">matrix</span><span class="p">){</span>
+  <span class="k">return</span> <span class="nx">sum</span><span class="p">(</span><span class="nx">map</span><span class="p">(</span><span class="nx">sum</span><span class="p">,</span><span class="nx">matrix</span><span class="p">));</span>
+<span class="p">}</span>
+<span class="c1">//调用
+</span><span class="c1"></span> <span class="nx">mat</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]];</span>
+ <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">summatrix</span><span class="p">(</span><span class="nx">mat</span><span class="p">));</span>
+<span class="c1">//输出 21
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id="结语">
+    <a href="#%e7%bb%93%e8%af%ad" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    结语
+</h2>
+<p>在学习函数式编程的过程中，我感受到了一种新的思维模式的冲击，仿佛打开了一种全新的世界，没有循环，甚至没有分支，语法简洁优雅。我认为作为一名计算机从业人员都应该去接触一下函数式编程，能够让你的视野更加开阔，能够从另一个角度去思考。</p>
+
+        </div>
+    </article>
+
+</div>
+
+ 
+<div class="container">
+
+    
+    <nav class="flex suggested">
+        
+        <a rel="prev" href="/posts/haskell-the-language-you-should-learn/" title="Previous post (older)">
+            <span>Previous</span>
+            Haskell — 你应该学的一门语言
+            </a>
+        
+        
+        
+        <a rel="next" href="/posts/golang-thread-scheduler/" title="Next post (newer)">
+            <span>Next</span>
+            Go 线程调度器
+            </a> 
+        
+    </nav>
+    
+
+    
+</div>
+
+</main>
+
+
+        </main>
+        <footer class="footer flex">
+    <section class="container">
+        <nav class="footer-links">
+            
+            <a href="https://chainlark.com/">chainlark</a>
+            
+            <a href="/index.xml">RSS</a>
+            
+        </nav>
+    </section>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.js" integrity="sha512-0UbR6HN0dY8fWN9T7fF658896tsPgnbRREHCNq46J9/JSn8GonXDZmqtTc3qS879GM0zV49b9LPhdc/maKP8Kg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" integrity="sha512-Tn2m0TIpgVyTzzvmxLNuqbSJH3JP8jm+Cy3hvHrW7ndTDcJ1w5mBiksqDBb8GpE2ksktFvDB/ykZ0mDpsZj20w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+
+    (function(){
+        
+        
+        let images = $('img');
+        for (let img of images) {
+            $(img).featherlight($(img));
+        }
+    })();
+    </script>
+    <script defer src="/ts/features.882b72337b0ef8cf09fe2162c5a3e8bc2381c17b65e1c654a4fbd770d38fe420.js" data-enable-footnotes="false"></script>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8R697QBLL4"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-8R697QBLL4');
+    </script>
+</footer>
+    </body>
+</html>

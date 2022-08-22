@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>区块链 on CodeStack</title>
+    <link>https://chenquan.me/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/</link>
+    <description>Recent content in 区块链 on CodeStack</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 18 Jan 2021 07:36:44 +0000</lastBuildDate><atom:link href="https://chenquan.me/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>PBFT算法关键要点详叙</title>
+      <link>https://chenquan.me/posts/pbft-key-points/</link>
+      <pubDate>Mon, 18 Jan 2021 07:36:44 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/pbft-key-points/</guid>
+      <description>引言  在一个分布式系统当中，如果需要提供可靠服务，数据操作（读写）的冗余是必要的。假设现在我们有一个分布式数据库集群，其中的服务器节点会相互同步数据。一种简单的思维，如果网络正常，服务器稳定，一切顺利，我们只需要把数据写入其中一台服务器，集群中的所有服务器就都会同步到写入的数据。但事情往往没有这么简单，实际上这台写入的服务器可能会宕机、断网，甚至代码也会有bug，这些问题都有可能导致数据同步失败，之前的写入操作实际上有可能是失败的，所有服务器无法同步到数据。同样地，如果写入成功，我们随便挑一台服务器读取数据就没有问题了吗？如果这台服务器同步速度慢一些，那么我们读取的值也是不对的。那么，如果我们在写入的时候多写如几台服务器不就好了，一种极端思维是我写入所有服务器，这样当然所有服务器上的数据都是最新的；在读取的时候我们也可以读所有服务器，这样一定能够读到最新的数据，但是这样显然很耗费资源，我们能不能读写一部分也能够得到确定的最新结果呢，如果可以的话，读写多少服务器比较合适呢？
+这个服务器数量，就是所谓的 quorum，一般来讲，在写入数据的时候，只需要达到 quorum 台服务器，我们就可以认为写入成功，同样地，在读取数据的时候，只需要读取 quorum 台服务器，就可以认为读取的结果是正确的，并且是最新的。
+显然这个quorum值是取决于分布式集群所有服务器的数量的，全网服务器数量越多，quorum 越大，当然，如果 quorum 越大，那么需要操作的服务器数量就越多，操作开销也越大。
+那么，quorum 多大比较合适呢？
+在集群的数据同步过程当中，存在几种情况：
+一是并发操作，就是多人同时操作数据集群，如果有两个人进行写入操作，比如 Alice写入 A = 2， 同时 Bob 写入 A =3 ，如果一半服务器接受 A=3，而另一半接受 A=4 是不行的，这就出现了集群脑裂的情况，为了避免这个情况，要求我们至少写入集群中的多数节点。
+另一种是非串行化读写，如果我们在写入数据的完成之后，用户立即来读取数据了，但是恰好用户读取的服务器还没有同步到最新数据，用户读的数据是过时的，这样也是不对的，我们应该保证，写入成功之后，读取的值应该是上次写入之后的结果，所以我们至少要读到一个写入操作过的节点。
+那么写入操作和读取操作至少都需要多少个节点才能保证上述情况不会发生呢？问题将会在下文中揭晓。
+   Prerequisite     共识问题 (Consensus Problem)  分布式系统的共识问题（Consensus Problem）是指寻找一种协议，使得该协 议满足以下三大属性：
+ 一致性（Agreement）：所有的非缺陷进程都必须同意一个值； 正确性（Validity）：所有非缺陷进程所同意的值必须来之非故障进程所提案的值； 可结束性（Termination）：每个非缺陷的进程必须最终确定一个值。  通常也把一致性和正确性合称安全性（Safety），把可结束性称为活性 （Liveness），而在分布式系统的算法和设计中， 安全性和活性是两个非常重要的属性，更通俗地讲，这两个属性的另一种解释是：
+ 安全性 (Safety) ：错误的值永远不会被采用（something “bad” will never happen）； 活性 (Liveness) ：最终正确的值将会被确定并同意，但是无法确定时间 （ something “good” will must happen, but we don’t know when）  也可通俗解释为：</description>
+    </item>
+    
+    <item>
+      <title>使用 pubma 对区块链网络进行混沌测试</title>
+      <link>https://chenquan.me/posts/chaos-testing-by-pubma/</link>
+      <pubDate>Wed, 12 Sep 2018 16:45:40 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/chaos-testing-by-pubma/</guid>
+      <description>Author: 陈权@hyperchain
+    0x01 问题明确  当前我们需要模拟如下场景：
+ 节点在高网络延迟下的表现 节点在高网络丢包率下的表现  有些bug我们是在比较苛刻的网络条件下测试得到的，而按照传统的经验，我们会想办法将环境部署到互联网上进行测试，但是这种方式非常原始，而且得到的结果也具备大量的偶然性，我们想要复现相同的结果也是十分困难的，因此我们使用容器技术对不同的网络情况进行模拟，以期得到可控的网络抖动测试环境。
+   0x02 pumba 工具介绍  先对容器网络Chaos-testing 工具pubma进行简单介绍，以及相关使用的说明。
+   What is Pubma(a)?  相信出生于90年代的小伙伴们都知道一个电影叫 The Lion King（狮子王），里面有一个角色的名字就叫Pumbaa，在Swahili语中，Pumbaa的意识是”保持愚蠢，无知，以及懒惰”。当然这个工具起这个名字的内涵大概就是想模拟一个“愚蠢的，不可预知的环境”的意思。
+   Pumba 能做什么？  简单地说，Pubma 能够完成包括对Docker容器的 kill，stop， remove，pause。
+当然， Pubma 也能够完成网络模拟，模拟包括一系列的网络问题（延迟，丢包，使用不同的丢包模型，带宽限制等等）。针对网络模拟，Pumba使用的是Linux内核tc netem实现的。 如果目标container不支持tc的话，Pumba将会使用sidekick 附着到目标容器进行控制。
+   怎么使用 Pumba  通常可以传一个容器列表到Pumba中，可以简单地写一个正则表达式来选择匹配的容器。如果你没有指定容器，那么Pumba将会对所有运行的容器进行干预。
+如果你使用了--random选项，那么Pumba将会在提供的容器列表中选择一些随机容器进行干扰。
+你也可以通过传入一些重复参数，以及持续时间参数来更加精细地控制你需要产生的chaos 混沌。
+   如何安装 pumba     源码安装  1 2 3 4 5 6 7 8  # Download binary from https://github.</description>
+    </item>
+    
+  </channel>
+</rss>

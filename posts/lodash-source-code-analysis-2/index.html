@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="theme-color" content="dark">
+    <title>Lodash 源码分析（二）“Function” Methods | CodeStack</title>
+
+    
+    
+    
+    <meta property="og:site_name" content="Hugo Tania is Amazing" />
+    <meta property="og:title" content="Lodash 源码分析（二）“Function” Methods | CodeStack"/>
+    <meta itemprop="name" content="Lodash 源码分析（二）“Function” Methods | CodeStack" />
+    <meta name="twitter:title" content="Lodash 源码分析（二）“Function” Methods | CodeStack" />
+    <meta name="application-name" content="Lodash 源码分析（二）“Function” Methods | CodeStack" />
+
+
+    <meta name="description" content="Hugo is Absurdly Fast!" />
+    <meta name="twitter:description" content="Hugo is Absurdly Fast!"/>
+    <meta itemprop="description" content="Hugo is Absurdly Fast!"/>
+    <meta property="og:description" content="Hugo is Absurdly Fast!" />
+
+    
+
+
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    
+    <link rel="stylesheet" href="/sass/main.min.0158e06e6beeec53cf25d2cb31334e3da41c26993a6f06151e34b499e132997a.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.gallery.min.css" integrity="sha512-B31/elyDKOSa2yGC1ALSAHkdlJ5FOhZJTNANGUFxWOnVMfKQmekRG2/sNdp6yJPrO7Ae9rlAxUlr0QjiJne01Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.css" integrity="sha512-56GJrpSgHk6Mc9Fltt+bQKcICJoEpxtvozXPA5n5OT0rfWiqGlJmJCI/vl16kctf/0XbBloh03vl7OF2xFnR8g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+</head>
+    <script>
+    (function() {
+        const colorSchemeKey = 'ThemeColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.userColorScheme = 'dark';
+        } else {
+            document.documentElement.dataset.userColorScheme = 'light';
+        }
+    })();
+</script>
+
+    <body class="dark">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-content flex">
+            <div id="nav-left" class="nav-left flex">
+                <a class="brand" href="/">
+                    
+                    <i class="fas fa-code"></i> 
+                    &nbsp; CodeStack
+                 </a>
+                 
+                 
+                 <a id="nav-left-extend" href="javascript:toggle_nav_extend();" class="nav-left-extend"><i class="czs-category-l"></i></a>
+            </div>
+
+            <div id="nav-right" class="nav-right flex">
+                
+                <a target="_blank" href="https://docker.chenquan.me/">
+                    
+                    <i class="fab fa-docker"></i>
+                    
+                   Docker 教程 
+                </a>
+                
+                <a target="_blank" href="/articles/">
+                    
+                    <i class="fas fa-archive"></i>
+                    
+                   文章归档 
+                </a>
+                
+
+                
+            </div>
+         </div>
+    </div>
+</nav>
+
+<script lang="javascript">
+    
+    function toggle_search_box() {
+        let search_box = document.getElementById('search-query');
+        let computedStyle = window.getComputedStyle(search_box, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'block') {
+            search_box.setAttribute('style', 'display: none; width: 0px;');
+        } else {
+            search_box.setAttribute('style', 'display: block; width: 200px;');
+        }
+    }
+    
+    function toggle_nav_extend() {
+        let nav_left_extend = document.getElementById('nav-left-extend');
+        let extend_icon = nav_left_extend.children[0];
+        let nav_right = document.getElementById('nav-right');
+        let computedStyle = window.getComputedStyle(nav_right, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'flex') {
+            nav_right.setAttribute('style', 'display: none;');
+            extend_icon.setAttribute('style', 'font-size: 26px;');
+            extend_icon.setAttribute('class', 'czs-category-l');
+        } else {
+            extend_icon.setAttribute('class', 'czs-close-l');
+            extend_icon.setAttribute('style', 'font-size: 20px;padding: 1px 0 0 3px;');
+            nav_right.setAttribute('style', 'display: flex;');
+        }
+    }
+</script>
+        <main>
+            
+<div class="container mainarea post-shadow">
+    <article class="post-article">
+        <header class="article-header">
+            <div class="thumb">
+                <div>
+                    <h1>Lodash 源码分析（二）“Function” Methods</h1>
+                    <div class="post-meta">
+                        <div>
+                            
+                            
+                            By terasum / <time>2017-08-29</time>
+                        </div>
+                        <div class="tags">
+                            
+                            <a href="/tags/javascript/">javascript</a>
+                            
+                            <a href="/tags/lodash/">lodash</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="article-post" id="write">
+        <p>这是Lodash源码分析的第二篇文章，我们在第一篇<a href="http://www.chenquan.me/archives/254">Lodash 源码分析（一）“Function” Methods</a>中介绍了基本的<code>_.after</code>，<code>_.map</code>，以及复杂的<code>_.ary</code>函数的实现以及我们自己的自定义轻量级版本。大概清楚了Lodash的整个代码脉络。这次我们继续分析，这次我们讲讲<code>_.reduce</code>和<code>_.curry</code>。</p>
+<h2 id="_reduce">
+    <a href="#_reduce" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    _.reduce
+</h2>
+<p>我一直觉得，如果能够理解<code>_.map</code>和<code>_.reduce</code>的实现，那么任何复杂的函数都不在话下。我们已经<a href="https://segmentfault.com/a/1190000010775719#articleHeader2">介绍了<code>_.map</code>的实现</a>，知道了<code>_.map</code>函数中是如何处理集合，并将其逐个进行函数处理的。我们知道在<code>_.map</code>函数中会把三个参数传到给定的函数中，分别是<code>array[index]</code>，<code>index</code>和<code>array</code>。这次我们看看<code>_.reduce</code>函数。</p>
+<p>众所周知，<code>_.reduce</code>函数能够将一个集合进行”折叠”。”折叠”理解起来比较抽象。我们可以通过代码作为样例说明一下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kr">const</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&#34;lodash&#34;</span><span class="p">);</span>
+<span class="nx">_</span><span class="p">.</span><span class="nx">reduce</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span><span class="p">){</span><span class="k">return</span> <span class="nx">a</span><span class="o">+</span><span class="nx">b</span><span class="p">});</span>
+<span class="c1">// 6
+</span></code></pre></td></tr></table>
+</div>
+</div><p>如果你不知道<code>_.reduce</code>到底是怎么工作的，那么你可以看看我写的这篇文章<a href="https://segmentfault.com/a/1190000010632526">从Haskell、JavaScript、Go看函数式编程</a>。我们今天的目的是看看lodash是如何实现<code>_.reduce</code>的，以及和我们函数式的实现的区别。</p>
+<p>我们看到lodash源代码是这样的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">reduce</span><span class="p">(</span><span class="nx">collection</span><span class="p">,</span> <span class="nx">iteratee</span><span class="p">,</span> <span class="nx">accumulator</span><span class="p">)</span> <span class="p">{</span>
+<span class="kd">var</span> <span class="nx">func</span> <span class="o">=</span> <span class="nx">isArray</span><span class="p">(</span><span class="nx">collection</span><span class="p">)</span> <span class="o">?</span> <span class="nx">arrayReduce</span> <span class="o">:</span> <span class="nx">baseReduce</span><span class="p">,</span>
+    <span class="nx">initAccum</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span> <span class="mi">3</span><span class="p">;</span>
+
+  <span class="k">return</span> <span class="nx">func</span><span class="p">(</span><span class="nx">collection</span><span class="p">,</span> <span class="nx">getIteratee</span><span class="p">(</span><span class="nx">iteratee</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="nx">accumulator</span><span class="p">,</span> <span class="nx">initAccum</span><span class="p">,</span> <span class="nx">baseEach</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在官方的注释中说，对于对象，遍历顺序是无法保证的。我们不考虑这么复杂的情况，先看看<code>Array</code>的情况。其次，我们在调用<code>_.reduce</code>的时候没有传入第三个<code>accumulator</code>参数，那么函数可以简化为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">reduce</span><span class="p">(</span><span class="nx">collection</span><span class="p">,</span> <span class="nx">iteratee</span><span class="p">,</span> <span class="nx">accumulator</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">arrayReduce</span><span class="p">(</span><span class="nx">collection</span><span class="p">,</span> <span class="nx">getIteratee</span><span class="p">(</span><span class="nx">iteratee</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="nx">accumulator</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">baseEach</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在看看<code>arrayReduce</code>函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript">  <span class="kd">function</span> <span class="nx">arrayReduce</span><span class="p">(</span><span class="nx">array</span><span class="p">,</span> <span class="nx">iteratee</span><span class="p">,</span> <span class="nx">accumulator</span><span class="p">,</span> <span class="nx">initAccum</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="nx">length</span> <span class="o">=</span> <span class="nx">array</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="nx">array</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">initAccum</span> <span class="o">&amp;&amp;</span> <span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">accumulator</span> <span class="o">=</span> <span class="nx">array</span><span class="p">[</span><span class="o">++</span><span class="nx">index</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">++</span><span class="nx">index</span> <span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span> <span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">accumulator</span> <span class="o">=</span> <span class="nx">iteratee</span><span class="p">(</span><span class="nx">accumulator</span><span class="p">,</span> <span class="nx">array</span><span class="p">[</span><span class="nx">index</span><span class="p">],</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">array</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">accumulator</span><span class="p">;</span>
+  <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这里的<code>accumulator</code>是初始累加值，如果传入，则”折叠”在其基础上进行，就上面的最简单的例子而言，如果传入第三个参数是<code>2</code>，那么返回值就会使<code>8</code>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kr">const</span> <span class="nx">_</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&#34;lodash&#34;</span><span class="p">);</span>
+<span class="nx">_</span><span class="p">.</span><span class="nx">reduce</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">b</span><span class="p">){</span><span class="k">return</span> <span class="nx">a</span><span class="o">+</span><span class="nx">b</span><span class="p">},</span><span class="mi">8</span><span class="p">);</span>
+<span class="c1">// 8
+</span></code></pre></td></tr></table>
+</div>
+</div><p>所以<code>arrayReduce</code>函数就是给定一个初始值然后进行迭代的函数。我们真正需要关注的函数式<code>iteratee</code>函数，即<code>getIteratee(func, 4)</code>这里的<code>func</code>就是我进行重命名之后的自定义函数。</p>
+<p>这个<code>getIteratee</code>函数在介绍<code>_.map</code>的时候就进行介绍了，在<code>func</code>是一个function的情况下，就是返回<code>func</code>本身。</p>
+<p>所以我们可以把整个<code>reduce</code>函数简化为如下版本：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">reduce</span><span class="p">(</span><span class="nx">array</span><span class="p">,</span> <span class="nx">func</span><span class="p">,</span> <span class="nx">accumulator</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+        <span class="nx">length</span> <span class="o">=</span> <span class="nx">array</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span> <span class="mi">0</span> <span class="o">:</span> <span class="nx">array</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">accumulator</span> <span class="o">=</span> <span class="nx">array</span><span class="p">[</span><span class="o">++</span><span class="nx">index</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">++</span><span class="nx">index</span> <span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span> <span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">accumulator</span> <span class="o">=</span> <span class="nx">func</span><span class="p">(</span><span class="nx">accumulator</span><span class="p">,</span> <span class="nx">array</span><span class="p">[</span><span class="nx">index</span><span class="p">],</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">array</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">accumulator</span><span class="p">;</span>
+  <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>其实看上去很像一个”递归“函数，因为前面一次的运算结果将会用于下一次函数调用，但又不是递归函数。我们其实完全可以写一个递归版本的<code>reduce</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">reduce</span><span class="p">(</span><span class="nx">array</span><span class="p">,</span><span class="nx">func</span><span class="p">,</span><span class="nx">accumulator</span><span class="p">){</span>
+  <span class="nx">accumulator</span> <span class="o">=</span> <span class="nx">accumulator</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span> <span class="nx">array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">:</span><span class="nx">accumulator</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">array</span><span class="p">.</span><span class="nx">length</span> <span class="o">&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="mi">0</span><span class="p">){</span>
+    <span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">array</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+    <span class="nx">accumulator</span> <span class="o">=</span> <span class="nx">func</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="nx">accumulator</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">reduce</span><span class="p">(</span><span class="nx">array</span><span class="p">,</span><span class="nx">func</span><span class="p">,</span><span class="nx">accumulator</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">accumulator</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>工作的也不错，但在分析过程中，发现lodash一直在避免修改原参数的值，尽量让整个函数调用时无副作用的。我觉得这个思想在开发过程中也有很多值得借鉴的地方。</p>
+<h2 id="_curry">
+    <a href="#_curry" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    _.curry
+</h2>
+<p>了解过函数式编程的同学一定听过大名鼎鼎的柯里化，在Lodash中也有一个专门用于柯里化的函数<code>_.curry</code>。这个函数接受一个函数<code>func</code>和这个函数的部分参数，然后返回一个接受剩余参数的函数<code>func'</code>。</p>
+<p>我们看看这个函数是怎么实现的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">curry</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">arity</span><span class="p">,</span> <span class="nx">guard</span><span class="p">)</span> <span class="p">{</span>
+   <span class="nx">arity</span> <span class="o">=</span> <span class="nx">guard</span> <span class="o">?</span> <span class="kc">undefined</span> <span class="o">:</span> <span class="nx">arity</span><span class="p">;</span>
+   <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">createWrap</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">WRAP_CURRY_FLAG</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span> <span class="nx">arity</span><span class="p">);</span>
+   <span class="nx">result</span><span class="p">.</span><span class="nx">placeholder</span> <span class="o">=</span> <span class="nx">curry</span><span class="p">.</span><span class="nx">placeholder</span><span class="p">;</span>
+   <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们又看到我们的老朋友<code>createWrap</code>了，其实这个函数我们在上一篇文章中分析过，但是我们那时候是分析<code>_.ary</code>函数的时候进行了精简，这次我们看看<code>createWrap</code>函数式怎么对<code>_.curry</code>函数进行处理的(将无关逻辑进行精简)：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">createWrap</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">bitmask</span><span class="p">,</span> <span class="nx">thisArg</span><span class="p">,</span> <span class="nx">partials</span><span class="p">,</span> <span class="nx">holders</span><span class="p">,</span> <span class="nx">argPos</span><span class="p">,</span> <span class="nx">ary</span><span class="p">,</span> <span class="nx">arity</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">isBindKey</span> <span class="o">=</span> <span class="mi">0</span>
+      <span class="kd">var</span> <span class="nx">length</span> <span class="o">=</span>  <span class="mi">0</span><span class="p">;</span>
+      <span class="nx">ary</span> <span class="o">=</span> <span class="kc">undefined</span> <span class="p">;</span>
+      <span class="nx">arity</span> <span class="o">=</span> <span class="nx">arity</span> <span class="o">===</span> <span class="kc">undefined</span> <span class="o">?</span> <span class="nx">arity</span> <span class="o">:</span> <span class="nx">toInteger</span><span class="p">(</span><span class="nx">arity</span><span class="p">);</span>
+      <span class="nx">length</span> <span class="o">-=</span> <span class="nx">holders</span> <span class="o">?</span> <span class="nx">holders</span><span class="p">.</span><span class="nx">length</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+      <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">getData</span><span class="p">(</span><span class="nx">func</span><span class="p">);</span>
+      <span class="kd">var</span> <span class="nx">newData</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nx">func</span><span class="p">,</span> <span class="nx">bitmask</span><span class="p">,</span> <span class="nx">thisArg</span><span class="p">,</span> <span class="nx">partials</span><span class="p">,</span> <span class="nx">holders</span><span class="p">,</span> <span class="nx">partialsRight</span><span class="p">,</span> <span class="nx">holdersRight</span><span class="p">,</span>
+        <span class="nx">argPos</span><span class="p">,</span> <span class="nx">ary</span><span class="p">,</span> <span class="nx">arity</span>
+      <span class="p">];</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">mergeData</span><span class="p">(</span><span class="nx">newData</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="nx">func</span> <span class="o">=</span> <span class="nx">newData</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+      <span class="nx">bitmask</span> <span class="o">=</span> <span class="nx">newData</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+      <span class="nx">thisArg</span> <span class="o">=</span> <span class="nx">newData</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+      <span class="nx">partials</span> <span class="o">=</span> <span class="nx">newData</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+      <span class="nx">holders</span> <span class="o">=</span> <span class="nx">newData</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span>
+      <span class="nx">arity</span> <span class="o">=</span> <span class="nx">newData</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">=</span> <span class="nx">newData</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">===</span> <span class="kc">undefined</span>
+        <span class="o">?</span> <span class="nx">func</span><span class="p">.</span><span class="nx">length</span>
+        <span class="o">:</span> <span class="nx">nativeMax</span><span class="p">(</span><span class="nx">newData</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">-</span> <span class="nx">length</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+      <span class="nx">result</span> <span class="o">=</span> <span class="nx">createCurry</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">bitmask</span><span class="p">,</span> <span class="nx">arity</span><span class="p">);</span>
+      <span class="kd">var</span> <span class="nx">setter</span> <span class="o">=</span> <span class="nx">data</span> <span class="o">?</span> <span class="nx">baseSetData</span> <span class="o">:</span> <span class="nx">setData</span><span class="p">;</span>
+      <span class="k">return</span> <span class="nx">setWrapToString</span><span class="p">(</span><span class="nx">setter</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">newData</span><span class="p">),</span> <span class="nx">func</span><span class="p">,</span> <span class="nx">bitmask</span><span class="p">);</span>
+    <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这里面的关键就是<code>createCurry</code>函数了：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">createCurry</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">bitmask</span><span class="p">,</span> <span class="nx">arity</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">Ctor</span> <span class="o">=</span> <span class="nx">createCtor</span><span class="p">(</span><span class="nx">func</span><span class="p">);</span>
+
+      <span class="kd">function</span> <span class="nx">wrapper</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">length</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">,</span>
+            <span class="nx">args</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">length</span><span class="p">),</span>
+            <span class="nx">index</span> <span class="o">=</span> <span class="nx">length</span><span class="p">,</span>
+            <span class="nx">placeholder</span> <span class="o">=</span> <span class="nx">getHolder</span><span class="p">(</span><span class="nx">wrapper</span><span class="p">);</span>
+
+        <span class="k">while</span> <span class="p">(</span><span class="nx">index</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">args</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">index</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="kd">var</span> <span class="nx">holders</span> <span class="o">=</span> <span class="p">(</span><span class="nx">length</span> <span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span> <span class="mi">3</span> <span class="o">&amp;&amp;</span> <span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">placeholder</span> <span class="o">&amp;&amp;</span> <span class="nx">args</span><span class="p">[</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">!==</span> <span class="nx">placeholder</span><span class="p">)</span>
+          <span class="o">?</span> <span class="p">[]</span>
+          <span class="o">:</span> <span class="nx">replaceHolders</span><span class="p">(</span><span class="nx">args</span><span class="p">,</span> <span class="nx">placeholder</span><span class="p">);</span>
+
+        <span class="nx">length</span> <span class="o">-=</span> <span class="nx">holders</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">length</span> <span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span> <span class="nx">arity</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="nx">createRecurry</span><span class="p">(</span>
+            <span class="nx">func</span><span class="p">,</span> <span class="nx">bitmask</span><span class="p">,</span> <span class="nx">createHybrid</span><span class="p">,</span> <span class="nx">wrapper</span><span class="p">.</span><span class="nx">placeholder</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span>
+            <span class="nx">args</span><span class="p">,</span> <span class="nx">holders</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">,</span> <span class="nx">arity</span> <span class="o">-</span> <span class="nx">length</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="kd">var</span> <span class="nx">fn</span> <span class="o">=</span> <span class="p">(</span><span class="k">this</span> <span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="o">!==</span> <span class="nx">root</span> <span class="o">&amp;&amp;</span> <span class="k">this</span> <span class="k">instanceof</span> <span class="nx">wrapper</span><span class="p">)</span> <span class="o">?</span> <span class="nx">Ctor</span> <span class="o">:</span> <span class="nx">func</span><span class="p">;</span>
+        <span class="k">return</span> <span class="nx">apply</span><span class="p">(</span><span class="nx">fn</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="nx">wrapper</span><span class="p">;</span>
+    <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>不得不说和<code>createHybird</code>函数十分相似,但是其中还有一个比较关键的函数，就是<code>createRecurry</code>，这个函数返回了一个能够继续进行curry的函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">createRecurry</span><span class="p">(</span><span class="nx">func</span><span class="p">,</span> <span class="nx">bitmask</span><span class="p">,</span> <span class="nx">wrapFunc</span><span class="p">,</span> <span class="nx">placeholder</span><span class="p">,</span> <span class="nx">thisArg</span><span class="p">,</span> <span class="nx">partials</span><span class="p">,</span> <span class="nx">holders</span><span class="p">,</span> <span class="nx">argPos</span><span class="p">,</span> <span class="nx">ary</span><span class="p">,</span> <span class="nx">arity</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">isCurry</span> <span class="o">=</span> <span class="nx">bitmask</span> <span class="o">&amp;</span> <span class="nx">WRAP_CURRY_FLAG</span><span class="p">,</span>
+          <span class="nx">newHolders</span> <span class="o">=</span> <span class="nx">isCurry</span> <span class="o">?</span> <span class="nx">holders</span> <span class="o">:</span> <span class="kc">undefined</span><span class="p">,</span>
+          <span class="nx">newHoldersRight</span> <span class="o">=</span> <span class="nx">isCurry</span> <span class="o">?</span> <span class="kc">undefined</span> <span class="o">:</span> <span class="nx">holders</span><span class="p">,</span>
+          <span class="nx">newPartials</span> <span class="o">=</span> <span class="nx">isCurry</span> <span class="o">?</span> <span class="nx">partials</span> <span class="o">:</span> <span class="kc">undefined</span><span class="p">,</span>
+          <span class="nx">newPartialsRight</span> <span class="o">=</span> <span class="nx">isCurry</span> <span class="o">?</span> <span class="kc">undefined</span> <span class="o">:</span> <span class="nx">partials</span><span class="p">;</span>
+
+      <span class="nx">bitmask</span> <span class="o">|=</span> <span class="p">(</span><span class="nx">isCurry</span> <span class="o">?</span> <span class="nx">WRAP_PARTIAL_FLAG</span> <span class="o">:</span> <span class="nx">WRAP_PARTIAL_RIGHT_FLAG</span><span class="p">);</span>
+      <span class="nx">bitmask</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="nx">isCurry</span> <span class="o">?</span> <span class="nx">WRAP_PARTIAL_RIGHT_FLAG</span> <span class="o">:</span> <span class="nx">WRAP_PARTIAL_FLAG</span><span class="p">);</span>
+
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">bitmask</span> <span class="o">&amp;</span> <span class="nx">WRAP_CURRY_BOUND_FLAG</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nx">bitmask</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="nx">WRAP_BIND_FLAG</span> <span class="o">|</span> <span class="nx">WRAP_BIND_KEY_FLAG</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="kd">var</span> <span class="nx">newData</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nx">func</span><span class="p">,</span> <span class="nx">bitmask</span><span class="p">,</span> <span class="nx">thisArg</span><span class="p">,</span> <span class="nx">newPartials</span><span class="p">,</span> <span class="nx">newHolders</span><span class="p">,</span> <span class="nx">newPartialsRight</span><span class="p">,</span>
+        <span class="nx">newHoldersRight</span><span class="p">,</span> <span class="nx">argPos</span><span class="p">,</span> <span class="nx">ary</span><span class="p">,</span> <span class="nx">arity</span>
+      <span class="p">];</span>
+
+      <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">wrapFunc</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="kc">undefined</span><span class="p">,</span> <span class="nx">newData</span><span class="p">);</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">isLaziable</span><span class="p">(</span><span class="nx">func</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nx">setData</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">newData</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="nx">result</span><span class="p">.</span><span class="nx">placeholder</span> <span class="o">=</span> <span class="nx">placeholder</span><span class="p">;</span>
+      <span class="k">return</span> <span class="nx">setWrapToString</span><span class="p">(</span><span class="nx">result</span><span class="p">,</span> <span class="nx">func</span><span class="p">,</span> <span class="nx">bitmask</span><span class="p">);</span>
+    <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Lodash为了实现curry化，进行了多层的包装，为了实现返回的是划一的Lodash中定义的能够curry化的函数。</p>
+<p>这个函数要求接受相应的参数列表，即代码中的<code>data</code>。在curry化的过程中有一个非常重要的东西，就是占位符<code>placeholder</code>。在对curry化的函数进行调用时也可以用占位符进行占位：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">curried</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">curry</span><span class="p">(</span><span class="nx">abc</span><span class="p">);</span>
+<span class="nx">curried</span><span class="p">(</span><span class="mi">1</span><span class="p">)(</span><span class="mi">2</span><span class="p">)(</span><span class="mi">3</span><span class="p">);</span>
+<span class="c1">// =&amp;gt; [1, 2, 3]
+</span><span class="c1"></span><span class="nx">curried</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)(</span><span class="mi">3</span><span class="p">);</span>
+<span class="c1">// =&amp;gt; [1, 2, 3]
+</span><span class="c1"></span><span class="nx">curried</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+<span class="c1">// =&amp;gt; [1, 2, 3]
+</span><span class="c1">// Curried with placeholders.
+</span><span class="c1"></span><span class="nx">curried</span><span class="p">(</span><span class="mi">1</span><span class="p">)(</span><span class="nx">_</span><span class="p">,</span> <span class="mi">3</span><span class="p">)(</span><span class="mi">2</span><span class="p">);</span>
+<span class="c1">// =&amp;gt; [1, 2, 3]
+</span></code></pre></td></tr></table>
+</div>
+</div><p>可以用下划线<code>_</code>作为占位符占位。我们且不看lodash为我们做的很多复杂的预处理和特殊情况的处理，我们就分析<code>_.curry</code>函数实现的主要思想。首先<code>_.curry</code>函数有一个属性存储了最初的函数的接受函数参数的个数。然后有一个参数数组用于存储部分参数，如果参数个数没有满足调用函数需要的个数，就继续返回一个重新curry化的函数。</p>
+<p>根据上面的思想我们可以写出一个简化的curry化代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="cm">/**
+</span><span class="cm"> *
+</span><span class="cm"> *var abc = function(a, b, c) {
+</span><span class="cm"> *    return [a, b, c];
+</span><span class="cm"> *};
+</span><span class="cm"> *
+</span><span class="cm"> *var curried = curry(abc);
+</span><span class="cm"> *
+</span><span class="cm"> *curried(1)(2)(3);
+</span><span class="cm"> * // =&amp;gt; [1, 2, 3]
+</span><span class="cm"> *
+</span><span class="cm"> * curried(1, 2)(3);
+</span><span class="cm"> * // =&amp;gt; [1, 2, 3]
+</span><span class="cm"> *
+</span><span class="cm"> * curried(1, 2, 3);
+</span><span class="cm"> * // =&amp;gt; [1, 2, 3]
+</span><span class="cm"> *
+</span><span class="cm"> * // Curried with placeholders.
+</span><span class="cm"> * curried(1)(&#34;_&#34;, 3)(2)
+</span><span class="cm"> * 这就无法处理了
+</span><span class="cm"> * // =&amp;gt; [1, 3, 2]
+</span><span class="cm"> */</span>
+
+<span class="kd">function</span> <span class="nx">curry</span><span class="p">(</span><span class="nx">func</span><span class="p">){</span>
+  <span class="kd">function</span> <span class="nx">wrapper</span><span class="p">(){</span>
+    <span class="nx">func</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">that</span> <span class="o">=</span> <span class="nx">func</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">that</span> <span class="o">?</span> <span class="nx">func</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">that</span> <span class="o">:</span> <span class="k">this</span><span class="p">;</span>
+    <span class="nx">func</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">paramlength</span> <span class="o">=</span> <span class="nx">func</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">paramlength</span> <span class="o">?</span> <span class="nx">func</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">paramlength</span><span class="o">:</span> <span class="nx">func</span><span class="p">.</span><span class="nx">length</span> <span class="p">;</span>
+    <span class="nx">func</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">paramindex</span> <span class="o">=</span> <span class="nx">func</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">paramindex</span> <span class="o">?</span><span class="nx">func</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">paramindex</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="nx">func</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">paramplaceholder</span> <span class="o">=</span> <span class="nx">func</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">paramplaceholder</span> <span class="o">?</span>  <span class="nx">func</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">paramplaceholder</span> <span class="o">:</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">func</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="nx">i</span> <span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span> <span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;_&#39;</span><span class="p">){</span>
+        <span class="k">continue</span><span class="p">;</span>
+      <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+        <span class="nx">func</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">paramplaceholder</span><span class="p">[</span><span class="nx">func</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">paramindex</span><span class="p">]</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+        <span class="nx">func</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">paramindex</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">func</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">paramindex</span> <span class="o">==</span> <span class="nx">func</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">paramlength</span><span class="p">){</span>
+      <span class="nx">func</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">paramindex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+      <span class="k">return</span> <span class="nx">func</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">func</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">that</span><span class="p">,</span><span class="nx">func</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">paramplaceholder</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">wrapper</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">wrapper</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们虽然可以借助Lodash的思想实现我们一个简单版本的<code>curry</code>函数，但是这个简单版本的函数有一个问题，那就是，这个函数是借助闭包实现的，在整个执行过程当中，只要被柯里化的函数没有执行结束，那么它就会一直存在在内存当中，它的一些属性也会一直存在。第二个问题是，没有办法实现Lodash的”真正”的占位符，只是在遇到”_”的时候将其跳过了。</p>
+<p>一个真正有效的柯里化函数实现起来有很多细节需要考虑，这就是Lodash存在的意义。我们应该在理解其实现原理的前提下，享受Lodash带来的便利。</p>
+<h2 id="小结">
+    <a href="#%e5%b0%8f%e7%bb%93" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    小结
+</h2>
+<p>阅读Lodash源码真的能够了解很多代码实现上的细节，Lodash在性能优化上面做了很多工作，也给我们学习一个优秀的js库提供了非常好的参考。我在阅读Lodash源代码的过程中也会遇到很多不理解的地方。但是细细琢磨发其实它的代码还是非常清晰易懂的。</p>
+<h2 id="待续">
+    <a href="#%e5%be%85%e7%bb%ad" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    待续
+</h2>
+<p>下周将继续更新Lodash源码分析系列，接下来将会分析Lodash集合方法。</p>
+<blockquote>
+<p>© 版权所有，禁止一切形式转载。顺便宣传一下个人博客<a href="http://chenquan.me">http://chenquan.me</a></p>
+</blockquote>
+        </div>
+    </article>
+
+</div>
+
+ 
+<div class="container">
+
+    
+    <nav class="flex suggested">
+        
+        <a rel="prev" href="/posts/lodash-source-code-analysis-1/" title="Previous post (older)">
+            <span>Previous</span>
+            Lodash 源码分析（一）“Function” Methods
+            </a>
+        
+        
+        
+        <a rel="next" href="/posts/lodash-source-code-analysis-3/" title="Next post (newer)">
+            <span>Next</span>
+            Lodash 源码分析（三）Array
+            </a> 
+        
+    </nav>
+    
+
+    
+</div>
+
+</main>
+
+
+        </main>
+        <footer class="footer flex">
+    <section class="container">
+        <nav class="footer-links">
+            
+            <a href="https://chainlark.com/">chainlark</a>
+            
+            <a href="/index.xml">RSS</a>
+            
+        </nav>
+    </section>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.js" integrity="sha512-0UbR6HN0dY8fWN9T7fF658896tsPgnbRREHCNq46J9/JSn8GonXDZmqtTc3qS879GM0zV49b9LPhdc/maKP8Kg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" integrity="sha512-Tn2m0TIpgVyTzzvmxLNuqbSJH3JP8jm+Cy3hvHrW7ndTDcJ1w5mBiksqDBb8GpE2ksktFvDB/ykZ0mDpsZj20w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+
+    (function(){
+        
+        
+        let images = $('img');
+        for (let img of images) {
+            $(img).featherlight($(img));
+        }
+    })();
+    </script>
+    <script defer src="/ts/features.882b72337b0ef8cf09fe2162c5a3e8bc2381c17b65e1c654a4fbd770d38fe420.js" data-enable-footnotes="false"></script>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8R697QBLL4"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-8R697QBLL4');
+    </script>
+</footer>
+    </body>
+</html>

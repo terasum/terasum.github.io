@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="theme-color" content="dark">
+    <title>使用 pubma 对区块链网络进行混沌测试 | CodeStack</title>
+
+    
+    
+    
+    <meta property="og:site_name" content="Hugo Tania is Amazing" />
+    <meta property="og:title" content="使用 pubma 对区块链网络进行混沌测试 | CodeStack"/>
+    <meta itemprop="name" content="使用 pubma 对区块链网络进行混沌测试 | CodeStack" />
+    <meta name="twitter:title" content="使用 pubma 对区块链网络进行混沌测试 | CodeStack" />
+    <meta name="application-name" content="使用 pubma 对区块链网络进行混沌测试 | CodeStack" />
+
+
+    <meta name="description" content="Hugo is Absurdly Fast!" />
+    <meta name="twitter:description" content="Hugo is Absurdly Fast!"/>
+    <meta itemprop="description" content="Hugo is Absurdly Fast!"/>
+    <meta property="og:description" content="Hugo is Absurdly Fast!" />
+
+    
+
+
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    
+    <link rel="stylesheet" href="/sass/main.min.0158e06e6beeec53cf25d2cb31334e3da41c26993a6f06151e34b499e132997a.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.gallery.min.css" integrity="sha512-B31/elyDKOSa2yGC1ALSAHkdlJ5FOhZJTNANGUFxWOnVMfKQmekRG2/sNdp6yJPrO7Ae9rlAxUlr0QjiJne01Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.css" integrity="sha512-56GJrpSgHk6Mc9Fltt+bQKcICJoEpxtvozXPA5n5OT0rfWiqGlJmJCI/vl16kctf/0XbBloh03vl7OF2xFnR8g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+</head>
+    <script>
+    (function() {
+        const colorSchemeKey = 'ThemeColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.userColorScheme = 'dark';
+        } else {
+            document.documentElement.dataset.userColorScheme = 'light';
+        }
+    })();
+</script>
+
+    <body class="dark">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-content flex">
+            <div id="nav-left" class="nav-left flex">
+                <a class="brand" href="/">
+                    
+                    <i class="fas fa-code"></i> 
+                    &nbsp; CodeStack
+                 </a>
+                 
+                 
+                 <a id="nav-left-extend" href="javascript:toggle_nav_extend();" class="nav-left-extend"><i class="czs-category-l"></i></a>
+            </div>
+
+            <div id="nav-right" class="nav-right flex">
+                
+                <a target="_blank" href="https://docker.chenquan.me/">
+                    
+                    <i class="fab fa-docker"></i>
+                    
+                   Docker 教程 
+                </a>
+                
+                <a target="_blank" href="/articles/">
+                    
+                    <i class="fas fa-archive"></i>
+                    
+                   文章归档 
+                </a>
+                
+
+                
+            </div>
+         </div>
+    </div>
+</nav>
+
+<script lang="javascript">
+    
+    function toggle_search_box() {
+        let search_box = document.getElementById('search-query');
+        let computedStyle = window.getComputedStyle(search_box, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'block') {
+            search_box.setAttribute('style', 'display: none; width: 0px;');
+        } else {
+            search_box.setAttribute('style', 'display: block; width: 200px;');
+        }
+    }
+    
+    function toggle_nav_extend() {
+        let nav_left_extend = document.getElementById('nav-left-extend');
+        let extend_icon = nav_left_extend.children[0];
+        let nav_right = document.getElementById('nav-right');
+        let computedStyle = window.getComputedStyle(nav_right, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'flex') {
+            nav_right.setAttribute('style', 'display: none;');
+            extend_icon.setAttribute('style', 'font-size: 26px;');
+            extend_icon.setAttribute('class', 'czs-category-l');
+        } else {
+            extend_icon.setAttribute('class', 'czs-close-l');
+            extend_icon.setAttribute('style', 'font-size: 20px;padding: 1px 0 0 3px;');
+            nav_right.setAttribute('style', 'display: flex;');
+        }
+    }
+</script>
+        <main>
+            
+<div class="container mainarea post-shadow">
+    <article class="post-article">
+        <header class="article-header">
+            <div class="thumb">
+                <div>
+                    <h1>使用 pubma 对区块链网络进行混沌测试</h1>
+                    <div class="post-meta">
+                        <div>
+                            
+                            
+                            By terasum / <time>2018-09-12</time>
+                        </div>
+                        <div class="tags">
+                            
+                            <a href="/tags/%E5%8C%BA%E5%9D%97%E9%93%BE/">区块链</a>
+                            
+                            <a href="/tags/%E6%B7%B7%E6%B2%8C%E6%B5%8B%E8%AF%95/">混沌测试</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="article-post" id="write">
+        <blockquote>
+<p>Author: 陈权@hyperchain</p>
+</blockquote>
+<h2 id="0x01-问题明确">
+    <a href="#0x01-%e9%97%ae%e9%a2%98%e6%98%8e%e7%a1%ae" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    0x01 问题明确
+</h2>
+<p>当前我们需要模拟如下场景：</p>
+<ul>
+<li>节点在高网络延迟下的表现</li>
+<li>节点在高网络丢包率下的表现</li>
+</ul>
+<p>有些bug我们是在比较苛刻的网络条件下测试得到的，而按照传统的经验，我们会想办法将环境部署到互联网上进行测试，但是这种方式非常原始，而且得到的结果也具备大量的偶然性，我们想要复现相同的结果也是十分困难的，因此我们使用容器技术对不同的网络情况进行模拟，以期得到可控的网络抖动测试环境。</p>
+<h2 id="0x02-pumba-工具介绍">
+    <a href="#0x02-pumba-%e5%b7%a5%e5%85%b7%e4%bb%8b%e7%bb%8d" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    0x02 pumba 工具介绍
+</h2>
+<p>先对容器网络Chaos-testing 工具<code>pubma</code>进行简单介绍，以及相关使用的说明。</p>
+<h3 id="what-is-pubmaa">
+    <a href="#what-is-pubmaa" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    What is Pubma(a)?
+</h3>
+<p>相信出生于90年代的小伙伴们都知道一个电影叫 <strong>The Lion King（狮子王）</strong>，里面有一个角色的名字就叫<strong>Pumbaa</strong>，在Swahili语中，<strong>Pumbaa</strong>的意识是”保持愚蠢，无知，以及懒惰”。当然这个工具起这个名字的内涵大概就是想模拟一个“愚蠢的，不可预知的环境”的意思。</p>
+<h3 id="pumba-能做什么">
+    <a href="#pumba-%e8%83%bd%e5%81%9a%e4%bb%80%e4%b9%88" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    Pumba 能做什么？
+</h3>
+<p>简单地说，Pubma 能够完成包括对Docker容器的 <code>kill</code>，<code>stop</code>， <code>remove</code>，<code>pause</code>。</p>
+<p>当然， Pubma 也能够完成网络模拟，模拟包括一系列的网络问题（延迟，丢包，使用不同的丢包模型，带宽限制等等）。针对网络模拟，Pumba使用的是Linux内核<code>tc</code> <code>netem</code>实现的。 如果目标container不支持tc的话，Pumba将会使用sidekick 附着到目标容器进行控制。</p>
+<h3 id="怎么使用-pumba">
+    <a href="#%e6%80%8e%e4%b9%88%e4%bd%bf%e7%94%a8-pumba" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    怎么使用 Pumba
+</h3>
+<p>通常可以传一个容器列表到Pumba中，可以简单地写一个正则表达式来选择匹配的容器。如果你没有指定容器，那么Pumba将会对所有运行的容器进行干预。</p>
+<p>如果你使用了<code>--random</code>选项，那么Pumba将会在提供的容器列表中选择一些随机容器进行干扰。</p>
+<p>你也可以通过传入一些重复参数，以及持续时间参数来更加精细地控制你需要产生的<strong>chaos 混沌</strong>。</p>
+<h3 id="如何安装-pumba">
+    <a href="#%e5%a6%82%e4%bd%95%e5%ae%89%e8%a3%85-pumba" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    如何安装 pumba
+</h3>
+<h4 id="源码安装">
+    <a href="#%e6%ba%90%e7%a0%81%e5%ae%89%e8%a3%85" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    源码安装
+</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># Download binary from https://github.com/gaia-adm/pumba/releases</span>
+curl -L https://github.com/alexei-led/pumba/releases/download/0.5.2/pumba_darwin_amd64 --
+<span class="c1"># Linux</span>
+curl -L https://github.com/alexei-led/pumba/releases/download/0.5.2/pumba_linux_amd64 --
+output /usr/local/bin/pumba
+chmod +x /usr/local/bin/pumba <span class="o">&amp;&amp;</span> pumba --help
+Install with Homebrew <span class="o">(</span>MacOS only<span class="o">)</span>
+brew install pumba <span class="o">&amp;&amp;</span> pumba --help
+</code></pre></td></tr></table>
+</div>
+</div><h1 id="heading">
+    <a href="#heading" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    
+</h1>
+<h4 id="使用-docker-镜像">
+    <a href="#%e4%bd%bf%e7%94%a8-docker-%e9%95%9c%e5%83%8f" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    使用 Docker 镜像
+</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">docker run gaiaadm/pumba pumba --help
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="pumba-使用例子">
+    <a href="#pumba-%e4%bd%bf%e7%94%a8%e4%be%8b%e5%ad%90" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    Pumba 使用例子
+</h3>
+<ol>
+<li>你可以通过<code>--help</code>来查看帮助：</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># pumba help</span>
+pumba --help
+
+pumba <span class="nb">kill</span> --help
+
+pumba netem delay --help
+</code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>通过<code>^test</code>正则随机kill掉一些 Docker 容器</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># 在第一个terminal中运行7个测试容器，并什么都不做</span>
+<span class="k">for</span> i in <span class="o">{</span>0..7<span class="o">}</span><span class="p">;</span> <span class="k">do</span> docker run -d --rm --name test<span class="nv">$i</span> alpine tail -f /dev/null<span class="p">;</span> <span class="k">done</span>
+
+<span class="c1"># 然后运行一个 名叫 `skipme` 的容器</span>
+docker run -d --rm --name skipme alpine tail -f /dev/null
+
+<span class="c1"># 在另一个 terminal 中查看当前运行的docker 容器</span>
+watch docker ps -a
+
+<span class="c1"># 回到第一个terminal中，然后每隔10s kill一个&#39;test&#39;开头的容器，并且忽略`skipme`容器</span>
+pumba --random --interval 10s <span class="nb">kill</span> re2:^test
+
+你可以随时按下 Ctrl-C 来停止 Pumba
+</code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>为ping 命令增加 <code>3000ms</code>(<code>+-50ms</code>)延迟，持续20s，并使用<code>normal</code> 分配 模型</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># 运行 &#34;ping&#34; 容器在terminal 1中</span>
+docker run -it --rm --name ping alpine ping 8.8.8.8
+
+<span class="c1"># 在termainal2中, 运行 pumba netem delay 命令, 分配到 &#34;ping&#34; 容器; 使用一个 &#34;tc&#34; 辅助容器</span>
+pumba netem --duration 20s --tc-image gaiadocker/iproute2 delay --time <span class="m">3000</span> jitter <span class="m">50</span> --distribution normal ping
+
+pumba 将会在 20s 后退出, 或者用 Ctrl-C 退出
+</code></pre></td></tr></table>
+</div>
+</div><ol start="4">
+<li>模拟丢包，为了模拟丢包我们需要使用三个terminal，同时使用<a href="https://iperf.fr/">iperf</a>工具来监控当前的网络带宽。
+在第一个terminal中，我们运行一个 <code>server</code> Docker 容器，然后用ipref来监控这个dokcer，这个server容器会启动一个UDP服务器。</li>
+</ol>
+<p>在第二个terminal中，启动一个有iperf监控报文发送容器，该容器会发UDP数据包到 server 容器。然后我们在第三个Terminal中运行 <code>pumba netem loss</code>命令，来为容器增加丢包场景。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># 创建一个docker网络</span>
+docker network create -d bridge testnet
+
+<span class="c1"># Terminal 1</span>
+<span class="c1"># 运行 server 容器</span>
+docker run -it --name server --network testnet --rm alpine sh -c <span class="s2">&#34;apk add --no-cache iperf; sh&#34;</span>
+<span class="c1"># shell inside server container: run a UDP Server listening on UDP port 5001</span>
+<span class="c1"># 在进入交互命令行的Server容器中运行UDP服务，在5001端口监听</span>
+sh$ iperf -s -u -i <span class="m">1</span>
+
+<span class="c1"># Terminal 2</span>
+<span class="c1"># 运行 client 容器</span>
+docker run -it --name client --network testnet --rm alpine sh -c <span class="s2">&#34;apk add --no-cache iperf; sh&#34;</span>
+
+<span class="c1"># 在进入交互命令行的 client容器中，发送UDP数据报到服务端，可以看到没有数据丢包</span>
+sh$ iperf -c server -u
+
+<span class="c1"># Terminal 1</span>
+<span class="c1"># 我们可以看到服务端没有数据丢包</span>
+
+<span class="c1"># Terminal 3</span>
+<span class="c1"># inject 20% packet loss into client container, for 1m</span>
+<span class="c1"># 往client容器注入 20% 的数据丢包，持续一分钟</span>
+pumba netem --duration 1m --tc-image gaiadocker/iproute2 loss --percent <span class="m">20</span> client
+
+<span class="c1"># Terminal 2</span>
+<span class="c1"># 重新在客户端container 中发送数据报，可以看到20%的丢包</span>
+sh$ iperf -c server -u
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="0x03-weave-网络">
+    <a href="#0x03-weave-%e7%bd%91%e7%bb%9c" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    0x03 Weave 网络
+</h2>
+<p>Weave网络是一个广泛使用的，易用的，简单的容器网络解决方案，能够支持夸主机之间Docker容器的互联。通过 weave-scope可以对当前docker的网络连接情况进行监控。</p>
+<blockquote>
+<p>Weave通过创建虚拟网络使docker容器能够跨主机通信并能够自动相互发现。</p>
+<p>通过weave网络，由多个容器构成的基于微服务架构的应用可以运行在任何地方：主机，多主机，云上或者数据中心。</p>
+<p>应用程序使用网络就好像容器是插在同一个网络交换机上一样，不需要配置端口映射，连接等。</p>
+<p>在weave网络中，使用应用容器提供的服务可以暴露给外部，而不用管它们运行在何处。类似地，现存的内部系统也可以接受来自于应用容器的请求，而不管容器运行于何处。</p>
+</blockquote>
+<p><img loading="lazy" 
+    src="https://chainlark.oss-cn-beijing.aliyuncs.com/qpeth.jpg" 
+    alt="image-20180912154905672" 
+     /></p>
+<p>我们通过weave网络来对容器之间的网络连接进行兼容，同时我们也能够观察各个容器的资源使用情况。weave-network和weave-scope相互配合可以达到网络监控的目的。</p>
+<h3 id="安装weave-network和weave-scope">
+    <a href="#%e5%ae%89%e8%a3%85weave-network%e5%92%8cweave-scope" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    安装weave-network和weave-scope
+</h3>
+<p>weave-network 是docker 的network插件，通常配合docker-compose安装。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">curl -sSL https://get.docker.com/ <span class="p">|</span> sh
+apt-get install -yq python-pip build-essential python-dev
+pip install docker-compose
+curl -L git.io/weave -o /usr/local/bin/weave
+chmod a+x /usr/local/bin/weave
+</code></pre></td></tr></table>
+</div>
+</div><p>weave-scope是一个网络监控平台，通常会在本地启动：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">sudo curl -L git.io/scope -o /usr/local/bin/scope
+sudo chmod a+x /usr/local/bin/scope
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="启动weave网络和scope监控">
+    <a href="#%e5%90%af%e5%8a%a8weave%e7%bd%91%e7%bb%9c%e5%92%8cscope%e7%9b%91%e6%8e%a7" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    启动weave网络，和scope监控
+</h3>
+<ol>
+<li>启动 weave scope:</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">scope launch
+</code></pre></td></tr></table>
+</div>
+</div><p>启动之后，可以在 http://localhost:4040 看到当前机器的docker情况。</p>
+<ol start="2">
+<li>启动weave network</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">weave launch
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="0x04-docker-compose-和-weave-网络">
+    <a href="#0x04-docker-compose-%e5%92%8c-weave-%e7%bd%91%e7%bb%9c" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    0x04 docker-compose 和 weave 网络
+</h2>
+<p>通常来说hyperchain集群以4个节点为一组，我们可以通过以下docker-compose进行配置：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="w">
+</span><span class="w"></span><span class="c"># docker-compose.yml</span><span class="w">
+</span><span class="w"></span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;3&#34;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">services</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">node1</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">hyperchain/hpc:latest</span><span class="w">
+</span><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="s2">&#34;5001:5003&#34;</span><span class="w">
+</span><span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;-n&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;4&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;-i&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;1&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;-p&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;5000&#39;</span><span class="p">]</span><span class="w">
+</span><span class="w">    </span><span class="nt">dns</span><span class="p">:</span><span class="w"> </span><span class="m">172.17.0.1</span><span class="w">
+</span><span class="w">    </span><span class="nt">networks</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="l">internal</span><span class="w">
+</span><span class="w">
+</span><span class="w">  </span><span class="nt">node2</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">hyperchain/hpc:latest</span><span class="w">
+</span><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="s2">&#34;5002:5003&#34;</span><span class="w">
+</span><span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;-n&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;4&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;-i&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;2&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;-p&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;5000&#39;</span><span class="p">]</span><span class="w">
+</span><span class="w">    </span><span class="nt">dns</span><span class="p">:</span><span class="w"> </span><span class="m">172.17.0.1</span><span class="w">
+</span><span class="w">    </span><span class="nt">networks</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="l">internal</span><span class="w">
+</span><span class="w">
+</span><span class="w">
+</span><span class="w">
+</span><span class="w">  </span><span class="nt">node3</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">hyperchain/hpc:latest</span><span class="w">
+</span><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="s2">&#34;5003:5003&#34;</span><span class="w">
+</span><span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;-n&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;4&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;-i&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;3&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;-p&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;5000&#39;</span><span class="p">]</span><span class="w">
+</span><span class="w">    </span><span class="nt">dns</span><span class="p">:</span><span class="w"> </span><span class="m">172.17.0.1</span><span class="w">
+</span><span class="w">    </span><span class="nt">networks</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="l">internal</span><span class="w">
+</span><span class="w">
+</span><span class="w">
+</span><span class="w">  </span><span class="nt">node4</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">hyperchain/hpc:latest</span><span class="w">
+</span><span class="w">    </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="s2">&#34;5004:5003&#34;</span><span class="w">
+</span><span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;-n&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;4&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;-i&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;4&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;-p&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;5000&#39;</span><span class="p">]</span><span class="w">
+</span><span class="w">    </span><span class="nt">dns</span><span class="p">:</span><span class="w"> </span><span class="m">172.17.0.1</span><span class="w">
+</span><span class="w">    </span><span class="nt">networks</span><span class="p">:</span><span class="w">
+</span><span class="w">      </span>- <span class="l">internal</span><span class="w">
+</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">networks</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">internal</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l">bridge</span><span class="w"> </span><span class="c"># 请注意，这里需要配置为网桥模式，否则无法进行网络干预</span><span class="w">
+</span><span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l">weavemesh</span><span class="w"> </span><span class="c"># 如果使用多机集群，建议使用weavemesh</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>简单解释一下，四个节点分别指定相应的ID和容许连接的节点数量，容器内部会自动生成相应的配置文件，同时节点的连接服务监听端口都是<code>5000</code>，所有的容器要求指定为 <code>node${i}</code>, 因为容器内部使用hostname进行连接。</p>
+<p>我们需要注意的是，单机集群的internal的网络驱动是<strong>bridge</strong>，下文采用单机集群进行演示</p>
+</blockquote>
+<p>启动容器集群：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">docker-compose up
+</code></pre></td></tr></table>
+</div>
+</div><p><img loading="lazy" 
+    src="https://chainlark.oss-cn-beijing.aliyuncs.com/3qw4x.jpg" 
+    alt="image-20180912160230137" 
+     /></p>
+<p>我们可以看到服务正常运行。</p>
+<p>此时我们可以看看weave-scope里面的状态：</p>
+<p><img loading="lazy" 
+    src="https://chainlark.oss-cn-beijing.aliyuncs.com/jptxa.jpg" 
+    alt="image-20180912160859572" 
+     /></p>
+<p>我们可以看到四个容器均是相互连接的，这个和我们的预期相符。一个简单的P2P网络集群已经正常启动，接下来我们试试使用<code>pumba</code>加点网络抖动。</p>
+<h2 id="0x05-网络抖动-chaos测试">
+    <a href="#0x05-%e7%bd%91%e7%bb%9c%e6%8a%96%e5%8a%a8-chaos%e6%b5%8b%e8%af%95" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    0x05 网络抖动 chaos测试
+</h2>
+<p>我们的网络集群已经正常启动，接下来我们为节点加上一些网络Chaos。</p>
+<h3 id="网络延迟">
+    <a href="#%e7%bd%91%e7%bb%9c%e5%bb%b6%e8%bf%9f" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    网络延迟
+</h3>
+<p>利用新的terminal来运行如下命令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">pumba --random --interval 6s --log-level info netem --tc-image<span class="o">=</span><span class="s2">&#34;gaiadocker/iproute2&#34;</span> --duration 5s delay --time <span class="m">3000</span>  --jitter <span class="m">30</span>   --correlation <span class="m">20</span>   re2:^docker
+</code></pre></td></tr></table>
+</div>
+</div><p>通过上述命令随机指定<code>docker</code>开头的容器接受数据包的实验增加<code>3000ms+-50ms</code>。</p>
+<p>通过测试可以得到，系统吞吐能力直线下降。</p>
+<p><img loading="lazy" 
+    src="https://chainlark.oss-cn-beijing.aliyuncs.com/ur41d.jpg" 
+    alt="image-20180912191301115" 
+     /></p>
+<blockquote>
+<p>100tps压测，开启chaos之前</p>
+</blockquote>
+<p><img loading="lazy" 
+    src="https://chainlark.oss-cn-beijing.aliyuncs.com/pilgo.jpg" 
+    alt="image-20180912191602298" 
+     /></p>
+<blockquote>
+<p>开启chaos之后</p>
+</blockquote>
+<p><img loading="lazy" 
+    src="https://chainlark.oss-cn-beijing.aliyuncs.com/9vlqw.jpg" 
+    alt="image-20180912192559217" 
+     /></p>
+<blockquote>
+<p>恢复正常之后</p>
+</blockquote>
+<h3 id="网络丢包">
+    <a href="#%e7%bd%91%e7%bb%9c%e4%b8%a2%e5%8c%85" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    网络丢包
+</h3>
+<ul>
+<li>在Terminal中运行如下命令进行丢包模拟：</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">pumba --random --interval 6s --log-level info netem --tc-image<span class="o">=</span><span class="s2">&#34;gaiadocker/iproute2&#34;</span> --duration 5s loss --percent <span class="m">80</span>  --correlation <span class="m">20</span>   re2:^docker
+</code></pre></td></tr></table>
+</div>
+</div><p>上面的命令模拟了随机节点80%丢包率的情况，我们需要注意，不论是延迟还是丢包干扰，都会对客户端发起的请求产生影响。</p>
+<p><img loading="lazy" 
+    src="https://chainlark.oss-cn-beijing.aliyuncs.com/v610g.jpg" 
+    alt="image-20180912194239440" 
+     /></p>
+<blockquote>
+<p>开启丢包干扰之前</p>
+</blockquote>
+<p><img loading="lazy" 
+    src="https://chainlark.oss-cn-beijing.aliyuncs.com/bje0e.jpg" 
+    alt="image-20180912205843902" 
+     /></p>
+<blockquote>
+<p>开启丢包干扰之后 (80%)</p>
+<p>注意：在我的个人电脑(macbook pro 2015 early)上进行的测试存在很多额外干扰，上述数据仅仅作为参考，无法作为结论数据。</p>
+</blockquote>
+<ul>
+<li>运行如下命令，固定干扰节点：</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">pumba --random --log-level info netem --tc-image<span class="o">=</span><span class="s2">&#34;gaiadocker/iproute2&#34;</span> --duration 10m loss --
+</code></pre></td></tr></table>
+</div>
+</div><p><img loading="lazy" 
+    src="https://chainlark.oss-cn-beijing.aliyuncs.com/o1nec.jpg" 
+    alt="image-20180912205522543" 
+     /></p>
+<blockquote>
+<p>在去除<code>--interval</code>参数之后，我们可以看到，pumba针对<code>docker-compose_node4_1</code> 也就是我们的node4应用了丢包控制(60%)。</p>
+</blockquote>
+<p>我们可以看到，针对<code>node2</code>的干扰是对该容器的所有网络请求进行干扰的：</p>
+<p><img loading="lazy" 
+    src="https://chainlark.oss-cn-beijing.aliyuncs.com/f575f.jpg" 
+    alt="image-20180912205612325" 
+     /></p>
+<blockquote>
+<p>针对客户端的请求阻断</p>
+</blockquote>
+<p>我们也可以看到，对于较高duration的情况下，如果丢包率较高，是会完全影响服务的正常工作的：</p>
+<p><img loading="lazy" 
+    src="https://chainlark.oss-cn-beijing.aliyuncs.com/zykji.jpg" 
+    alt="image-20180913000248625" 
+     /></p>
+<blockquote>
+<p>可以看到针对node4发送的包无法到达，而其他节点则正常</p>
+</blockquote>
+<ul>
+<li>运行如下命令阻断node2和node3的网络(100% 10min)：</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">pumba --log-level info netem --tc-image<span class="o">=</span><span class="s2">&#34;gaiadocker/iproute2&#34;</span> --duration 10m loss --percent <span class="m">100</span>  docker-compose_node3_1
+
+pumba --log-level info netem --tc-image<span class="o">=</span><span class="s2">&#34;gaiadocker/iproute2&#34;</span> --duration 10m loss --percent <span class="m">100</span>  docker-compose_node2_1
+</code></pre></td></tr></table>
+</div>
+</div><p>我们通过该命令观察容器之间的状态:</p>
+<p><img loading="lazy" 
+    src="https://chainlark.oss-cn-beijing.aliyuncs.com/vfgi9.jpg" 
+    alt="image-20180912204608582" 
+     /></p>
+<blockquote>
+<p>容器之间已经无法连接到node2/3, 对于node2/3而言则无法访问所有节点</p>
+</blockquote>
+<ul>
+<li>运行如下命令进行重复包产生:</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">pumba --random --interval 11s --log-level<span class="o">=</span><span class="s2">&#34;info&#34;</span> netem --tc-image<span class="o">=</span><span class="s2">&#34;gaiadocker/iproute2&#34;</span> --duration 10s duplicate percent <span class="m">80</span> --correlation <span class="m">20</span> re2:^docker
+</code></pre></td></tr></table>
+</div>
+</div><p>可以观察到重复包在同一时间由4节点收到了：</p>
+<p><img loading="lazy" 
+    src="https://chainlark.oss-cn-beijing.aliyuncs.com/dfz9e.jpg" 
+    alt="image-20180913001334275" 
+     /></p>
+<ul>
+<li>我们也可以将数据包进行扰乱（可能多发，可能少发），通过如下命令将80%的数据包进行指定node1节点扰乱，持续10m：</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">pumba --log-level<span class="o">=</span><span class="s2">&#34;info&#34;</span> netem --tc-image<span class="o">=</span><span class="s2">&#34;gaiadocker/iproute2&#34;</span> --duration 10m corrupt percent <span class="m">100</span> docker-compose_node1_1
+</code></pre></td></tr></table>
+</div>
+</div><p>我们可以得到如下结果：</p>
+<p><img loading="lazy" 
+    src="https://chainlark.oss-cn-beijing.aliyuncs.com/cwgl6.jpg" 
+    alt="image-20180913002134991" 
+     /></p>
+<blockquote>
+<p>扰乱之前，按照每个节点收到一个包正常运行</p>
+</blockquote>
+<p><img loading="lazy" 
+    src="https://chainlark.oss-cn-beijing.aliyuncs.com/t6u4c.jpg" 
+    alt="image-20180913002310216" 
+     /></p>
+<blockquote>
+<p>进行扰乱后，我们可以看到数据包的个数没有变化，但是到达时间发生了变化。</p>
+</blockquote>
+<h2 id="0x06-总结">
+    <a href="#0x06-%e6%80%bb%e7%bb%93" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    0x06 总结
+</h2>
+<p>我们可以看到，在docker+docker-compose组合中，pumba能够做的 Chaos-testing 非常丰富，配置也十分灵活。能够进行包括延迟，丢包，扰乱，重复包等噪音。而本身pumba这个工具也可以帮助我们对docker 容器本身进行 stop，rm， pause 等操作，可以模拟服务宕机等异常情况。pumba能够帮助我们发现在复杂的网络和物理场景下软件的一些潜在问题。</p>
+<p>但是在使用pumba的过程当中，也遇到了一些问题，比方说mac本身是没有tc命令的，这就要求制定<code>--tc-image</code>，而如果使用了tc镜像，如果再指定<code>--interval</code>的话，那么会创建出很多个<code>container</code>，这是pumba的一个bug，笔者也给该项目提了相关的issue。</p>
+<p>更多chaos测试和pumba的相关内容可以参考项目：<a href="https://github.com/alexei-led/pumba">pumba</a></p>
+<h2 id="0x07">
+    <a href="#0x07" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    0x07
+</h2>
+<p>参考文献：</p>
+<p><a href="https://codefresh.io/docker-tutorial/chaos_testing_docker/">https://codefresh.io/docker-tutorial/chaos_testing_docker/</a></p>
+<p><a href="https://github.com/alexei-led/pumba/blob/master/README.md">https://github.com/alexei-led/pumba/blob/master/README.md</a></p>
+<p><a href="https://blog.csdn.net/happyanger6/article/details/71104577">weave网络介绍</a></p>
+<p><a href="https://microservices-demo.github.io/deployment/docker-compose-weave.html">https://microservices-demo.github.io/deployment/docker-compose-weave.html</a></p>
+<p><a href="https://github.com/microservices-demo/microservices-demo/blob/master/deploy/docker-compose-weave/docker-compose.yml">https://github.com/microservices-demo/microservices-demo/blob/master/deploy/docker-compose-weave/docker-compose.yml</a></p>
+<p><a href="https://www.weave.works/docs/net/latest/install/using-weave/#peer-connections">https://www.weave.works/docs/net/latest/install/using-weave/#peer-connections</a></p>
+
+        </div>
+    </article>
+
+</div>
+
+ 
+<div class="container">
+
+    
+    <nav class="flex suggested">
+        
+        <a rel="prev" href="/posts/vimrc-configuration/" title="Previous post (older)">
+            <span>Previous</span>
+            寻觅了很久的 .vimrc
+            </a>
+        
+        
+        
+        <a rel="next" href="/posts/wrk2-note/" title="Next post (newer)">
+            <span>Next</span>
+            WRK2 http benchmark 快速笔记
+            </a> 
+        
+    </nav>
+    
+
+    
+</div>
+
+</main>
+
+
+        </main>
+        <footer class="footer flex">
+    <section class="container">
+        <nav class="footer-links">
+            
+            <a href="https://chainlark.com/">chainlark</a>
+            
+            <a href="/index.xml">RSS</a>
+            
+        </nav>
+    </section>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.js" integrity="sha512-0UbR6HN0dY8fWN9T7fF658896tsPgnbRREHCNq46J9/JSn8GonXDZmqtTc3qS879GM0zV49b9LPhdc/maKP8Kg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" integrity="sha512-Tn2m0TIpgVyTzzvmxLNuqbSJH3JP8jm+Cy3hvHrW7ndTDcJ1w5mBiksqDBb8GpE2ksktFvDB/ykZ0mDpsZj20w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+
+    (function(){
+        
+        
+        let images = $('img');
+        for (let img of images) {
+            $(img).featherlight($(img));
+        }
+    })();
+    </script>
+    <script defer src="/ts/features.882b72337b0ef8cf09fe2162c5a3e8bc2381c17b65e1c654a4fbd770d38fe420.js" data-enable-footnotes="false"></script>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8R697QBLL4"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-8R697QBLL4');
+    </script>
+</footer>
+    </body>
+</html>

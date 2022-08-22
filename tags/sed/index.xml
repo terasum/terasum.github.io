@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>sed on CodeStack</title>
+    <link>https://chenquan.me/tags/sed/</link>
+    <description>Recent content in sed on CodeStack</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Wed, 05 Jul 2017 14:06:00 +0000</lastBuildDate><atom:link href="https://chenquan.me/tags/sed/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>精通 sed (mastering sed)</title>
+      <link>https://chenquan.me/posts/mastering-in-diving/</link>
+      <pubDate>Wed, 05 Jul 2017 14:06:00 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/mastering-in-diving/</guid>
+      <description>mastering sed   我承认这是标题党，但是sed在平时工作中sed真的很有用，特别是像我这种需要写一些shell进行自动化工作的。
+    sed 快速入门  sed 作为流编辑神器，在写脚本的时候往往会发挥奇效，所以这里我将sed的一些关键用法介绍一下，目的在于实用，而不是全面。
+   &amp;lt;code&amp;gt;-i&amp;lt;/code&amp;gt; 参数  常常会看到会有sed -i这样的命令，-i的意思就是直接在源文件上进行操作。
+   动作  sed的动作是我们需要掌握的最为重要的内容 ：
+– a ：新增， a 的后面可以接字串，而这些字串会在新的一行出现(目前的下一行);
+– c ：取代， c 的后面可以接字串，这些字串可以取代 n1,n2 之间的行;
+– d ：删除， d 后面通常不接任何字符;
+– i ：插入， i 的后面可以接字串，而这些字串会在新的一行出现(目前的上一行)；
+– p ：列印，亦即将某个选择的数据印出。通常 p 会与参数 sed -n 一起运行;
+– s ：替换，可以直接进行取代的工作通常这个 s 的动作可以搭配正则语法,语法很像vim的替换。
+   样例  测试文件内容：</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>golang on CodeStack</title>
+    <link>https://chenquan.me/tags/golang/</link>
+    <description>Recent content in golang on CodeStack</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sun, 20 Aug 2017 04:32:13 +0000</lastBuildDate><atom:link href="https://chenquan.me/tags/golang/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go实时GC——三色算法理论与实践</title>
+      <link>https://chenquan.me/posts/golang-gc-algorithm-3-colors/</link>
+      <pubDate>Sun, 20 Aug 2017 04:32:13 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/golang-gc-algorithm-3-colors/</guid>
+      <description>对于实时系统而言，垃圾回收系统可能是一个极大的隐患，因为在垃圾回收的时候需要将整个程序暂停。所以在我们设计消息总线系统的时候，需要小心地选择我们的语言。Go一直在强调它的低延迟，但是它真的做到了吗？如果是的，它是怎么做到的呢？
+在这篇文章当中，我们将会看到Go语言的GC是如何实现的（tricolor algorithm，三色算法），以及为什么这种方法能够达到如此之低的GC暂停，以及最重要的是，它是否真的有效（对这些GC暂停进行benchmar测试，以及同其它类型的语言进行比较）。
+   From Haskell to Go  我们用pub/sub消息总线系统为例说明问题，这些系统在发布消息的时候都是in-memory存储的。在早期，我们用Haskell实现了第一版的消息系统，但是后面发现GHC的gabage collector存在一些基础延迟的问题，我们放弃了这个系统转而用Go进行了实现。
+这是我们有关Haskell消息系统的一些实现细节,在GHC中最重要的一点是它GC暂停时间同当前的工作集的大小成比例关系（也就是说，GC时间和内存中存储对象的数目有关）。在我们的例子中，内存中存储对象的数目往往都非常巨大，这就导致gc时间常常高达数百毫秒。这就会导致在GC的时候整个系统是阻塞的。
+而在Go语言中，不同于GHC的全局暂停(stop-the-world)收集器，Go的垃圾收集器是和主程序并行的。这就可以避免程序的长时间暂停。我们则更加关注于Go所承诺的低延迟以及其在每个新版本中所提及的延迟提升是否真的向他们所说的那样。
+   并行垃圾回收是如何工作的?  Go的GC是如何实现并行的呢？其中的关键在于tricolor mark-and-sweep algorithm 三色标记清除算法。该算法能够让系统的gc暂停时间成为能够预测的问题。调度器能够在很短的时间内实现GC调度，并且对源程序的影响极小。下面我们看看三色标记清除算法是如何工作的：
+假设我们有这样的一段链表操作的代码：
+var A LinkedListNode; var B LinkedListNode; // ... B.next = &amp;LinkedListNode{next: nil}; // ... A.next = &amp;LinkedListNode{next: nil}; *(B.next).next = &amp;LinkedListNode{next: nil}; B.next = *(B.next).next; B.next = nil;     第一步  var A LinkedListNode; var B LinkedListNode; // ... B.next = &amp;LinkedListNode{next: nil};  刚开始我们假设有三个节点A、B和C，作为根节点，红色的节点A和B始终都能够被访问到，然后进行一次赋值B.</description>
+    </item>
+    
+    <item>
+      <title>用gomock进行mock测试</title>
+      <link>https://chenquan.me/posts/use-gomock-to-mock-testing/</link>
+      <pubDate>Thu, 22 Jun 2017 15:26:11 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/use-gomock-to-mock-testing/</guid>
+      <description>mock对象就是为了解决上面的问题而诞生的，mock(模拟)对象能够模拟实际依赖对象的功能，同时又不需要非常复杂的准备工作，你需要做的，仅仅就是定义对象接口，然后实现它，再交给测试对象去使用。
+go-mock是专门为go语言开发的mock库，该库使用方式简单，支持自动生成代码，可以说是不可多得的好工具。下面我就简单地展示一下go-mock是如何工作的:
+首先你需要做的是将依赖下载到本地：
+1 2  go get github.com/golang/mock/gomock go get github.com/golang/mock/mockgen   第一个是代码依赖，第二个是命令行工具（特别好用）。
+下面用一个非常简单的例子来说明gomock是如何工作的：
+我在$GOPATH/src目录下新建一个项目：hellomock，在$GOPATH/src/hellomock目录下新建hellomock.go，并定义一个接口Talker:
+1 2 3 4 5  package hellomock type Talker interface { SayHello(word string)(response string) }   然后我们需要一个实现了Talker功能的结构体，假设我们有这样的场景，我们现在有一个迎宾的岗位，需要一个能够迎宾的迎宾员，当然这个迎宾员可以是一个人，或者是一只鹦鹉。那么我们需要做的是，定义一个Persion结构体（或者是鹦鹉或者是别的什么东西），并实现Talker接口：
+person.go
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18  package hellomock import &amp;#34;fmt&amp;#34; type Person struct{ name string } func NewPerson(name string)*Person{ return &amp;amp;Person{ name:name, } } func (p *Person)SayHello(name string)(word string) { return fmt.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,638 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on CodeStack</title>
+    <link>https://chenquan.me/posts/</link>
+    <description>Recent content in Posts on CodeStack</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Tue, 01 Feb 2022 15:37:14 +0000</lastBuildDate><atom:link href="https://chenquan.me/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>全链路追踪系统技术分析</title>
+      <link>https://chenquan.me/posts/tracing-system-analysis/</link>
+      <pubDate>Tue, 01 Feb 2022 15:37:14 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/tracing-system-analysis/</guid>
+      <description>前言  近期正好有机会接触到了一个全链路追踪的改造项目，正好给自己一个了解其他领域的机会，其实也是为我自己找到了一个能够挑战自己的机会，这是一个很重要的项目，也涉及非常复杂的系统和相关方。而长期以技术人员的思维考虑事情的我，觉得这是一个很好的挑战自我的机会，一方面能够了解一个相对陌生的领域的技术，另一方面，也能够拓宽自己的能力边界。
+   技术背景  整体的出发点其实是一个客户路程的追踪展示需求，需求说简单也挺简单的，即希望能够看到客户在使用APP的过程当中出现了哪些问题，导致这些问题的原因是什么。但其实这里面涉及到的内容是相对复杂的，这涉及到前端的数据埋点，以及后端的链路跟踪，这是一个端到端的全链路追踪系统。
+其实全链路追踪这件事是有现成的解决方案的，在现代的微服务架构体系下，很多框架乃至解决方案都提供了非常完备的技术方案帮助追踪系统调用链路。但是不禁要问，究竟是什么时候起，需要全链路追踪系统了呢？
+我们知道，在设计系统架构的时候，合适是一个非常重要的原则，简单的系统如单体系统乃至仅有一两个微服务的系统，我们在分析系统解决问题的时候，其实是相对快速方便的，不存在调用链路冗长复杂，系统依赖关系模糊的情况，只有在软件系统发展到一定规模，系统业务达到一定量级了，才需要大量的服务去支撑完整系统，这个过程恰恰为大型信息系统演变的过程。
+ Distributed Programming is the art of solving the same problem that you can solve on a single computer using multiple computers — Mikito Takada
+ 所谓 “天下大事，合久必分”，软件系统往往也类似，达到一定规模，复杂度上升到一定程度，拆分是解决复杂性问题的优选方案，分布式系统横空出世，用来解决单机系统无法解决的问题。但是微服务架构带来的问题也很突出，系统很多，链路很长，服务器集群规模很大，出了问题往往没有办法快速定位原因。 为了解决这个业务规模增长带来的软件系统规模增长引发的开发维护难度也快速增长的尖锐问题，链路追踪自然而然成为了解决问题的良方。
+   现有系统分析  分布式系统的链路追踪和故障定位已经成为系统规模增之后不得不解决的难题，困扰着开发者的还包括这些问题：
+ 根因定位难：原来笔者在支付宝工作时，除了一个线上故障，往往要拉好几个团队的人一起看，因为很多服务都拆分给了很多团队负责，出了问题很难说清楚是哪个服务的问题，所以一堆人都要到线上看，没有有效的跟踪定位能力，效率必然低下。 容量评估难：就如木桶原则，整个系统的性能短板在哪里，所有流量的毕竟之地，以及大促的时候需要重点关注以及扩容的服务是哪个，需要做出这些判断没有一个有效的链路请求数据真的只能拍脑袋随便猜。 架构设计难：在进行系统分析和架构设计的时候，往往需要对上下游的依赖进行分析评估以确定影响，没有一个有效的链路追踪系统，只能如盲人摸象，有文档还好，老司机指点也行，如果没有，只能看代码自求多福。 性能优化难：同容量评估类似，链路数据能够帮助我们快速找到系统的性能瓶颈，一个用户请求响应慢，服务返回不及时，到底是哪个服务导致的一目了然，也不用推诿扯皮。  上面的都是问题，这也帮助我们澄清了全链路系统应该解决的需求，链路架构与服务浏览地图、耗时、异常数据的采集与展现都是需要解决的问题。
+   Google 的 Dapper  2010年Google发布了一篇名叫《Dapper, a Large-Scale Distributed Systems Tracing Infrastructure》的论文，被业界誉为分布式系统链路追踪的开山级文献。该文献详细叙述了Google 内部是如何实现一个低损耗、应用透明、大规模的监控追踪系统来为生产系统保驾护航的。在 Dapper 之前 Magpie系统已经针对性能调试、容量规划、系统调优和异常检测等方面提出了一些解决思路。而 X-Trace则提供了一个针对网络流量的追踪方案。Dapper 结合了两者的优势。本小节则重点分析 Dapper 中几个重要的设计。</description>
+    </item>
+    
+    <item>
+      <title>PBFT算法关键要点详叙</title>
+      <link>https://chenquan.me/posts/pbft-key-points/</link>
+      <pubDate>Mon, 18 Jan 2021 07:36:44 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/pbft-key-points/</guid>
+      <description>引言  在一个分布式系统当中，如果需要提供可靠服务，数据操作（读写）的冗余是必要的。假设现在我们有一个分布式数据库集群，其中的服务器节点会相互同步数据。一种简单的思维，如果网络正常，服务器稳定，一切顺利，我们只需要把数据写入其中一台服务器，集群中的所有服务器就都会同步到写入的数据。但事情往往没有这么简单，实际上这台写入的服务器可能会宕机、断网，甚至代码也会有bug，这些问题都有可能导致数据同步失败，之前的写入操作实际上有可能是失败的，所有服务器无法同步到数据。同样地，如果写入成功，我们随便挑一台服务器读取数据就没有问题了吗？如果这台服务器同步速度慢一些，那么我们读取的值也是不对的。那么，如果我们在写入的时候多写如几台服务器不就好了，一种极端思维是我写入所有服务器，这样当然所有服务器上的数据都是最新的；在读取的时候我们也可以读所有服务器，这样一定能够读到最新的数据，但是这样显然很耗费资源，我们能不能读写一部分也能够得到确定的最新结果呢，如果可以的话，读写多少服务器比较合适呢？
+这个服务器数量，就是所谓的 quorum，一般来讲，在写入数据的时候，只需要达到 quorum 台服务器，我们就可以认为写入成功，同样地，在读取数据的时候，只需要读取 quorum 台服务器，就可以认为读取的结果是正确的，并且是最新的。
+显然这个quorum值是取决于分布式集群所有服务器的数量的，全网服务器数量越多，quorum 越大，当然，如果 quorum 越大，那么需要操作的服务器数量就越多，操作开销也越大。
+那么，quorum 多大比较合适呢？
+在集群的数据同步过程当中，存在几种情况：
+一是并发操作，就是多人同时操作数据集群，如果有两个人进行写入操作，比如 Alice写入 A = 2， 同时 Bob 写入 A =3 ，如果一半服务器接受 A=3，而另一半接受 A=4 是不行的，这就出现了集群脑裂的情况，为了避免这个情况，要求我们至少写入集群中的多数节点。
+另一种是非串行化读写，如果我们在写入数据的完成之后，用户立即来读取数据了，但是恰好用户读取的服务器还没有同步到最新数据，用户读的数据是过时的，这样也是不对的，我们应该保证，写入成功之后，读取的值应该是上次写入之后的结果，所以我们至少要读到一个写入操作过的节点。
+那么写入操作和读取操作至少都需要多少个节点才能保证上述情况不会发生呢？问题将会在下文中揭晓。
+   Prerequisite     共识问题 (Consensus Problem)  分布式系统的共识问题（Consensus Problem）是指寻找一种协议，使得该协 议满足以下三大属性：
+ 一致性（Agreement）：所有的非缺陷进程都必须同意一个值； 正确性（Validity）：所有非缺陷进程所同意的值必须来之非故障进程所提案的值； 可结束性（Termination）：每个非缺陷的进程必须最终确定一个值。  通常也把一致性和正确性合称安全性（Safety），把可结束性称为活性 （Liveness），而在分布式系统的算法和设计中， 安全性和活性是两个非常重要的属性，更通俗地讲，这两个属性的另一种解释是：
+ 安全性 (Safety) ：错误的值永远不会被采用（something “bad” will never happen）； 活性 (Liveness) ：最终正确的值将会被确定并同意，但是无法确定时间 （ something “good” will must happen, but we don’t know when）  也可通俗解释为：</description>
+    </item>
+    
+    <item>
+      <title>WRK2 http benchmark 快速笔记</title>
+      <link>https://chenquan.me/posts/wrk2-note/</link>
+      <pubDate>Fri, 11 Jan 2019 08:39:41 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/wrk2-note/</guid>
+      <description>首先需要克隆 wrk2 仓库的代码:
+1  git clone https://github.com/giltene/wrk2.git   编译安装
+make &amp;amp;&amp;amp; sudo make install  注意:
+在macos下编译需要修改一行代码，我的系统版本为10.14 Mojave则在deps/luajit/src/Makefile文件293行
+修改为相应的系统版本号：
+1 2  # export MACOSX_DEPLOYMENT_TARGET=10.4 export MACOSX_DEPLOYMENT_TARGET=10.14   安装完毕之后，就可以进行压力测试了。
+   编写压测lua脚本  以post测试为例,编写如下lua脚本：
+post.lua
+1 2 3  wrk.method = &amp;#34;POST&amp;#34; wrk.body = &amp;#34;{\&amp;#34;jsonrpc\&amp;#34;:\&amp;#34;2.0\&amp;#34;, \&amp;#34;method\&amp;#34;: \&amp;#34;node_getNodeStates\&amp;#34;, \&amp;#34;id\&amp;#34;: 1}&amp;#34; wrk.headers[&amp;#34;Content-type&amp;#34;] = &amp;#34;application/json&amp;#34;      压力测试  wrk拥有如下选项：
+Usage: wrk &amp;lt;options&amp;gt; &amp;lt;url&amp;gt; Options: -c, --connections &amp;lt;N&amp;gt; 需要保持的连接数量 -d, --duration &amp;lt;T&amp;gt; 测试持续的时间 -t, --threads &amp;lt;N&amp;gt; 需要使用的线程数量 -s, --script &amp;lt;S&amp;gt; 需要加载的lua脚本 -H, --header &amp;lt;H&amp;gt; 添加请求头 -L --latency 打印延迟统计 -U --u_latency 打印不正确的延迟统计 --timeout &amp;lt;T&amp;gt; 连接/请求超时时间 -B, --batch_latency 统计整个批量时间 (正式对应的每一个op) -v, --version 打印版本细节 -R, --rate &amp;lt;T&amp;gt; TPS [必填参数]  简单测试命令:</description>
+    </item>
+    
+    <item>
+      <title>使用 pubma 对区块链网络进行混沌测试</title>
+      <link>https://chenquan.me/posts/chaos-testing-by-pubma/</link>
+      <pubDate>Wed, 12 Sep 2018 16:45:40 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/chaos-testing-by-pubma/</guid>
+      <description>Author: 陈权@hyperchain
+    0x01 问题明确  当前我们需要模拟如下场景：
+ 节点在高网络延迟下的表现 节点在高网络丢包率下的表现  有些bug我们是在比较苛刻的网络条件下测试得到的，而按照传统的经验，我们会想办法将环境部署到互联网上进行测试，但是这种方式非常原始，而且得到的结果也具备大量的偶然性，我们想要复现相同的结果也是十分困难的，因此我们使用容器技术对不同的网络情况进行模拟，以期得到可控的网络抖动测试环境。
+   0x02 pumba 工具介绍  先对容器网络Chaos-testing 工具pubma进行简单介绍，以及相关使用的说明。
+   What is Pubma(a)?  相信出生于90年代的小伙伴们都知道一个电影叫 The Lion King（狮子王），里面有一个角色的名字就叫Pumbaa，在Swahili语中，Pumbaa的意识是”保持愚蠢，无知，以及懒惰”。当然这个工具起这个名字的内涵大概就是想模拟一个“愚蠢的，不可预知的环境”的意思。
+   Pumba 能做什么？  简单地说，Pubma 能够完成包括对Docker容器的 kill，stop， remove，pause。
+当然， Pubma 也能够完成网络模拟，模拟包括一系列的网络问题（延迟，丢包，使用不同的丢包模型，带宽限制等等）。针对网络模拟，Pumba使用的是Linux内核tc netem实现的。 如果目标container不支持tc的话，Pumba将会使用sidekick 附着到目标容器进行控制。
+   怎么使用 Pumba  通常可以传一个容器列表到Pumba中，可以简单地写一个正则表达式来选择匹配的容器。如果你没有指定容器，那么Pumba将会对所有运行的容器进行干预。
+如果你使用了--random选项，那么Pumba将会在提供的容器列表中选择一些随机容器进行干扰。
+你也可以通过传入一些重复参数，以及持续时间参数来更加精细地控制你需要产生的chaos 混沌。
+   如何安装 pumba     源码安装  1 2 3 4 5 6 7 8  # Download binary from https://github.</description>
+    </item>
+    
+    <item>
+      <title>寻觅了很久的 .vimrc</title>
+      <link>https://chenquan.me/posts/vimrc-configuration/</link>
+      <pubDate>Thu, 30 Aug 2018 01:32:44 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/vimrc-configuration/</guid>
+      <description>&lt;p&gt;&lt;code&gt;.vimrc&lt;/code&gt;熟悉又痛苦的一个文件，从自己编译&lt;code&gt;YCM&lt;/code&gt;，安装&lt;code&gt;Ctags&lt;/code&gt;到索性一键安装&lt;code&gt;SpaceVim&lt;/code&gt;最终还是归于沉寂。&lt;/p&gt;
+&lt;p&gt;玩来玩去，我觉得一个vim的配置还是要简单实用才是最实在的。因此我找到&lt;code&gt;vim-bootstrap&lt;/code&gt;然后稍微改了一下，现在放在我自己的&lt;a href=&#34;https://github.com/dotfile&#34;&gt;dotfile&lt;/a&gt;中，供大家参考。&lt;/p&gt;
+&lt;p&gt;在这里我放上我的 vim-cheatsheet。&lt;/p&gt;
+&lt;h2 id=&#34;vim-cheat-sheet&#34;&gt;
+    &lt;a href=&#34;#vim-cheat-sheet&#34; class=&#34;anchor&#34;&gt;
+        &lt;svg class=&#34;icon&#34; aria-hidden=&#34;true&#34; focusable=&#34;false&#34; height=&#34;16&#34; version=&#34;1.1&#34; viewBox=&#34;0 0 16 16&#34; width=&#34;16&#34;&gt;
+            &lt;path fill-rule=&#34;evenodd&#34;
+                d=&#34;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&#34;&gt;
+            &lt;/path&gt;
+        &lt;/svg&gt;
+    &lt;/a&gt;
+    VIM cheat sheet
+&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;如果你在使用本&lt;code&gt;.vimrc&lt;/code&gt;，你可以参考本使用文档&lt;br&gt;
+直接将&lt;code&gt;vimrc&lt;/code&gt;文件放到$HOME并命名为&lt;code&gt;.vimrc&lt;/code&gt;即可&lt;/p&gt;
+&lt;/blockquote&gt;</description>
+    </item>
+    
+    <item>
+      <title>如何用GN编译V8引擎</title>
+      <link>https://chenquan.me/posts/how-to-compile-v8-engine-by-gn/</link>
+      <pubDate>Sat, 12 May 2018 01:50:38 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/how-to-compile-v8-engine-by-gn/</guid>
+      <description>&lt;p&gt;在v8引擎的6.5版本以上，google采用了&lt;code&gt;GN+Ninja&lt;/code&gt;的编译组合，因此本文主要是基于&lt;code&gt;GN+Ninjia&lt;/code&gt;的编译方式进行说明。&lt;/p&gt;
+&lt;h2 id=&#34;获取源码&#34;&gt;
+    &lt;a href=&#34;#%e8%8e%b7%e5%8f%96%e6%ba%90%e7%a0%81&#34; class=&#34;anchor&#34;&gt;
+        &lt;svg class=&#34;icon&#34; aria-hidden=&#34;true&#34; focusable=&#34;false&#34; height=&#34;16&#34; version=&#34;1.1&#34; viewBox=&#34;0 0 16 16&#34; width=&#34;16&#34;&gt;
+            &lt;path fill-rule=&#34;evenodd&#34;
+                d=&#34;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&#34;&gt;
+            &lt;/path&gt;
+        &lt;/svg&gt;
+    &lt;/a&gt;
+    获取源码
+&lt;/h2&gt;
+&lt;p&gt;在官方文档中，还特别提示了避免HFS环境下的unicode问题，需要额外配置一下：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;$ git config --global core.precomposeUnicode &lt;span class=&#34;nb&#34;&gt;true&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;现在v8在github上面有源码镜像，你只需要&lt;code&gt;git clone&lt;/code&gt;下来即可。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;$ git clone git@github.com:v8/v8.git
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description>
+    </item>
+    
+    <item>
+      <title>Lodash 源码分析（三）Array</title>
+      <link>https://chenquan.me/posts/lodash-source-code-analysis-3/</link>
+      <pubDate>Thu, 21 Sep 2017 04:57:38 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/lodash-source-code-analysis-3/</guid>
+      <description>&lt;p&gt;这是Lodash源码分析系列文章的第三篇，前面两篇文章(&lt;a href=&#34;http://www.chenquan.me/archives/254&#34;&gt;Lodash 源码分析（一）“Function” Methods&lt;/a&gt;、&lt;a href=&#34;http://www.chenquan.me/archives/267&#34;&gt;Lodash 源码分析（二）“Function” Methods&lt;/a&gt;)分别分析了Lodash “Function” 中的一些重要函数，也给出了简化的实现，为理解其内部机理和执行方式提供了便利。这篇文章将专注于Array，Array是Lodash中非常重要的内容，我们将分析其代码实现以及同类似库中的实现对比。&lt;/p&gt;
+&lt;h2 id=&#34;_head&#34;&gt;
+    &lt;a href=&#34;#_head&#34; class=&#34;anchor&#34;&gt;
+        &lt;svg class=&#34;icon&#34; aria-hidden=&#34;true&#34; focusable=&#34;false&#34; height=&#34;16&#34; version=&#34;1.1&#34; viewBox=&#34;0 0 16 16&#34; width=&#34;16&#34;&gt;
+            &lt;path fill-rule=&#34;evenodd&#34;
+                d=&#34;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&#34;&gt;
+            &lt;/path&gt;
+        &lt;/svg&gt;
+    &lt;/a&gt;
+    _.head
+&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;_.head&lt;/code&gt;函数其实很简单，返回一个数组的第一个元素，完全可以在两三行代码中实现。可以看到Lodash中是这么实现的：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;head&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+   &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;array&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;length&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;?&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;undefined&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;Lodash进行了简单的判断，然后返回了第一个元素。这么简单的函数其实没有什么好说的，但我拿出来说是想介绍另一个库&lt;code&gt;Ramda.js&lt;/code&gt;的实现：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span class=&#34;nx&#34;&gt;module&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;exports&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;nth&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;它是用&lt;code&gt;nth&lt;/code&gt;函数实现该功能的，那么这个函数式怎么样的呢？&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span class=&#34;nx&#34;&gt;module&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;exports&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;_curry2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;nth&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;offset&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;list&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;kd&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;idx&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;offset&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;lt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;?&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;list&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;length&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;offset&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;offset&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;_isString&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;list&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;?&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;list&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;charAt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;idx&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;list&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;idx&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;];&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这个函数就有点意思了，用了柯里化，是一个函数式的实现，当&lt;code&gt;head&lt;/code&gt;函数返回一个&lt;code&gt;nth(0)&lt;/code&gt;时，其实返回的是一个柯里化之后的函数，然后再接受一个数组，判断数组类型之后返回&lt;code&gt;list[offset]&lt;/code&gt;的值。&lt;/p&gt;
+&lt;p&gt;再看看Lodash的&lt;code&gt;nth&lt;/code&gt;的实现：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;nth&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+   &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;array&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;length&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;?&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;baseNth&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;toInteger&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;undefined&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;baseNth&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;kd&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;length&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;length&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;!&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;length&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+  &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+  &lt;span class=&#34;nx&#34;&gt;n&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;n&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;lt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;?&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;length&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;isIndex&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;length&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;?&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;n&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;undefined&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;仔细对比两个库的实现，两个库都允许负下标的处理，但是对于Ramda而言，如果list是一个&lt;code&gt;null&lt;/code&gt;或者&lt;code&gt;undefined&lt;/code&gt;类型的数据的话，将会抛出&lt;code&gt;TypeError&lt;/code&gt;，而Lodash则优雅一些。&lt;/p&gt;
+&lt;h2 id=&#34;_join&#34;&gt;
+    &lt;a href=&#34;#_join&#34; class=&#34;anchor&#34;&gt;
+        &lt;svg class=&#34;icon&#34; aria-hidden=&#34;true&#34; focusable=&#34;false&#34; height=&#34;16&#34; version=&#34;1.1&#34; viewBox=&#34;0 0 16 16&#34; width=&#34;16&#34;&gt;
+            &lt;path fill-rule=&#34;evenodd&#34;
+                d=&#34;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&#34;&gt;
+            &lt;/path&gt;
+        &lt;/svg&gt;
+    &lt;/a&gt;
+    _.join
+&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;_.join&lt;/code&gt;函数是另一个简单的函数：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span class=&#34;kd&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;arrayProto&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;prototype&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;nativeJoin&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;arrayProto&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;join&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+
+&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;join&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;separator&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;array&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;null&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;?&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;nativeJoin&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;call&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;separator&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;重写之后函数变为:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;join&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;separator&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;array&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;null&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;?&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#39;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;prototype&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;join&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;call&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;separator&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;我们再对比一下Ramda的实现：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span class=&#34;o&#34;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;lt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;br&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;/&amp;gt;&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;invoker&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;require&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;./invoker&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;module&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;exports&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;invoker&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;join&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;再看看invoker函数：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span class=&#34;nx&#34;&gt;module&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;exports&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;_curry2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;invoker&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;arity&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;method&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;curryN&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;arity&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;kd&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;target&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;arguments&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;arity&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;];&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;target&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;!=&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;null&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;_isFunction&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;target&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;method&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]))&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+      &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;target&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;method&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;].&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;apply&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;target&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;prototype&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;slice&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;call&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;arguments&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;arity&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;));&lt;/span&gt;
+    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;throw&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;TypeError&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;toString&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;target&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39; does not have a method named &amp;#34;&amp;#39;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;method&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;s1&#34;&gt;&amp;#39;&amp;#34;&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+  &lt;span class=&#34;p&#34;&gt;});&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;invoker&lt;/code&gt;函数就是为了返回一个curry化的函数，那么我们其实可以这么理解如果用Lodash实现一个函数化的&lt;code&gt;join&lt;/code&gt;可以这么实现：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;_join&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;separator&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;){&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;Array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;prototype&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;join&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;call&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;array&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;seprator&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;join&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;curry&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;_join&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;那么我们可以和Ramda的使用方式一样使用：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-javascript&#34; data-lang=&#34;javascript&#34;&gt;&lt;span class=&#34;nx&#34;&gt;join&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;_&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;,&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)([&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]);&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;// 1,2,3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description>
+    </item>
+    
+    <item>
+      <title>Lodash 源码分析（二）“Function” Methods</title>
+      <link>https://chenquan.me/posts/lodash-source-code-analysis-2/</link>
+      <pubDate>Tue, 29 Aug 2017 10:55:53 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/lodash-source-code-analysis-2/</guid>
+      <description>&lt;p&gt;这是Lodash源码分析的第二篇文章，我们在第一篇&lt;a href=&#34;http://www.chenquan.me/archives/254&#34;&gt;Lodash 源码分析（一）“Function” Methods&lt;/a&gt;中介绍了基本的&lt;code&gt;_.after&lt;/code&gt;，&lt;code&gt;_.map&lt;/code&gt;，以及复杂的&lt;code&gt;_.ary&lt;/code&gt;函数的实现以及我们自己的自定义轻量级版本。大概清楚了Lodash的整个代码脉络。这次我们继续分析，这次我们讲讲&lt;code&gt;_.reduce&lt;/code&gt;和&lt;code&gt;_.curry&lt;/code&gt;。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Lodash 源码分析（一）“Function” Methods</title>
+      <link>https://chenquan.me/posts/lodash-source-code-analysis-1/</link>
+      <pubDate>Mon, 21 Aug 2017 11:38:10 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/lodash-source-code-analysis-1/</guid>
+      <description>Lodash一直是我很喜欢用的一个库，代码也十分简洁优美，一直想抽时间好好分析一下Lodash的源代码。最近抽出早上的一些时间来分析一下Lodash的一些我觉得比较好的源码。因为函数之间可能会有相互依赖，所以不会按照文档顺序进行分析，而是根据依赖关系和简易程度由浅入深地进行分析。因为个人能力有限，如果理解有偏差，还请直接指出，以便我及时修改。
+源码都是针对4.17.4版本的，源docs写得也很好，还有很多样例。
+   _.after  _.after函数几乎是Lodash中最容易理解的一个函数了，它一共有两个参数，第一个参数是调用次数n,第二个参数是n次调用之后执行的函数func。
+1 2 3 4 5 6 7 8 9 10 11  function after(n, func) { if (typeof func != &amp;#39;function&amp;#39;) { throw new TypeError(FUNC_ERROR_TEXT); } n = toInteger(n); return function() { if (--n &amp;amp;lt; 1) { return func.apply(this, arguments); } }; }   这个函数的核心代码就是：
+1  func.apply(this,arguments);   但是一定要注意，这个函数中有闭包的应用，就是这个参数n。n本应该在函数_.after返回的时候就应该从栈空间回收，但事实上它还被返回的函数引用着，一直在内存中：
+1 2 3 4 5  return function() { if (--n &amp;amp;lt; 1) { return func.</description>
+    </item>
+    
+    <item>
+      <title>Go实时GC——三色算法理论与实践</title>
+      <link>https://chenquan.me/posts/golang-gc-algorithm-3-colors/</link>
+      <pubDate>Sun, 20 Aug 2017 04:32:13 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/golang-gc-algorithm-3-colors/</guid>
+      <description>对于实时系统而言，垃圾回收系统可能是一个极大的隐患，因为在垃圾回收的时候需要将整个程序暂停。所以在我们设计消息总线系统的时候，需要小心地选择我们的语言。Go一直在强调它的低延迟，但是它真的做到了吗？如果是的，它是怎么做到的呢？
+在这篇文章当中，我们将会看到Go语言的GC是如何实现的（tricolor algorithm，三色算法），以及为什么这种方法能够达到如此之低的GC暂停，以及最重要的是，它是否真的有效（对这些GC暂停进行benchmar测试，以及同其它类型的语言进行比较）。
+   From Haskell to Go  我们用pub/sub消息总线系统为例说明问题，这些系统在发布消息的时候都是in-memory存储的。在早期，我们用Haskell实现了第一版的消息系统，但是后面发现GHC的gabage collector存在一些基础延迟的问题，我们放弃了这个系统转而用Go进行了实现。
+这是我们有关Haskell消息系统的一些实现细节,在GHC中最重要的一点是它GC暂停时间同当前的工作集的大小成比例关系（也就是说，GC时间和内存中存储对象的数目有关）。在我们的例子中，内存中存储对象的数目往往都非常巨大，这就导致gc时间常常高达数百毫秒。这就会导致在GC的时候整个系统是阻塞的。
+而在Go语言中，不同于GHC的全局暂停(stop-the-world)收集器，Go的垃圾收集器是和主程序并行的。这就可以避免程序的长时间暂停。我们则更加关注于Go所承诺的低延迟以及其在每个新版本中所提及的延迟提升是否真的向他们所说的那样。
+   并行垃圾回收是如何工作的?  Go的GC是如何实现并行的呢？其中的关键在于tricolor mark-and-sweep algorithm 三色标记清除算法。该算法能够让系统的gc暂停时间成为能够预测的问题。调度器能够在很短的时间内实现GC调度，并且对源程序的影响极小。下面我们看看三色标记清除算法是如何工作的：
+假设我们有这样的一段链表操作的代码：
+var A LinkedListNode; var B LinkedListNode; // ... B.next = &amp;LinkedListNode{next: nil}; // ... A.next = &amp;LinkedListNode{next: nil}; *(B.next).next = &amp;LinkedListNode{next: nil}; B.next = *(B.next).next; B.next = nil;     第一步  var A LinkedListNode; var B LinkedListNode; // ... B.next = &amp;LinkedListNode{next: nil};  刚开始我们假设有三个节点A、B和C，作为根节点，红色的节点A和B始终都能够被访问到，然后进行一次赋值B.</description>
+    </item>
+    
+    <item>
+      <title>Go 线程调度器</title>
+      <link>https://chenquan.me/posts/golang-thread-scheduler/</link>
+      <pubDate>Sat, 19 Aug 2017 07:24:24 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/golang-thread-scheduler/</guid>
+      <description>在Go1.1版本中，加入了由Dmitry Vyukov贡献的新的调度器。新的调度器能够动态地调整Go程序的并发性能，而且表现非常出色。因此我想写篇文章介绍一下这个调度器。
+这篇博客里面大多数东西都已经被包含在了原始设计文档中了，这个文档的内容相当详实，但是过于技术化了。
+虽然有关新调度器所有东西都在那个设计文档中，但这篇博客有图片配图了，所以比设计文档清晰易懂多了。
+   Go运行时为什么需要调度器？  在我们开始研究新调度器之前，我们首先需要理解为什么需要调度器。既然操作系统已经能够为我们调度线程了，我们为什么又创造了一个用户实现的调度器？
+POSIX的线程API是对现有Unix进程模型在逻辑上的一个强大大的扩展，使得线程得到了很多类似进程的控制能力。比如，线程有它自己的信号码，线程能够被赋予CPU affinity功能(就是指定线程只能在某个CPU上运行），线程能被添加到cgroups中，线程所占用的的资源也能够查询。这些额外特性大大增加了Go 程序在创建goroutine 时所需要的开销，是在线程多达100000的时候尤其明显。
+另外一个问题是，操作系统无法针对Go的设计模型给出很好的调度决策。比如，当运行一次垃圾收集的时候，Go的垃圾收集器要求所有线程都被暂停，并且要求内存要处于一致状态（consistent state）。这就要求所有等待所有正在运行的线程到同时达到一个一致点，而我们事先知道在这个一致点内存是一致的。
+当很多被调度的线程分散在随机点（random point）上时，你不得不等待他们中的大多数到达一致状态才能进行垃圾回收。而Go调度器却能够只在内存一致的时候进行调度，这就意味着我们只需要等待在一个CPU核心中的活跃线程达到一致即可。
+   来看看里面的各个角色（Our Cast of Characters）  目前有三个常见的线程模型。一个是N：1的，即多个用户空间线程运行在一个OS线程上。这个模型可以很快的进行上下文切换，但是不能利用多核系统（multi-core systems)的优势。另一个模型是1：1的，即可执行程序的一个线程匹配一个OS线程。这个模型能够利用机器上的所有核心的优势，但是上下文切换非常慢，因为它需要进行系统内核调用。
+Go试图通过M：N的调度器去获取这两种模型的全部优势。它在任意数目的OS线程上调用任意数目的goroutines。你可以快速进行上下文切换，并且还能利用你系统上所有的核心的优势。这个模型主要的缺点是它增加了调度器的复杂性。
+为了完成调度任务，Go调度器使用了三个实体：
+
+三角形表示OS线程，它是由OS管理的可执行程序的一个线程，而且工作起来特别像你的标准POSIX线程。在运行时代码里，它被成为M，即机器（machine）。
+圆形表示一个goroutine。它包括栈、指令指针以及对于调度goroutines很重要的其它信息，比如阻塞它的任何channel。在运行时代码里，它被称为G。
+矩形表示调度上下文。你可以把它看作是一个在单线程上进行线程调度的自定义版本。它是让我们从N:1调度器转到M:N调度器的重要部分。在运行时代码里，它被叫做P，即处理器（processor）。这部分将会进行较为详细的介绍。
+
+我们可以从上面的图里看到两个线程（M），每个线程都拥有一个上下文（P），每个线程都正在运行一个goroutine（G）。为了运行goroutines，一个线程必须拥有一个上下文。
+上下文的数目在启动时被设置为环境变量GOMAXPROCS的值或者通过运行时函数GOMAXPROCS()来设置。通常，在你的程序执行时它不会发生变化。上下文的数目被固定的意思是，只有GOMAXPROCS个上下文正在任意时刻上运行Go代码。我们可以使用它调整Go进程的调用使其适合于一个单独的计算机，比如一个4核的PC中可以在4个线程上运行Go代码。
+外部的灰色goroutines没在运行，但是已经准备好被调度了。它们被安排成一个叫做runqueue的列表。当一个goroutine执行一个go 语句的时候，goroutine就被添加到runqueue的末端。一旦一个上下文已经运行一个goroutine到了一个点上，它就会把一个goroutine从它的runqueue给pop出来，设置栈和指令指针并且开始运行这个goroutine。
+为了降低mutex竞争，每一个上下文都有它自己的运行队列。在Go调度器的早期版本中，Go的调度器只有一个全全局的运行队列，并且只有一个互斥锁(mutex)来保护它。这样的设计在32核的多CPU核机器上进行性能压榨时往往会得到较差的表现。
+只要有goroutine在运行，调度器就能够以一个稳定的状态运行。然而还是有一些情况能够改变这种状态。
+   系统调用细节  你可能想问，为什么一定要有上下文？我们能不能去掉上下文而把运行队列直接放到线程上运行？不可以，上下文存在的意义是，如果一个正在运行的线程因为一些原因需要阻塞，我们可以将其挂起并将线程上下文移交给别的线程。
+另一种需要阻塞的情况是，在进行系统调用的时候。因为一个线程在进行系统调用的时候不能既执行代码又进行阻塞等待（注：一个M控制多个G,在系统调用的时候不允许其中的某个G阻塞，而另一个G运行，因为系统调用必须是原子性的）。因此我们需要将该上下文冻结以便调度。
+
+从上图我们能够看出，一个线程放弃了它的上下文以便让别的的线程可以运行G0。调度器确保预先有足够的线程来运行所有的上下文。上图中的M1 可能是仅仅为了能够处理系统调用而创建的，也可能来自一个线程池。这个处于系统调用中的线程将会一直持有导致这次系统调用这的goroutine，因为从技术层面上来说，它仍然在执行，尽管可能阻塞在OS里了。
+当这个系统调用返回的时候，这个线程必须获取一个上下文来运行这个返回的goroutine。较为常见的操作是从其它线程中“偷取”一个上下文。如果“偷取”不成功，它就会把它的goroutine放回到一个全局运行队列中，然后把自己放回到线程池中然后进入睡眠状态。
+这个全局运行队列是各个上下文在运行完自己的本地运行队列后获取新goroutine的地方。上下文也会周期性的检查这个全局运行队列上的以获取goroutine。如果不这样做的话，全局运行队列上的goroutines由于饥渴可能导致无法执行而终止。
+Go程序要在多线程上运行就是因为要处理系统调用，哪怕GOMAXPROCS等于1。运行时使用调用系统调用的goroutines，而不是线程。
+   盗取工作  系统的稳定状态改变的另外一种情况是，当一个上下文运行完要被调度的所有goroutines的时。如果各个上下文的运行队列里的goroutine的数目不均衡，将会改变调度器状态。上述的情况会导致会导致一个上下文在执行完它的运行队列后就结束了，尽管系统中仍然有许多goroutine要执行。因此为了能够一直运行Go代码，一个上下文能够从全局运行队列中获取goroutine，但是如果全局运行队列中也没有goroutine了，那么上下文就不得不从其它地方获取goroutine了。
+
+这里的“其它地方”指的是就是其它的上下文！当一个上下文完成自己的全部任务后，它就会尝试“盗取”另一个上下文运行队列中一半的工作量。这将确保每个上下文总是有活干，同时也能够保证所有的线程都处于最大的负荷。
+   展望  关于调度器还有许多细节，像cgo线程、LockOSThread()函数以及与系统与网络poller的整合。这些已经超过这篇文章的要探讨的范围了，但是仍然值得去深入研究。在Go运行时库里，仍然有大量有意思的创建工作要做。
+ 原文 Daniel Morsing</description>
+    </item>
+    
+    <item>
+      <title>从Haskell、JS、go看函数式编程</title>
+      <link>https://chenquan.me/posts/functional-programming-by-haskell-js-golang/</link>
+      <pubDate>Sat, 12 Aug 2017 10:23:31 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/functional-programming-by-haskell-js-golang/</guid>
+      <description>本文就是我在学习函数式编程的过程当中自己体悟到的一些东西，这里将用go,JavaScript以及Haskell三种语言来分析函数式编程的一些奥秘。JavaScript由于具有的一些优势能够让我们可以实现函数式编程，而go作为一种强类型语言，虽然灵活性又稍有欠缺，但是也能够完成一些高阶函数的实现，Haskell语言作为正统的函数式编程语言，为了解释说明问题，作为对比参照。
+   正文  函数式编程也算是经常看到了，它的一些优势包括：
+ 不包括赋值语句(assignment statement),一个变量一旦初始化，就无法被修改(immutable) 无副作用，函数除了计算结果，将不会产生任何副作用 因为无副作用，所以任何表达式在任何时候都能够evaluate  虽然上面的优势看看上去好像很厉害的样子，但是，到底厉害在哪里呢？我们可以通过下面的例子进行说明：
+求和函数
+Haskell
+1 2 3 4  sum [1,2,3] -- 6 -- sum 的实现其实是 foldr (+) 0 [1,2,3]   在Haskell中flodr的函数定义是：
+1  foldr :: Foldable t =&amp;amp;gt; (a -&amp;amp;gt; b -&amp;amp;gt; b) -&amp;amp;gt; b -&amp;amp;gt; t a -&amp;amp;gt; b   函数实现是:
+1 2 3 4  -- if the list is empty, the result is the initial value z; else -- apply f to the first element and the result of folding the rest foldr f z [] = z foldr f z (x:xs) = f x (foldr f z xs)   这是一个递归实现，在函数式编程中，递归定义是十分常见的。</description>
+    </item>
+    
+    <item>
+      <title>Haskell — 你应该学的一门语言</title>
+      <link>https://chenquan.me/posts/haskell-the-language-you-should-learn/</link>
+      <pubDate>Wed, 09 Aug 2017 12:37:04 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/haskell-the-language-you-should-learn/</guid>
+      <description>三月的时候立下一个flag, 说是在一个月内学会haskell，现在已经8月了，终于有时间坐下来好好地看看haskell,一直以来我都执着于各种语言，现在已经掌握的语言包括: go, python, php, c, java, javascript, shell, 这些语言在不同的领域都是神兵利器，能够帮我解决不同的问题，但是haskell不一样，是一种我完全凭借兴趣去学习的语言。
+刚开始看趣学指南的时候，觉得这门语言语法太奇怪了，我看得很难受。慢慢发现这其实是一种思维定势，如果我的第一门入门语言是haskell的话，想必就不是这种态度了。 Haskell是一门非常迷人的语言，它的列表推导式真的很厉害，能够解决原来传统过程式语言需要写很多代码才能解决的问题。它给了你另外一种思考问题的方式，开阔视野。
+我觉得既然是计算机从业者，都应该去学学python和haskell两门语言，python将教会你什么如何让世界变美好，Haskell将告诉你这个世界是多么奇妙。如果你现在被冯·诺依曼式的架构侵染太深的话，学学Haskell吧，它会告诉你这世界上还有这样写代码的方式。
+   书籍  最棒的haskell免费入门书 haskell趣学指南
+   视频  下面是两小时入门haskell的内容，视频我也贴在下面了，但直接访问不了，你懂的。
+   讲义  下面是我翻译过的视频随堂讲义内容：
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179 180 181 182 183 184 185 186 187 188 189 190 191 192 193 194 195 196 197 198 199 200 201 202 203 204 205 206 207 208 209 210 211 212 213 214 215 216 217 218 219 220 221 222 223 224 225 226 227 228 229 230 231 232 233 234 235 236 237 238 239 240 241 242 243 244 245 246 247 248 249 250 251 252 253 254 255 256 257 258 259 260 261 262 263 264 265 266 267 268 269 270 271 272 273 274 275 276 277 278 279 280 281 282 283 284 285 286 287 288 289 290 291 292 293 294 295 296 297 298 299 300 301 302 303 304 305 306 307 308 309 310 311 312 313 314 315 316 317 318 319 320 321 322 323 324 325 326 327 328 329 330 331 332 333 334 335 336 337 338 339 340 341 342 343 344 345 346 347 348 349 350 351 352 353 354 355 356 357 358 359 360 361 362 363 364 365 366 367 368 369 370 371 372 373 374 375 376 377 378 379 380 381 382 383 384 385 386 387 388 389 390 391 392 393 394 395 396 397 398 399 400 401 402 403 404 405 406 407 408 409 410 411 412 413 414 415 416 417 418 419 420 421 422 423 424 425 426 427 428 429 430 431 432 433 434 435 436 437 438 439 440 441 442 443 444 445 446 447 448 449 450 451 452 453 454 455 456 457 458 459 460 461 462 463 464 465 466 467 468 469 470 471 472 473 474 475 476 477 478 479 480 481 482 483 484 485 486 487 488 489 490 491 492 493 494 495 496 497 498 499 500 501 502 503 504 505 506 507 508 509 510 511 512 513 514 515 516 517 518 519 520 521 522 523 524 525 526 527 528 529 530 531 532 533 534 535 536 537 538 539 540 541 542 543 544 545 546 547 548 549 550 551 552 553 554 555 556 557 558 559 560 561 562 563 564 565 566 567 568 569 570 571 572 573 574 575 576 577 578 579 580 581 582 583 584 585 586 587 588 589 590 591 592 593 594 595 596 597 598 599 600 601 602 603 604 605 606 607  -- Haskell 是一种函数式编程语言 -- 在Haskell 中所有的值都是immutable 的，所以一旦一个变量被赋值之后，它就不会改变了 -- 函数可以作为另一个函数的参数 -- 递归函数在hankell中很普遍 -- Haskell没有for.</description>
+    </item>
+    
+    <item>
+      <title>精通 sed (mastering sed)</title>
+      <link>https://chenquan.me/posts/mastering-in-diving/</link>
+      <pubDate>Wed, 05 Jul 2017 14:06:00 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/mastering-in-diving/</guid>
+      <description>mastering sed   我承认这是标题党，但是sed在平时工作中sed真的很有用，特别是像我这种需要写一些shell进行自动化工作的。
+    sed 快速入门  sed 作为流编辑神器，在写脚本的时候往往会发挥奇效，所以这里我将sed的一些关键用法介绍一下，目的在于实用，而不是全面。
+   &amp;lt;code&amp;gt;-i&amp;lt;/code&amp;gt; 参数  常常会看到会有sed -i这样的命令，-i的意思就是直接在源文件上进行操作。
+   动作  sed的动作是我们需要掌握的最为重要的内容 ：
+– a ：新增， a 的后面可以接字串，而这些字串会在新的一行出现(目前的下一行);
+– c ：取代， c 的后面可以接字串，这些字串可以取代 n1,n2 之间的行;
+– d ：删除， d 后面通常不接任何字符;
+– i ：插入， i 的后面可以接字串，而这些字串会在新的一行出现(目前的上一行)；
+– p ：列印，亦即将某个选择的数据印出。通常 p 会与参数 sed -n 一起运行;
+– s ：替换，可以直接进行取代的工作通常这个 s 的动作可以搭配正则语法,语法很像vim的替换。
+   样例  测试文件内容：</description>
+    </item>
+    
+    <item>
+      <title>小船浮绿水——乌镇一日游</title>
+      <link>https://chenquan.me/posts/traveling-in-wuzhen/</link>
+      <pubDate>Sun, 02 Jul 2017 13:46:09 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/traveling-in-wuzhen/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>用gomock进行mock测试</title>
+      <link>https://chenquan.me/posts/use-gomock-to-mock-testing/</link>
+      <pubDate>Thu, 22 Jun 2017 15:26:11 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/use-gomock-to-mock-testing/</guid>
+      <description>mock对象就是为了解决上面的问题而诞生的，mock(模拟)对象能够模拟实际依赖对象的功能，同时又不需要非常复杂的准备工作，你需要做的，仅仅就是定义对象接口，然后实现它，再交给测试对象去使用。
+go-mock是专门为go语言开发的mock库，该库使用方式简单，支持自动生成代码，可以说是不可多得的好工具。下面我就简单地展示一下go-mock是如何工作的:
+首先你需要做的是将依赖下载到本地：
+1 2  go get github.com/golang/mock/gomock go get github.com/golang/mock/mockgen   第一个是代码依赖，第二个是命令行工具（特别好用）。
+下面用一个非常简单的例子来说明gomock是如何工作的：
+我在$GOPATH/src目录下新建一个项目：hellomock，在$GOPATH/src/hellomock目录下新建hellomock.go，并定义一个接口Talker:
+1 2 3 4 5  package hellomock type Talker interface { SayHello(word string)(response string) }   然后我们需要一个实现了Talker功能的结构体，假设我们有这样的场景，我们现在有一个迎宾的岗位，需要一个能够迎宾的迎宾员，当然这个迎宾员可以是一个人，或者是一只鹦鹉。那么我们需要做的是，定义一个Persion结构体（或者是鹦鹉或者是别的什么东西），并实现Talker接口：
+person.go
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18  package hellomock import &amp;#34;fmt&amp;#34; type Person struct{ name string } func NewPerson(name string)*Person{ return &amp;amp;Person{ name:name, } } func (p *Person)SayHello(name string)(word string) { return fmt.</description>
+    </item>
+    
+    <item>
+      <title>Elliptic Curve Cryptography: a gentle introduction (4)</title>
+      <link>https://chenquan.me/posts/elliptic-curve-cryptography_a-gentle-introduction_4/</link>
+      <pubDate>Thu, 15 Jun 2017 16:10:28 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/elliptic-curve-cryptography_a-gentle-introduction_4/</guid>
+      <description>椭圆曲线加密：安全性以及RSA对比  原标题：Elliptic Curve Cryptography: breaking security and a comparison with RSA 这篇文章是ECC：优雅入门系列的第四篇文章，我们已经在前面的文章中知道了一个椭圆曲线上的离散对数离散对数问题是如何在保障加密安全的过程中扮演重要角色的。但是，如果你还记得的话，我们曾经提到说目前还没有严格的数学证明来证明计算离散对数的复杂性:我们相信这件事情是“困难”的，但是我们并不确定。在这篇文章的开篇，我们将尝试去解释在目前的技术能力下，完成这件事情是多么地“困难”。 然后，在这篇文章的第二部分，我们将尝试去回答这样的问题，为什么我们需要椭圆曲线？RSA（或者其他基于模运算的加密系统）不是也挺好的吗？ 攻破离散对数问题 我们将会在下文中看到两个最为有效的用来计算椭圆曲线上的离散对数的算法：baby-step,giant-step算法，以及Pollard&#39;s方法。 在开始之前，我还是简单提醒一下，所谓的离散对数问题就是给定两个点P和Q，找到这样的证书x使得满足式子 $Q = xP$。其中的点是椭圆曲线子群中的点，这个椭圆曲线应该拥有基点G和阶n。
+Baby-step,giant-step 在描述这个算法的细节之前，我们先快速地看一下这个问题：我们始终能够写出这样的整数x使得$x = am+b$，其中a,m,b是三个任意整数。举例来说，我们可以写出 $10 = 2\cdot 3+4$。 根据上面的规则，我们可以给出如下的等式来描述离散对数问题：
+$$Q = xP \ Q = (am +b)P \ Q = amP + bP \ Q - amp = bP$$
+“baby-step,giant-step”其实是一个二分算法。不同于暴力破解( brute-force attack)(通过枚举所有有可能的点xP得到我们需要的Q)，我们可以&amp;quot;稍微&amp;quot;地减少计算量，通过计算bP和Q-amP直到我们找到相似值。这个算法的具体步骤如下：
+ 计算 $m = \lceil \sqrt{n} \rceil$ 对于所有的$b$属于$0,&amp;hellip;,m$计算$bP$并将结果存储到hash表中. 对于所有的$a$属于$0,&amp;hellip;,m$: 计算$amP$ 计算$Q - amP$ 检查这个hash表并观察是否存在这样的点使得$Q - amP = bP$ 如果这样的点存在，那么我们就找到了这样的x 满足$x = am +b$  就像你看到的一样，我们计算点$bP$的时候步进非常小，就像baby走路一样，系数b慢慢增加($1P,2P,3P,&amp;hellip;$)。然后，在这个算法的第二部分，我们计算$amP$的时候步进又很大，因为系数am的变化规律是($1mP,2mP,3mP,&amp;hellip;$，其中m是一个大整数)。  baby-step,giant-step算法：通过小步进初始化一些点在hashmap中进行存储，然后我们计算大步进并比较新的点是否在hashmap中能够被找到，计算离散对数相当于是一个重新排序的事情。 为了能够理解这个算法是怎么工作的，首先我们先忘记点$bP$是如何缓存的，而是考虑等式 $Q = amP + bP$。看看如下的步骤： - 当$a=0$的时候我们看看$Q$是否等于$bP$，其中$b$是$0$到$m$之间的某个整数。那么在实际上我们就是在比较$Q$和$0P$到$mP$之间是否相等。 - 当$a = 1$ 时，我们检查$Q$是否等于$mP + bP$。其中这里的$Q$就相当于同 $mP$到$2mP$之间的值比较。 - 当$a=2$我们需要比较$Q$和$2mP$和$3mP$之间的点。 - .</description>
+    </item>
+    
+    <item>
+      <title>Elliptic Curve Cryptography: a gentle introduction (3)</title>
+      <link>https://chenquan.me/posts/elliptic-curve-cryptography_a-gentle-introduction_3/</link>
+      <pubDate>Thu, 15 Jun 2017 15:54:41 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/elliptic-curve-cryptography_a-gentle-introduction_3/</guid>
+      <description>这篇文章是系列文章ECC：优雅入门中的第三篇文章。
+在之前的文章中我们知道了什么是椭圆曲线以及我们定义了一些群律为了能够在椭圆曲线上做一些数学运算。然后我们将椭圆曲线重新在一个素数的有限模整数域中进行描述。在这次重新描述过程中，我们知道了椭圆曲线是如何生成一个循环子群的，以及我们介绍了一些基本的概念：基点(base point)，阶(order)和辅因子(cofactor)。
+最后，我们了解了在有限域上的标量乘法是一个“简单”的问题，但是反过来的离散对数问题却是一个“困难”的问题。现在我们一起看看这些东西是如何应用到加密算法中的。
+主要参数(Domain parameters) 我们的椭圆曲线算法将会在一个定义在有限域上的的椭圆曲线的子群中运行。因此我们需要如下的几个参数： - 素数P 描述了有限域的大小。 - 系数a和b 用于描述椭圆曲线的方程。 - 基点G用于生成我们的子群 - 阶n ，子群的阶 - 辅因子h ，子群的辅因子 一言以蔽之，我们算法中所需要的主要参数是一个6元组(p,a,b,G,n,h)。
+随机曲线 当我们说离散对数问题是一个“困难的问题”时，其实并不完全正确。这里有一些椭圆曲线是非常脆弱的，这些椭圆曲线能够被一些具有特殊目的的算法快速解决。例如，所有的曲线满足 $p = hn$ (这种曲线的有限域的阶和椭圆曲线的阶相同)能够被Smart&#39;s attack轻而易举地攻破,这个攻击方式能够在多项式时间内将离散对数问题解决。 现在，假设我给你一些曲线的主要参数。这里就会存在一个问题，就是可能我已经发现了一些脆弱的能够被轻而易举地攻破的曲线，但是没有其它人知道，而且我能够建立一个“”快速”的算法，很快地得到我刚刚给你的离散对数的答案。那么我该如何说服你相信我，或者说我并不知道任何的弱点呢？也就是说我该如何证明，这个曲线是安全的（在某种意义上说，这不能被我以特殊的目的攻击）？
+为了能够解决这类问题，我们常常会增加一个主要参数：种子S（seed S）。这是一个随机数用来生成系数a和b，或者是基点G，或者两者。这些参数通过对S计算hash生成。Hash，众所周知，非常容易计算，但是逆运算是非常&amp;quot;困难&amp;quot;的。  通过种子生成一个随机曲线的示意图：一个随机数的hash是用来计算曲线的不同参数的。 如果我们想要作弊，通过主要参数中得到随机种子，我们需要解决一个&#34;hard&#34;问题：hash逆推 一个通过种子生成的曲线被称为通过随机验证。这个利用hash生成参数的理论被称为&#34;nothing up mu sleeve&#34;,这个理论被广泛应用在密码学中。 这个技巧能够提供一些保障，保证这个曲线不是被作者精心设计的隐藏的脆弱的。实际上，如果我给你一个曲线和以和种子，它就意味着我不能够任意地选择参数a和b,而你也相对的可以肯定这个曲线不能够被我利用特定的目的攻击。而这个“相对的”的原因我将在下一篇文章中进行解释。 一个用于生成和检查随机曲线的标准算法已经在ANSI X.9.62中进行描述，这个算法是基于SHA-1。如果你对这个感兴趣，你可以阅读a specification by SECG了解生成可信的随机曲线算法（搜索 &amp;ldquo;Verifiably Random Curves and Base Point Generators&amp;rdquo;）。
+我写了一个简单的python脚本用于验证所有的随机曲线，这个脚本是基于OpenSSL的。我非常建议你去看看。
+椭圆曲线加密(Elliptic Curve Cryptography) 我们在前面花了很多时间，但是最后我们还是到这一节了！废话不多说，简单粗暴： 1. 私钥是一个随机的整数，从${1,...,n-1}$中选择(其中n 是子群的阶)。 2. 公钥是一个点H满足条件H = dG(其中G是这个子群的基点) 看到了嘛？如果我们知道d和G（以及其他的主要参数），找到最终的H是很&amp;quot;简单&amp;quot;的。但是如果我们知道H和G，找到私钥d是困难的，因为这需要我们解决一个离散对数问题。
+现在我们将介绍两个基于上述条件的公钥加密算法：ECDH(Elliptic curve Diffie-Hellman)用于加密，另一个是ECDSA(Elliptic Curve Digital Signature Algorithm)用于数字签名。</description>
+    </item>
+    
+    <item>
+      <title>Elliptic Curve Cryptography: a gentle introduction (2)</title>
+      <link>https://chenquan.me/posts/elliptic-curve-cryptography_a-gentle-introduction_2/</link>
+      <pubDate>Wed, 14 Jun 2017 15:14:45 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/elliptic-curve-cryptography_a-gentle-introduction_2/</guid>
+      <description>这篇文章是ECC:优雅入门系列的第二篇文章
+在前面的文章中，我们已经知道了椭圆曲线是如何在实数域内定义一个群的。特别地我们已经定义了一种点加的规则:给定三个齐次的点，它们的和为0 $(P+Q+R=0)$。我们已经通过一个几何方法和一种代数方法来描述计算点的加法。
+然后我们介绍了一个扩展标量乘法$(nP = P+P+…+P)$我们也找到了一种较为简单的计算标量乘法的”简便“算法:double and add。
+现在我们将我们的椭圆曲线严格限制到有限域（finiite fields）中，而不是在实数域中，我们看看会有什么变化。
+p的整数模域(The field of integers modulo p) 首先，有限域，是一个有限数字元素的集合。一个有限域的例子就是p的证书模。其中p是一个素数。这通常会被称为$\mathbb{Z}/p,GF(p)$ 或者$\mathbb{F}_p$。我们会在后面用到这些符号。 在域中我们有两个双目运算，加法($+$)和乘法( $\times$ )。这两者都是闭集，满足结合律以及交换律。对于这两个操作，存在这样的唯一元素，有且仅有唯一的相反元素。最终，乘法可以分配到加法中：$ x\times (y+z) = x \times y+x \times z $。
+这个p的整数模域包括了所有的从0到p-1的整数。加法和乘法也都能够在模运算中表现良好，这里有$\mathbb{F}_{23}$的一些样例操作：
+ 加法 $(18 + 9)\mod 23 = 4$ 减法 $(7 - 14)\mod 23 = 16$ 乘法 $4\cdot7\mod 23 = 5$ 相反加 $-5\mod 23 = 18$  特别地: $(5+(-5))\mod 23 = (5+18)\mod 23 = 0$   相反幂 $9^{-1} \mod 23 = 18$  特别地： $9\cdot9^{-1}\mod 23 = 9 \cdot 18\ mod\ 23 = 1$    如果这些等式对你来说不是很熟悉，那么你可能需要恶补一下有关模运算的有关知识，你可以到可汗学院学习一下。 前已经阐明，p 的模整数是一个域，并且其拥有的所有属性都已经列出。需要注意的是，p 必须是素数，这点非常重要。4的模整数就不是一个域：2没有相反幂（例如，等式 $2\cdot x\mod 4 = 1$没有解）</description>
+    </item>
+    
+    <item>
+      <title>Elliptic Curve Cryptography: a gentle introduction (1)</title>
+      <link>https://chenquan.me/posts/elliptic-curve-cryptography_a-gentle-introduction_1/</link>
+      <pubDate>Mon, 12 Jun 2017 15:37:22 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/elliptic-curve-cryptography_a-gentle-introduction_1/</guid>
+      <description>现在我们可以在TLS,PGP,SSH等应用中看到椭圆曲线加密系统的踪影，这三个应用几乎构建起了现代web应用和信息技术世界的基石，更不要说Bitcoin以及其他的加密货币。
+在ECC流行之前，几乎所有的公钥算法都是基于RSA,DSA以及DH，这些算法都是基于同余理论构建的。RSA以及其同类算法现在还是很流行，往往配合ECC一同使用，相对于RSA这种原理很容易被人理解，也很容易实现的算法而言，ECC的内部机理对大多数人而言似乎是一种未解之谜。
+我将会用这一系列的文章带领大家进入椭圆曲线加密的全新世界，我的目标不是详细地说明ECC的全部细节(这些在网上随手都能搜索到)，而是要提供一个简单易懂的教程说明什么是ECC，以及为什么它是安全的，当然我也不想花费大量的时间去进行数学证明。我将会提供一些有用的样例然后用一些生动的动态交互工具和脚本去展现它们。
+特别地，这里有些点事我将要提及的：
+为了理解这里都在说些什么，你需要预先理解一些理论：几何和现代代数，并且需要了解对称加密和非对称加密算法，最后你需要对什么是easy的问题，什么是hard的问题有一个清晰的认识。
+准备好了吗？让我们开始吧！
+   椭圆曲线 （Elliptic Curves）  首先，从什么是椭圆曲线（Elliptic Curver）开始，Wolfram MathWorld给了一个完整定义: 但是我们不玩这个，简单来说，椭圆曲线就是一个可以通过等式： $$ y^2 = x^3 + ax + b $$
+描述的点集。
+其中$4a^3+27b^2 \neq 0$
+ 因为需要排除掉 singular curves 也称奇异曲线。
+ 上述的等式叫做椭圆曲线_Weierstrass normal form_
+ 上图是不同椭圆曲线的形状（ b=1, a从2变化到-3 ）
+  singularities 曲线:
+左边, a curve with a cusp（尖点）:$y^2=x^3$
+右边, a curve with a self-intersection（自交）$y^2 = x^3 - 3x + 2$上述两者均为不合法的椭圆曲线
+ 根据不同的a和b，椭圆曲线可能在平面上展现出不同的形状，很明显，椭圆曲线是关于x轴对称的。
+在我们的设计当中，我们还需要一个_无穷点_ Point at infinity（或者称为理想点），现在我们用符号 0 作为作为我们的无穷点。</description>
+    </item>
+    
+    <item>
+      <title>普吉岛之旅 - 雨季去浮潜是怎样的体验</title>
+      <link>https://chenquan.me/posts/diving-in-puket-/</link>
+      <pubDate>Sat, 10 Jun 2017 11:42:02 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/diving-in-puket-/</guid>
+      <description> http://chenquanme.oss-cn-shanghai.aliyuncs.com/blog/puket.mp4
+  普吉岛
+2017年5月
+hyperchain 团建
+ </description>
+    </item>
+    
+    <item>
+      <title>你好泰国! 带着索尼 A6000 去普吉岛拍照</title>
+      <link>https://chenquan.me/posts/hello-tailand-traveling-in-puket/</link>
+      <pubDate>Fri, 09 Jun 2017 13:39:10 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/hello-tailand-traveling-in-puket/</guid>
+      <description> Puket, Thailand
+2017-05-23/2017-05-28
+Sony a6000 / iPhone SE
+ </description>
+    </item>
+    
+    <item>
+      <title>一个成功的git分支模型</title>
+      <link>https://chenquan.me/posts/a-successful-git-branch-model/</link>
+      <pubDate>Sun, 16 Apr 2017 14:34:58 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/a-successful-git-branch-model/</guid>
+      <description>在这篇文章中我将介绍一些在过去一年中（无论是工作还是个人项目中）较为成功的开发模型，这里不会介绍很多项目的细节，仅仅是介绍分支策略和发布管理。
+整个模型都是专注于Git 作为一个源代码版本管理工具进行的。
+   Why git  尽管Git和中央源代码管理系统之间的优劣讨论从未停止过，期间的争论也很激烈，但是作为一个开发者，我更习惯用Git作为我的版本管理工具，Git彻底改变了开发者合并和分支的思维习惯。在传统的CVS/Subversion系统中 ，合并分支是一件非常恐怖的事情，你需要非常小心。
+但是在Git中，这些行为变得非常地简单并且安全，这几乎变成了程序员每天工作流中的核心部分。就拿书来说，讲CVS/Subversion系统的书中，分支和合并几乎是在后面的章节中进行介绍的（为高级用户准备的）但是在几乎所有介绍Git的书中，分支和合并的内容都放到了前三章作为基础内容进行介绍。
+   Decentrailzed but centrailzed  （标题我译为分布且集中，但是好像并不是很恰当）
+在我们的日常工作中，工作较好的模型是存在一个中心化的truth”（可信）仓库，需要注意的是，这个仓库仅仅是在逻辑上被设置为一个中央仓库（因为Git是一个DVCS&amp;lt;分布式版本控制系统&amp;gt;，它在技术层面并没有一个实际意义上的中央仓库）我们将这个“中央”仓库称为origin，几乎所有的Giter都对这个名字非常熟悉。
+所有的开发者都从origin 拉取代码，并将修改push到origin仓库中。除了到中央仓库push-pull之外，开发者还可以从其他的子团队分支中拉取代码。举例来说，在开发一个非常重大的feature的时候，可能会有多个开发者共同合作，很多时候push到“中央”仓库可能还太早，这个时候这些子团队分支就起到作用了。就像上图所示，这些子团队分支就像Alice-Bob，Alice-David和Clair-David子团队分支。
+从技术上来说，让Alice 定义一个新的名叫Bob的远程分支，并将其指向Bob的仓库，并不需要多少成本，反之亦然。
+   The main branches  （主分支策略）
+这个开发模型在很大程度上是由现有的模型演变而来，就像下图所示。核心仓库有两个无限生命周期的分支：
+ master develop  在origin仓库的master分支相信对所有的Git user一定非常熟悉，与master分支同时存在的分支并行发展，被称为develop分支。
+我们通常将origin/master分支作为源代码的HEAD，并将其标记为production-ready（可供发布）状态。
+我们把origin/develop分支作标记为最新开发进度的HEAD，所有在develop分支上所做的改变都将体现在下个发布版本中。有的人将这个分支为“集成分支”，很多自动化的预发布版本都是从这个分支编译而来。
+当develop分支上的源代码达到了一个可以发布的点的时候，所有的变更都将以某种方式合并回master并将打上一个发布tag。当然具体是怎么做的将在今后进行讨论。
+因此，每次将变更合并到master就意味着新的生成版本发。所以这件事需要非常严格地进行审核，从理论上讲，我们可以在每次commit到maser分支的时候，用git hooks进行自动化编译，并自动化地将我们的软件发布到我们的生产服务器。
+   Supporting branches  除了main分支和develop分支，我们的开发模型还拥有很多支持分支来帮助团队成员之间进行协作，这些分支可以方便跟踪新特性，为生产发布做准备和快速热修复产品中的问题。不像前面提到的主要分支，这些分支最终都会本删除，所以这些分支的生命周期是有限的。
+支持分支主要分为以下三类：
+ Feature branches Release branches Hotfix branches  这些分支都有其自身的目标，并遵守相应严格的规则去确定哪个分支是其的源分支，那些分支是其需要合并进入的分支。
+实际上从技术层面这些分支和普通分支一样并不是特殊的分支。这些分支的分类取决于我们如何去使用它。这些分支实际上就是普通的Git分支。
+   Feature branches  可能检出的分支：</description>
+    </item>
+    
+    <item>
+      <title>Sublime Text 安装配置，代理设置，插件管理</title>
+      <link>https://chenquan.me/posts/sublime-text-installation-proxy-plugin/</link>
+      <pubDate>Thu, 25 Aug 2016 00:09:16 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/sublime-text-installation-proxy-plugin/</guid>
+      <description>我一直想写一篇文章，用来说明如何按照我自己的喜好来进行Sublime Text(目前版本是V3)的安装和设置。
+这篇文章更多的是为我自己写的一篇指南，以免未来的什么时候我忘记了。如果这篇文章能够帮到你，那就更棒啦！
+   步骤1: 下载并且安装  你可以从以下链接下载最新版本：
+ Sublime Text 2 Sublime Text 3  目前我使用的版本是ST3 build 3065 更新于2014年8月29日
+ 译者 用的版本是st3 build 3083
+    步骤2: 安装Package Control (插件管理工具)  如果想安装其他的插件，需要先安装这个Package Control 插件，请遵照这个链接中的安装教程：
+Package Control Install
+注意：如果你在使用代理，可能需要手动下载并安装这个包，安装完成之后，需要重启下sublime text (出于安全因素的考虑)
+译者 ：
+由于考虑到国内不一定能打开安装链接，我把安装代码贴在下面，请在st3中按快捷键’ctrl+`’然后再弹出的输入框中输入以下代码并回车（2015/8/25）：
+1 2 3 4 5  import urllib.request,os,hashlib; h = &amp;#39;eb2297e1a458f27d836c04bb0cbaf282&amp;#39; +&amp;amp;lt;/blockquote&amp;amp;gt; &amp;#39;d0e7a3098092775ccb37ca9d6b2e4b7d&amp;#39;; pf = &amp;#39;Package Control.sublime-package&amp;#39;; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.</description>
+    </item>
+    
+  </channel>
+</rss>

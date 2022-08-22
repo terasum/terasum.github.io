@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="theme-color" content="dark">
+    <title>Haskell — 你应该学的一门语言 | CodeStack</title>
+
+    
+    
+    
+    <meta property="og:site_name" content="Hugo Tania is Amazing" />
+    <meta property="og:title" content="Haskell — 你应该学的一门语言 | CodeStack"/>
+    <meta itemprop="name" content="Haskell — 你应该学的一门语言 | CodeStack" />
+    <meta name="twitter:title" content="Haskell — 你应该学的一门语言 | CodeStack" />
+    <meta name="application-name" content="Haskell — 你应该学的一门语言 | CodeStack" />
+
+
+    <meta name="description" content="Hugo is Absurdly Fast!" />
+    <meta name="twitter:description" content="Hugo is Absurdly Fast!"/>
+    <meta itemprop="description" content="Hugo is Absurdly Fast!"/>
+    <meta property="og:description" content="Hugo is Absurdly Fast!" />
+
+    
+
+
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    
+    <link rel="stylesheet" href="/sass/main.min.0158e06e6beeec53cf25d2cb31334e3da41c26993a6f06151e34b499e132997a.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.gallery.min.css" integrity="sha512-B31/elyDKOSa2yGC1ALSAHkdlJ5FOhZJTNANGUFxWOnVMfKQmekRG2/sNdp6yJPrO7Ae9rlAxUlr0QjiJne01Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.css" integrity="sha512-56GJrpSgHk6Mc9Fltt+bQKcICJoEpxtvozXPA5n5OT0rfWiqGlJmJCI/vl16kctf/0XbBloh03vl7OF2xFnR8g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+</head>
+    <script>
+    (function() {
+        const colorSchemeKey = 'ThemeColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.userColorScheme = 'dark';
+        } else {
+            document.documentElement.dataset.userColorScheme = 'light';
+        }
+    })();
+</script>
+
+    <body class="dark">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-content flex">
+            <div id="nav-left" class="nav-left flex">
+                <a class="brand" href="/">
+                    
+                    <i class="fas fa-code"></i> 
+                    &nbsp; CodeStack
+                 </a>
+                 
+                 
+                 <a id="nav-left-extend" href="javascript:toggle_nav_extend();" class="nav-left-extend"><i class="czs-category-l"></i></a>
+            </div>
+
+            <div id="nav-right" class="nav-right flex">
+                
+                <a target="_blank" href="https://docker.chenquan.me/">
+                    
+                    <i class="fab fa-docker"></i>
+                    
+                   Docker 教程 
+                </a>
+                
+                <a target="_blank" href="/articles/">
+                    
+                    <i class="fas fa-archive"></i>
+                    
+                   文章归档 
+                </a>
+                
+
+                
+            </div>
+         </div>
+    </div>
+</nav>
+
+<script lang="javascript">
+    
+    function toggle_search_box() {
+        let search_box = document.getElementById('search-query');
+        let computedStyle = window.getComputedStyle(search_box, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'block') {
+            search_box.setAttribute('style', 'display: none; width: 0px;');
+        } else {
+            search_box.setAttribute('style', 'display: block; width: 200px;');
+        }
+    }
+    
+    function toggle_nav_extend() {
+        let nav_left_extend = document.getElementById('nav-left-extend');
+        let extend_icon = nav_left_extend.children[0];
+        let nav_right = document.getElementById('nav-right');
+        let computedStyle = window.getComputedStyle(nav_right, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'flex') {
+            nav_right.setAttribute('style', 'display: none;');
+            extend_icon.setAttribute('style', 'font-size: 26px;');
+            extend_icon.setAttribute('class', 'czs-category-l');
+        } else {
+            extend_icon.setAttribute('class', 'czs-close-l');
+            extend_icon.setAttribute('style', 'font-size: 20px;padding: 1px 0 0 3px;');
+            nav_right.setAttribute('style', 'display: flex;');
+        }
+    }
+</script>
+        <main>
+            
+<div class="container mainarea post-shadow">
+    <article class="post-article">
+        <header class="article-header">
+            <div class="thumb">
+                <div>
+                    <h1>Haskell — 你应该学的一门语言</h1>
+                    <div class="post-meta">
+                        <div>
+                            
+                            
+                            By terasum / <time>2017-08-09</time>
+                        </div>
+                        <div class="tags">
+                            
+                            <a href="/tags/haskell/">haskell</a>
+                            
+                            <a href="/tags/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/">函数式编程</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="article-post" id="write">
+        <p>三月的时候立下一个flag, 说是在一个月内学会haskell，现在已经8月了，终于有时间坐下来好好地看看haskell,一直以来我都执着于各种语言，现在已经掌握的语言包括: go, python, php, c, java, javascript, shell, 这些语言在不同的领域都是神兵利器，能够帮我解决不同的问题，但是haskell不一样，是一种我完全凭借兴趣去学习的语言。</p>
+<p>刚开始看趣学指南的时候，觉得这门语言语法太奇怪了，我看得很难受。慢慢发现这其实是一种思维定势，如果我的第一门入门语言是haskell的话，想必就不是这种态度了。 Haskell是一门非常迷人的语言，它的列表推导式真的很厉害，能够解决原来传统过程式语言需要写很多代码才能解决的问题。它给了你另外一种思考问题的方式，开阔视野。</p>
+<p>我觉得既然是计算机从业者，都应该去学学python和haskell两门语言，python将教会你什么如何让世界变美好，Haskell将告诉你这个世界是多么奇妙。如果你现在被冯·诺依曼式的架构侵染太深的话，学学Haskell吧，它会告诉你这世界上还有这样写代码的方式。</p>
+<h2 id="书籍">
+    <a href="#%e4%b9%a6%e7%b1%8d" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    书籍
+</h2>
+<p>最棒的haskell免费入门书 <a href="http://learnyouahaskell.com/chapters">haskell趣学指南</a></p>
+<h2 id="视频">
+    <a href="#%e8%a7%86%e9%a2%91" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    视频
+</h2>
+<p>下面是两小时入门haskell的内容，视频我也贴在下面了，但直接访问不了，你懂的。</p>
+<h2 id="讲义">
+    <a href="#%e8%ae%b2%e4%b9%89" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    讲义
+</h2>
+<p>下面是我翻译过的视频随堂讲义内容：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span><span class="lnt">122
+</span><span class="lnt">123
+</span><span class="lnt">124
+</span><span class="lnt">125
+</span><span class="lnt">126
+</span><span class="lnt">127
+</span><span class="lnt">128
+</span><span class="lnt">129
+</span><span class="lnt">130
+</span><span class="lnt">131
+</span><span class="lnt">132
+</span><span class="lnt">133
+</span><span class="lnt">134
+</span><span class="lnt">135
+</span><span class="lnt">136
+</span><span class="lnt">137
+</span><span class="lnt">138
+</span><span class="lnt">139
+</span><span class="lnt">140
+</span><span class="lnt">141
+</span><span class="lnt">142
+</span><span class="lnt">143
+</span><span class="lnt">144
+</span><span class="lnt">145
+</span><span class="lnt">146
+</span><span class="lnt">147
+</span><span class="lnt">148
+</span><span class="lnt">149
+</span><span class="lnt">150
+</span><span class="lnt">151
+</span><span class="lnt">152
+</span><span class="lnt">153
+</span><span class="lnt">154
+</span><span class="lnt">155
+</span><span class="lnt">156
+</span><span class="lnt">157
+</span><span class="lnt">158
+</span><span class="lnt">159
+</span><span class="lnt">160
+</span><span class="lnt">161
+</span><span class="lnt">162
+</span><span class="lnt">163
+</span><span class="lnt">164
+</span><span class="lnt">165
+</span><span class="lnt">166
+</span><span class="lnt">167
+</span><span class="lnt">168
+</span><span class="lnt">169
+</span><span class="lnt">170
+</span><span class="lnt">171
+</span><span class="lnt">172
+</span><span class="lnt">173
+</span><span class="lnt">174
+</span><span class="lnt">175
+</span><span class="lnt">176
+</span><span class="lnt">177
+</span><span class="lnt">178
+</span><span class="lnt">179
+</span><span class="lnt">180
+</span><span class="lnt">181
+</span><span class="lnt">182
+</span><span class="lnt">183
+</span><span class="lnt">184
+</span><span class="lnt">185
+</span><span class="lnt">186
+</span><span class="lnt">187
+</span><span class="lnt">188
+</span><span class="lnt">189
+</span><span class="lnt">190
+</span><span class="lnt">191
+</span><span class="lnt">192
+</span><span class="lnt">193
+</span><span class="lnt">194
+</span><span class="lnt">195
+</span><span class="lnt">196
+</span><span class="lnt">197
+</span><span class="lnt">198
+</span><span class="lnt">199
+</span><span class="lnt">200
+</span><span class="lnt">201
+</span><span class="lnt">202
+</span><span class="lnt">203
+</span><span class="lnt">204
+</span><span class="lnt">205
+</span><span class="lnt">206
+</span><span class="lnt">207
+</span><span class="lnt">208
+</span><span class="lnt">209
+</span><span class="lnt">210
+</span><span class="lnt">211
+</span><span class="lnt">212
+</span><span class="lnt">213
+</span><span class="lnt">214
+</span><span class="lnt">215
+</span><span class="lnt">216
+</span><span class="lnt">217
+</span><span class="lnt">218
+</span><span class="lnt">219
+</span><span class="lnt">220
+</span><span class="lnt">221
+</span><span class="lnt">222
+</span><span class="lnt">223
+</span><span class="lnt">224
+</span><span class="lnt">225
+</span><span class="lnt">226
+</span><span class="lnt">227
+</span><span class="lnt">228
+</span><span class="lnt">229
+</span><span class="lnt">230
+</span><span class="lnt">231
+</span><span class="lnt">232
+</span><span class="lnt">233
+</span><span class="lnt">234
+</span><span class="lnt">235
+</span><span class="lnt">236
+</span><span class="lnt">237
+</span><span class="lnt">238
+</span><span class="lnt">239
+</span><span class="lnt">240
+</span><span class="lnt">241
+</span><span class="lnt">242
+</span><span class="lnt">243
+</span><span class="lnt">244
+</span><span class="lnt">245
+</span><span class="lnt">246
+</span><span class="lnt">247
+</span><span class="lnt">248
+</span><span class="lnt">249
+</span><span class="lnt">250
+</span><span class="lnt">251
+</span><span class="lnt">252
+</span><span class="lnt">253
+</span><span class="lnt">254
+</span><span class="lnt">255
+</span><span class="lnt">256
+</span><span class="lnt">257
+</span><span class="lnt">258
+</span><span class="lnt">259
+</span><span class="lnt">260
+</span><span class="lnt">261
+</span><span class="lnt">262
+</span><span class="lnt">263
+</span><span class="lnt">264
+</span><span class="lnt">265
+</span><span class="lnt">266
+</span><span class="lnt">267
+</span><span class="lnt">268
+</span><span class="lnt">269
+</span><span class="lnt">270
+</span><span class="lnt">271
+</span><span class="lnt">272
+</span><span class="lnt">273
+</span><span class="lnt">274
+</span><span class="lnt">275
+</span><span class="lnt">276
+</span><span class="lnt">277
+</span><span class="lnt">278
+</span><span class="lnt">279
+</span><span class="lnt">280
+</span><span class="lnt">281
+</span><span class="lnt">282
+</span><span class="lnt">283
+</span><span class="lnt">284
+</span><span class="lnt">285
+</span><span class="lnt">286
+</span><span class="lnt">287
+</span><span class="lnt">288
+</span><span class="lnt">289
+</span><span class="lnt">290
+</span><span class="lnt">291
+</span><span class="lnt">292
+</span><span class="lnt">293
+</span><span class="lnt">294
+</span><span class="lnt">295
+</span><span class="lnt">296
+</span><span class="lnt">297
+</span><span class="lnt">298
+</span><span class="lnt">299
+</span><span class="lnt">300
+</span><span class="lnt">301
+</span><span class="lnt">302
+</span><span class="lnt">303
+</span><span class="lnt">304
+</span><span class="lnt">305
+</span><span class="lnt">306
+</span><span class="lnt">307
+</span><span class="lnt">308
+</span><span class="lnt">309
+</span><span class="lnt">310
+</span><span class="lnt">311
+</span><span class="lnt">312
+</span><span class="lnt">313
+</span><span class="lnt">314
+</span><span class="lnt">315
+</span><span class="lnt">316
+</span><span class="lnt">317
+</span><span class="lnt">318
+</span><span class="lnt">319
+</span><span class="lnt">320
+</span><span class="lnt">321
+</span><span class="lnt">322
+</span><span class="lnt">323
+</span><span class="lnt">324
+</span><span class="lnt">325
+</span><span class="lnt">326
+</span><span class="lnt">327
+</span><span class="lnt">328
+</span><span class="lnt">329
+</span><span class="lnt">330
+</span><span class="lnt">331
+</span><span class="lnt">332
+</span><span class="lnt">333
+</span><span class="lnt">334
+</span><span class="lnt">335
+</span><span class="lnt">336
+</span><span class="lnt">337
+</span><span class="lnt">338
+</span><span class="lnt">339
+</span><span class="lnt">340
+</span><span class="lnt">341
+</span><span class="lnt">342
+</span><span class="lnt">343
+</span><span class="lnt">344
+</span><span class="lnt">345
+</span><span class="lnt">346
+</span><span class="lnt">347
+</span><span class="lnt">348
+</span><span class="lnt">349
+</span><span class="lnt">350
+</span><span class="lnt">351
+</span><span class="lnt">352
+</span><span class="lnt">353
+</span><span class="lnt">354
+</span><span class="lnt">355
+</span><span class="lnt">356
+</span><span class="lnt">357
+</span><span class="lnt">358
+</span><span class="lnt">359
+</span><span class="lnt">360
+</span><span class="lnt">361
+</span><span class="lnt">362
+</span><span class="lnt">363
+</span><span class="lnt">364
+</span><span class="lnt">365
+</span><span class="lnt">366
+</span><span class="lnt">367
+</span><span class="lnt">368
+</span><span class="lnt">369
+</span><span class="lnt">370
+</span><span class="lnt">371
+</span><span class="lnt">372
+</span><span class="lnt">373
+</span><span class="lnt">374
+</span><span class="lnt">375
+</span><span class="lnt">376
+</span><span class="lnt">377
+</span><span class="lnt">378
+</span><span class="lnt">379
+</span><span class="lnt">380
+</span><span class="lnt">381
+</span><span class="lnt">382
+</span><span class="lnt">383
+</span><span class="lnt">384
+</span><span class="lnt">385
+</span><span class="lnt">386
+</span><span class="lnt">387
+</span><span class="lnt">388
+</span><span class="lnt">389
+</span><span class="lnt">390
+</span><span class="lnt">391
+</span><span class="lnt">392
+</span><span class="lnt">393
+</span><span class="lnt">394
+</span><span class="lnt">395
+</span><span class="lnt">396
+</span><span class="lnt">397
+</span><span class="lnt">398
+</span><span class="lnt">399
+</span><span class="lnt">400
+</span><span class="lnt">401
+</span><span class="lnt">402
+</span><span class="lnt">403
+</span><span class="lnt">404
+</span><span class="lnt">405
+</span><span class="lnt">406
+</span><span class="lnt">407
+</span><span class="lnt">408
+</span><span class="lnt">409
+</span><span class="lnt">410
+</span><span class="lnt">411
+</span><span class="lnt">412
+</span><span class="lnt">413
+</span><span class="lnt">414
+</span><span class="lnt">415
+</span><span class="lnt">416
+</span><span class="lnt">417
+</span><span class="lnt">418
+</span><span class="lnt">419
+</span><span class="lnt">420
+</span><span class="lnt">421
+</span><span class="lnt">422
+</span><span class="lnt">423
+</span><span class="lnt">424
+</span><span class="lnt">425
+</span><span class="lnt">426
+</span><span class="lnt">427
+</span><span class="lnt">428
+</span><span class="lnt">429
+</span><span class="lnt">430
+</span><span class="lnt">431
+</span><span class="lnt">432
+</span><span class="lnt">433
+</span><span class="lnt">434
+</span><span class="lnt">435
+</span><span class="lnt">436
+</span><span class="lnt">437
+</span><span class="lnt">438
+</span><span class="lnt">439
+</span><span class="lnt">440
+</span><span class="lnt">441
+</span><span class="lnt">442
+</span><span class="lnt">443
+</span><span class="lnt">444
+</span><span class="lnt">445
+</span><span class="lnt">446
+</span><span class="lnt">447
+</span><span class="lnt">448
+</span><span class="lnt">449
+</span><span class="lnt">450
+</span><span class="lnt">451
+</span><span class="lnt">452
+</span><span class="lnt">453
+</span><span class="lnt">454
+</span><span class="lnt">455
+</span><span class="lnt">456
+</span><span class="lnt">457
+</span><span class="lnt">458
+</span><span class="lnt">459
+</span><span class="lnt">460
+</span><span class="lnt">461
+</span><span class="lnt">462
+</span><span class="lnt">463
+</span><span class="lnt">464
+</span><span class="lnt">465
+</span><span class="lnt">466
+</span><span class="lnt">467
+</span><span class="lnt">468
+</span><span class="lnt">469
+</span><span class="lnt">470
+</span><span class="lnt">471
+</span><span class="lnt">472
+</span><span class="lnt">473
+</span><span class="lnt">474
+</span><span class="lnt">475
+</span><span class="lnt">476
+</span><span class="lnt">477
+</span><span class="lnt">478
+</span><span class="lnt">479
+</span><span class="lnt">480
+</span><span class="lnt">481
+</span><span class="lnt">482
+</span><span class="lnt">483
+</span><span class="lnt">484
+</span><span class="lnt">485
+</span><span class="lnt">486
+</span><span class="lnt">487
+</span><span class="lnt">488
+</span><span class="lnt">489
+</span><span class="lnt">490
+</span><span class="lnt">491
+</span><span class="lnt">492
+</span><span class="lnt">493
+</span><span class="lnt">494
+</span><span class="lnt">495
+</span><span class="lnt">496
+</span><span class="lnt">497
+</span><span class="lnt">498
+</span><span class="lnt">499
+</span><span class="lnt">500
+</span><span class="lnt">501
+</span><span class="lnt">502
+</span><span class="lnt">503
+</span><span class="lnt">504
+</span><span class="lnt">505
+</span><span class="lnt">506
+</span><span class="lnt">507
+</span><span class="lnt">508
+</span><span class="lnt">509
+</span><span class="lnt">510
+</span><span class="lnt">511
+</span><span class="lnt">512
+</span><span class="lnt">513
+</span><span class="lnt">514
+</span><span class="lnt">515
+</span><span class="lnt">516
+</span><span class="lnt">517
+</span><span class="lnt">518
+</span><span class="lnt">519
+</span><span class="lnt">520
+</span><span class="lnt">521
+</span><span class="lnt">522
+</span><span class="lnt">523
+</span><span class="lnt">524
+</span><span class="lnt">525
+</span><span class="lnt">526
+</span><span class="lnt">527
+</span><span class="lnt">528
+</span><span class="lnt">529
+</span><span class="lnt">530
+</span><span class="lnt">531
+</span><span class="lnt">532
+</span><span class="lnt">533
+</span><span class="lnt">534
+</span><span class="lnt">535
+</span><span class="lnt">536
+</span><span class="lnt">537
+</span><span class="lnt">538
+</span><span class="lnt">539
+</span><span class="lnt">540
+</span><span class="lnt">541
+</span><span class="lnt">542
+</span><span class="lnt">543
+</span><span class="lnt">544
+</span><span class="lnt">545
+</span><span class="lnt">546
+</span><span class="lnt">547
+</span><span class="lnt">548
+</span><span class="lnt">549
+</span><span class="lnt">550
+</span><span class="lnt">551
+</span><span class="lnt">552
+</span><span class="lnt">553
+</span><span class="lnt">554
+</span><span class="lnt">555
+</span><span class="lnt">556
+</span><span class="lnt">557
+</span><span class="lnt">558
+</span><span class="lnt">559
+</span><span class="lnt">560
+</span><span class="lnt">561
+</span><span class="lnt">562
+</span><span class="lnt">563
+</span><span class="lnt">564
+</span><span class="lnt">565
+</span><span class="lnt">566
+</span><span class="lnt">567
+</span><span class="lnt">568
+</span><span class="lnt">569
+</span><span class="lnt">570
+</span><span class="lnt">571
+</span><span class="lnt">572
+</span><span class="lnt">573
+</span><span class="lnt">574
+</span><span class="lnt">575
+</span><span class="lnt">576
+</span><span class="lnt">577
+</span><span class="lnt">578
+</span><span class="lnt">579
+</span><span class="lnt">580
+</span><span class="lnt">581
+</span><span class="lnt">582
+</span><span class="lnt">583
+</span><span class="lnt">584
+</span><span class="lnt">585
+</span><span class="lnt">586
+</span><span class="lnt">587
+</span><span class="lnt">588
+</span><span class="lnt">589
+</span><span class="lnt">590
+</span><span class="lnt">591
+</span><span class="lnt">592
+</span><span class="lnt">593
+</span><span class="lnt">594
+</span><span class="lnt">595
+</span><span class="lnt">596
+</span><span class="lnt">597
+</span><span class="lnt">598
+</span><span class="lnt">599
+</span><span class="lnt">600
+</span><span class="lnt">601
+</span><span class="lnt">602
+</span><span class="lnt">603
+</span><span class="lnt">604
+</span><span class="lnt">605
+</span><span class="lnt">606
+</span><span class="lnt">607
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-haskell" data-lang="haskell"><span class="c1">-- Haskell 是一种函数式编程语言</span>
+<span class="c1">-- 在Haskell 中所有的值都是immutable 的，所以一旦一个变量被赋值之后，它就不会改变了</span>
+<span class="c1">-- 函数可以作为另一个函数的参数</span>
+<span class="c1">-- 递归函数在hankell中很普遍</span>
+<span class="c1">-- Haskell没有for.while，以及典型的变量，但是它拥有常量</span>
+<span class="c1">-- Haskell试试一种惰性求值的语言，只有在真正需要的时候再进行求值，以及错误检查</span>
+
+
+<span class="c1">-- 最佳的Best free book</span>
+<span class="c1">-- http://learnyouahaskell.com/chapters</span>
+
+
+<span class="c1">-- 输入 ghci 到你的terminal中</span>
+
+<span class="kr">import</span> <span class="nn">Data.List</span>
+<span class="kr">import</span> <span class="nn">System.IO</span>
+
+<span class="c1">-- This is haskell comment single line</span>
+
+<span class="cm">{-
+</span><span class="cm">
+</span><span class="cm">muti-line comment
+</span><span class="cm">-}</span>
+
+
+<span class="c1">-- --------DATA types ---------</span>
+<span class="c1">-- Haskell 能够自己进行类型推定</span>
+<span class="c1">-- Haskell 是一种静态类型语言，在编译之后无法改变类型</span>
+<span class="c1">-- 值不可变(immutable)</span>
+<span class="c1">-- 你可以在gchi 中使用 :t 来查看数据类型</span>
+
+<span class="c1">-- Int : 所有的数字范围在 -2^63 ~ 2^63</span>
+<span class="c1">-- :: Int 表示这个类型是一个Int类型的数据</span>
+
+<span class="nf">maxInt</span> <span class="ow">=</span> <span class="n">maxBound</span> <span class="ow">::</span> <span class="kt">Int</span>
+<span class="nf">minInt</span> <span class="ow">=</span> <span class="n">minBount</span> <span class="ow">::</span> <span class="kt">Int</span>
+
+<span class="c1">-- Integer 无限制的number类型</span>
+
+<span class="c1">-- Float： 单精度浮点数</span>
+<span class="c1">-- Double: 双精度浮点数</span>
+<span class="nf">bigFloat</span> <span class="ow">=</span> <span class="mf">3.99999999999</span><span class="o">+</span><span class="mf">0.00000000005</span> 
+
+<span class="c1">-- Bool： True或者False</span>
+<span class="c1">-- Char: 一个unicode字符，用单引号括起来</span>
+<span class="c1">-- Tuple: 能够存储多种数据类型的一组数据 (11 pts 精度)</span>
+
+<span class="c1">-- 你可以用这种方式声明一个常量</span>
+
+<span class="nf">always5</span> <span class="ow">::</span> <span class="kt">Int</span>
+<span class="nf">always5</span> <span class="ow">=</span> <span class="mi">5</span>
+
+
+<span class="c1">-- ------MATH-----</span>
+<span class="c1">-- 一些牛逼的操作</span>
+<span class="c1">-- 求1到100的和</span>
+
+<span class="nf">sumofValues</span> <span class="ow">=</span> <span class="n">sum</span><span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">1000</span><span class="p">]</span>
+
+<span class="nf">addEx</span> <span class="ow">=</span> <span class="mi">5</span> <span class="o">+</span> <span class="mi">4</span>
+<span class="nf">subEx</span> <span class="ow">=</span> <span class="mi">5</span> <span class="o">-</span> <span class="mi">4</span>
+<span class="nf">multEx</span> <span class="ow">=</span> <span class="mi">5</span> <span class="o">*</span> <span class="mi">4</span>
+<span class="nf">divEX</span> <span class="ow">=</span> <span class="mi">5</span> <span class="o">/</span> <span class="mi">4</span>
+
+<span class="c1">-- mod 是前缀操作符</span>
+
+<span class="nf">modEx</span> <span class="ow">=</span> <span class="n">mod</span> <span class="mi">5</span> <span class="mi">4</span>
+
+<span class="c1">-- 你可以通过反引号将前缀函数变为中缀形式</span>
+<span class="nf">modEx2</span> <span class="ow">=</span> <span class="mi">5</span> <span class="p">`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">4</span>
+
+<span class="c1">-- 负数必须要用括号括起来</span>
+
+<span class="nf">negNumEx</span> <span class="ow">=</span> <span class="mi">5</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="c1">-- 如果你定义了一个Int类型的数，你必须要用fromIntegral 函数先处理之后才能够使用sqrt函数进行处理</span>
+<span class="nf">num9</span> <span class="ow">=</span> <span class="mi">9</span> <span class="ow">::</span> <span class="kt">Int</span>
+<span class="nf">sqrtof9</span> <span class="ow">=</span> <span class="n">sqrt</span> <span class="p">(</span><span class="n">fromIntegral</span> <span class="mi">9</span><span class="p">)</span>
+
+<span class="c1">-- built in 的一些数学函数</span>
+<span class="nf">piVal</span> <span class="ow">=</span> <span class="n">pi</span>
+<span class="nf">ePow9</span> <span class="ow">=</span> <span class="n">exp</span> <span class="mi">9</span>
+<span class="nf">logOf9</span> <span class="ow">=</span> <span class="n">log</span> <span class="mi">9</span>
+<span class="nf">squared9</span> <span class="ow">=</span> <span class="mi">9</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="nf">truncateVal</span> <span class="ow">=</span> <span class="n">truncate</span> <span class="mf">9.999</span>
+<span class="nf">roundVal</span> <span class="ow">=</span> <span class="n">round</span> <span class="mf">9.999</span>
+<span class="nf">ceilingVal</span> <span class="ow">=</span> <span class="n">ceiling</span> <span class="mf">9.999</span>
+<span class="nf">floorVal</span> <span class="ow">=</span> <span class="n">floor</span> <span class="mf">9.999</span>
+
+<span class="c1">-- 当然还有一些基本数学函数： sin cos tan asin acos sinh tanh cosh asinh atanh acosh</span>
+
+<span class="nf">trueAndFalse</span> <span class="ow">=</span>   <span class="kt">True</span> <span class="o">&amp;&amp;</span> <span class="kt">False</span>
+<span class="nf">trueOrFalse</span>  <span class="ow">=</span> <span class="kt">True</span> <span class="o">||</span> <span class="kt">False</span>
+<span class="nf">notTrue</span> <span class="ow">=</span> <span class="n">not</span><span class="p">(</span><span class="kt">True</span><span class="p">)</span>
+
+<span class="c1">-- 记住你可以用 :t 在ghci得到数据的类型</span>
+<span class="c1">-- 当然也可以在函数中用:t 判断数据的类型</span>
+
+<span class="c1">-- :t(+) = Num =&amp;gt; a -&amp;gt; a -&amp;gt; a</span>
+<span class="c1">-- Type a 是一种 num的类型， 传入两个a 类型的数据，然后得到一个a类型的数据</span>
+
+<span class="c1">-- :t truncate = (RealFrac a, Integral b) =&amp;gt; a -&amp;gt; b</span>
+
+<span class="c1">-- ------ LIST ------</span>
+
+<span class="c1">-- List是一个单向链表，只能够在前面添加数据</span>
+<span class="c1">-- List能够存储一系列相同类型的数据</span>
+
+<span class="nf">primeNumbers</span> <span class="ow">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">11</span><span class="p">]</span>
+
+<span class="c1">-- 在连接两个链表的时候会如果其中一个链表很大会导致连接速度很慢</span>
+<span class="nf">morePrime</span> <span class="ow">=</span> <span class="n">primeNumbers</span> <span class="o">++</span> <span class="p">[</span><span class="mi">13</span><span class="p">,</span><span class="mi">17</span><span class="p">,</span><span class="mi">19</span><span class="p">,</span><span class="mi">23</span><span class="p">,</span><span class="mi">29</span><span class="p">]</span>
+
+<span class="c1">-- 你可以使用冒号 : 进行数据和列表连接, 一定要有一个列表，哪怕是空列表</span>
+
+<span class="nf">favNums</span> <span class="ow">=</span> <span class="mi">2</span> <span class="kt">:</span> <span class="mi">7</span> <span class="kt">:</span> <span class="mi">21</span> <span class="kt">:</span> <span class="mi">66</span> <span class="kt">:</span> <span class="kt">[]</span>
+
+<span class="c1">-- 你可以弄一个列表的列表</span>
+
+<span class="nf">multiList</span> <span class="p">[[</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">7</span><span class="p">],[</span><span class="mi">11</span><span class="p">,</span><span class="mi">13</span><span class="p">,</span><span class="mi">17</span><span class="p">]]</span>
+
+<span class="c1">-- 在列表面快速添加一个元素 </span>
+<span class="nf">morePrime2</span> <span class="ow">=</span> <span class="mi">2</span> <span class="kt">:</span> <span class="n">morePrime2</span>
+
+<span class="c1">-- 得到列表的长度</span>
+
+<span class="nf">length</span> <span class="n">morePrime</span>
+
+<span class="c1">-- 得到index 为1 的元素</span>
+<span class="nf">morePrime</span> <span class="o">!!</span> <span class="mi">1</span>
+
+<span class="c1">-- 得到第一个元素</span>
+<span class="nf">head</span> <span class="n">morePrime</span>
+<span class="c1">-- 得到最后一个元素</span>
+<span class="nf">last</span> <span class="n">morePrime</span>
+
+<span class="c1">-- 得到除了第一个元素之外的所有元素</span>
+<span class="nf">tail</span> <span class="n">morePrime</span>
+
+<span class="c1">-- 得到除了最后一个元素之外的所有元素</span>
+
+<span class="nf">init</span> <span class="n">morePrime</span>
+
+<span class="c1">-- 得到指定个数的列表前几个元素</span>
+<span class="nf">take</span> <span class="mi">3</span> <span class="n">morePrime</span>
+
+<span class="c1">-- 删除前几个元素</span>
+<span class="nf">drop</span> <span class="mi">2</span> <span class="n">morePrime</span>
+
+<span class="c1">-- 判断一个元素是否在列表中</span>
+
+<span class="mi">3</span> <span class="p">`</span><span class="n">elem</span><span class="p">`</span> <span class="n">morePrime</span>
+
+<span class="c1">-- or </span>
+ <span class="n">elem</span> <span class="mi">3</span> <span class="n">morePrime</span>
+
+<span class="c1">-- 列表中的最大值</span>
+
+ <span class="n">maximum</span> <span class="n">morePrime</span>
+<span class="c1">-- 列表中的最小值</span>
+ <span class="n">minimin</span> <span class="n">morePrime</span>
+
+
+<span class="c1">-- 列表求和</span>
+
+<span class="nf">sum</span> <span class="n">morePrime</span>
+
+<span class="c1">-- 列表求积</span>
+
+<span class="nf">product</span> <span class="n">morePrime</span>
+
+<span class="c1">-- 列表自动推导</span>
+<span class="nf">zeroToten</span> <span class="ow">=</span> <span class="p">[</span><span class="mi">0</span><span class="o">..</span><span class="mi">10</span><span class="p">]</span>
+
+<span class="c1">-- 步进2列表自动推导</span>
+
+<span class="nf">step2list</span> <span class="ow">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="o">..</span><span class="mi">20</span><span class="p">]</span>
+
+<span class="c1">-- 字符列表自动推导</span>
+<span class="nf">letterlist</span> <span class="ow">=</span><span class="p">[</span><span class="sc">&#39;A&#39;</span><span class="o">..</span><span class="sc">&#39;Z&#39;</span><span class="p">]</span>
+
+<span class="c1">-- 字符列表步进2自动推导</span>
+<span class="nf">letterlist</span> <span class="ow">=</span><span class="p">[</span><span class="sc">&#39;A&#39;</span><span class="p">,</span><span class="sc">&#39;C&#39;</span><span class="o">..</span><span class="sc">&#39;Z&#39;</span><span class="p">]</span>
+
+<span class="c1">--无限列表,Haskell只计算你所需要的值</span>
+<span class="nf">infinPow10</span> <span class="ow">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="o">..</span><span class="p">]</span>
+
+<span class="c1">-- repeat 可以得到一个重复值的列表</span>
+
+<span class="nf">many2s</span> <span class="ow">=</span> <span class="n">take</span> <span class="mi">10</span> <span class="p">(</span><span class="n">repeat</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="c1">-- replicate 能够指定重复次数和值</span>
+<span class="c1">-- 3 重复10次</span>
+<span class="nf">many3s</span> <span class="ow">=</span> <span class="n">replicate</span> <span class="mi">10</span> <span class="mi">3</span>
+
+<span class="c1">-- 循环列表，无限循环</span>
+
+<span class="nf">cyclelis</span> <span class="ow">=</span> <span class="n">take</span> <span class="mi">10</span> <span class="p">(</span><span class="n">cycle</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+
+<span class="c1">-- haskell 较为高级的列表推导式</span>
+<span class="c1">-- haskell 可以通过列表推导式实现高级条件数据筛选</span>
+
+<span class="c1">-- 将1..10 的元素都乘以2然后返回一个列表</span>
+ <span class="n">listtime2</span> <span class="ow">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">|</span> <span class="n">x</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">-</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">10</span><span class="p">]]</span>
+<span class="c1">-- 输出 [2,4,6,8,10,12,14,16,18,20]</span>
+
+<span class="c1">-- 将1..20中 3*x 小于50的剔除，输出剩下的3*x的列表</span>
+ <span class="n">listtime3</span> <span class="ow">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">|</span> <span class="n">x</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">-</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">20</span><span class="p">],</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="mi">50</span><span class="p">]</span>
+<span class="c1">-- 输出 [3,6,9,12,15,18,21,24,27,30,33,36,39,42,45,48]</span>
+
+<span class="c1">-- 输出在 1..500中所有能够被 13和9整除的数</span>
+
+<span class="nf">divisBy9N13</span> <span class="ow">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">|</span> <span class="n">x</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">-</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">500</span><span class="p">],</span><span class="n">x</span> <span class="p">`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">13</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">x</span> <span class="p">`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">9</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+<span class="c1">-- 输出[117,234,351,468]</span>
+
+<span class="c1">-- 列表排序</span>
+<span class="c1">-- 需要import Data.List</span>
+<span class="nf">sortedList</span> <span class="ow">=</span> <span class="n">sort</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">6</span><span class="p">]</span>
+
+<span class="c1">-- zipWith 可以合并两个列表</span>
+ <span class="n">sumOfLists</span> <span class="ow">=</span> <span class="n">zipWith</span> <span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span>
+ <span class="c1">-- 输出[7,9,11,13,15]</span>
+
+ <span class="c1">--数据过滤，通过filter函数,能够保留满足条件的数据</span>
+<span class="nf">listBiggerThan5</span> <span class="ow">=</span> <span class="n">filter</span> <span class="p">(</span><span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span><span class="mi">5</span><span class="p">)</span> <span class="n">sumOfLists</span>
+
+<span class="c1">-- takeWhile 能够取出数据直到条件为false</span>
+
+<span class="nf">evenUp20</span> <span class="ow">=</span>  <span class="n">takeWhile</span> <span class="p">(</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="ow">=</span><span class="mi">20</span><span class="p">)</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="o">..</span><span class="p">]</span>
+
+<span class="c1">-- foldl 从左到右应用运算符</span>
+<span class="c1">-- foldr 从右到左应用运算符</span>
+<span class="nf">foldl</span> <span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="mi">1</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+<span class="c1">-- 24</span>
+
+
+<span class="c1">-- ------TUPLES ------</span>
+<span class="c1">-- Tuple 能够存储多种类型，但是其大小是固定的</span>
+<span class="nf">randTuple</span> <span class="ow">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">&#34;Random tuple&#34;</span><span class="p">)</span>
+
+<span class="nf">bobsSmith</span> <span class="ow">=</span> <span class="p">(</span><span class="s">&#34;Bob Smith&#34;</span><span class="p">,</span><span class="mi">52</span><span class="p">)</span>
+
+<span class="c1">-- Get the first value</span>
+<span class="nf">bobsAge</span> <span class="ow">=</span> <span class="n">fst</span> <span class="n">bobsSmith</span>
+<span class="c1">-- Get the second value</span>
+<span class="nf">bobsAge</span> <span class="ow">=</span> <span class="n">snd</span> <span class="n">bobsSmith</span>
+
+<span class="c1">-- zip函数能够将两个列表压缩为tuples</span>
+
+<span class="nf">names</span> <span class="ow">=</span><span class="p">[</span><span class="s">&#34;Bob&#34;</span><span class="p">,</span><span class="s">&#34;Mary&#34;</span><span class="p">,</span><span class="s">&#34;Tom&#34;</span><span class="p">]</span>
+<span class="nf">address</span> <span class="ow">=</span><span class="p">[</span><span class="s">&#34;123 Main&#34;</span><span class="p">,</span><span class="s">&#34;234 North&#34;</span><span class="p">,</span><span class="s">&#34;567 south&#34;</span><span class="p">]</span>
+
+<span class="nf">nameNaddress</span> <span class="ow">=</span> <span class="n">zip</span> <span class="n">names</span> <span class="n">address</span>
+<span class="c1">-- 输出 [(&#34;Bob&#34;,&#34;123 Main&#34;),(&#34;Mary&#34;,&#34;234 North&#34;),(&#34;Tom&#34;,&#34;567 south&#34;)]</span>
+
+<span class="c1">-- ------ FUNCTIONS -------</span>
+<span class="c1">-- ghc --make haskelltut 将会编译你的程序并执行main函数</span>
+
+<span class="c1">-- Functions 必须由小写字母开始</span>
+
+<span class="c1">-- 我们能够使用let关键字定义一个函数</span>
+<span class="c1">-- let num7 = 7</span>
+<span class="c1">-- let getTriple x = x * 3</span>
+<span class="c1">-- getTriple num7 = 21</span>
+
+<span class="c1">-- main 函数能够在terminal中被调用的main函数</span>
+
+<span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span>
+    <span class="c1">-- 在一行中打印</span>
+    <span class="n">putStrLn</span> <span class="s">&#34;What&#39;s your name&#34;</span>
+    <span class="c1">-- 获取用户的输入并将其存储到name中</span>
+    <span class="c1">-- &amp;lt;- 运算符能从IO操作中取得数据并放入变量中</span>
+    <span class="n">name</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">-</span> <span class="n">getLine</span>
+
+    <span class="n">putStrLn</span> <span class="p">(</span><span class="s">&#34;hello&#34;</span> <span class="o">++</span> <span class="n">name</span><span class="p">)</span>
+
+<span class="c1">-- 创建一个名为addMe 的函数</span>
+<span class="c1">-- x 是一个参数，然后后面是类型签名</span>
+<span class="c1">-- 传入的类型如果符合要求将会自动应用函数声明</span>
+<span class="c1">-- 所有的函数都要求有返回值</span>
+<span class="c1">-- 如果一个函数没有参数则称为一个定义或一个名称</span>
+
+<span class="c1">--你可以通过如下的形式定义一个函数：</span>
+<span class="c1">-- funcName :: param1 -&amp;gt; param2 -&amp;gt; returnType</span>
+<span class="nf">addMe</span> <span class="ow">::</span> <span class="kt">Int</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kt">Int</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kt">Int</span>
+
+<span class="c1">-- funcName param1 param2 = operations (Returned Value)</span>
+<span class="c1">-- 执行: addMe 4 5</span>
+<span class="nf">addMe</span> <span class="n">x</span> <span class="n">y</span> <span class="ow">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+
+<span class="c1">-- 如果没有类型声明则该函数能够处理浮点数</span>
+<span class="nf">sumMe</span> <span class="n">x</span> <span class="n">y</span> <span class="ow">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+
+
+<span class="c1">-- 当然你也可以定义一个tuple相加函数</span>
+<span class="nf">addTuples</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Int</span><span class="p">,</span><span class="kt">Int</span><span class="p">)</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="p">(</span><span class="kt">Int</span><span class="p">,</span><span class="kt">Int</span><span class="p">)</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="p">(</span><span class="kt">Int</span><span class="p">,</span><span class="kt">Int</span><span class="p">)</span>
+<span class="nf">addTuples</span> <span class="p">(</span><span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">)</span> <span class="p">(</span><span class="n">x2</span><span class="p">,</span><span class="n">y2</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">x1</span> <span class="o">+</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y1</span> <span class="o">+</span><span class="n">y2</span><span class="p">)</span>
+
+<span class="c1">-- 你可以根据不同的值进行不同的操作 类似于switch case</span>
+<span class="nf">whatAge</span> <span class="ow">::</span> <span class="kt">Int</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kt">String</span>
+<span class="nf">whatAge</span> <span class="mi">16</span> <span class="ow">=</span> <span class="s">&#34;You can drive&#34;</span>
+<span class="nf">whatAge</span> <span class="mi">18</span> <span class="ow">=</span> <span class="s">&#34;You can vote&#34;</span>
+<span class="nf">whatAge</span> <span class="mi">21</span> <span class="ow">=</span> <span class="s">&#34;You are a adult&#34;</span>
+<span class="c1">-- default</span>
+<span class="nf">whatAge</span> <span class="n">x</span> <span class="ow">=</span> <span class="s">&#34;Nothing Import&#34;</span>
+
+<span class="c1">-- 定义一个我们期望输入以及输出的函数</span>
+<span class="nf">factorial</span> <span class="ow">::</span> <span class="kt">Int</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kt">Int</span>
+<span class="c1">-- 如果是0 则返回1 （递归函数)</span>
+<span class="nf">factorial</span> <span class="mi">0</span> <span class="ow">=</span> <span class="mi">1</span>
+<span class="nf">factorial</span> <span class="n">n</span> <span class="ow">=</span> <span class="n">factorial</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1">-- 3 * factorial (2) : 6</span>
+<span class="c1">-- 2 * factorial (1) : 2</span>
+<span class="c1">-- 1 * factorial (0) : 1</span>
+
+<span class="c1">-- 当然你也可以定义一个乘法的Factorial</span>
+<span class="nf">productFactorial</span> <span class="n">n</span> <span class="ow">=</span> <span class="n">product</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="n">n</span><span class="p">]</span>
+
+<span class="c1">-- 我们能够利用竖线来根据不同情况下的返回值</span>
+<span class="nf">isOdd</span> <span class="ow">::</span> <span class="kt">Int</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kt">Bool</span>
+
+<span class="nf">isOdd</span> <span class="n">n</span>
+    <span class="c1">-- if 如果是奇数</span>
+    <span class="o">|</span> <span class="n">n</span> <span class="p">`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">=</span> <span class="kt">False</span>
+    <span class="c1">-- else</span>
+    <span class="o">|</span> <span class="n">otherwise</span> <span class="ow">=</span> <span class="kt">True</span>
+
+<span class="c1">-- 当然这个函数能够精简</span>
+<span class="nf">isEven</span> <span class="n">n</span> <span class="ow">=</span> <span class="n">n</span> <span class="p">`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span>
+
+<span class="c1">-- 多个条件的 if else </span>
+
+    <span class="n">whatGrade</span> <span class="ow">::</span> <span class="kt">Int</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kt">String</span>
+    <span class="n">whatGrade</span> <span class="n">age</span>
+        <span class="o">|</span> <span class="p">(</span><span class="n">age</span> <span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span><span class="ow">=</span> <span class="mi">5</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">age</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="ow">=</span> <span class="mi">6</span><span class="p">)</span> <span class="ow">=</span> <span class="s">&#34;Kindergarten&#34;</span>
+        <span class="o">|</span> <span class="p">(</span><span class="n">age</span> <span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span><span class="ow">=</span> <span class="mi">6</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">age</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="ow">=</span> <span class="mi">10</span><span class="p">)</span> <span class="ow">=</span> <span class="s">&#34;Elementary school&#34;</span>
+        <span class="o">|</span> <span class="p">(</span><span class="n">age</span> <span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span><span class="ow">=</span> <span class="mi">10</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">age</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="ow">=</span> <span class="mi">14</span><span class="p">)</span> <span class="ow">=</span> <span class="s">&#34;Middle school&#34;</span>
+        <span class="o">|</span> <span class="p">(</span><span class="n">age</span> <span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span><span class="ow">=</span> <span class="mi">14</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">age</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="ow">=</span> <span class="mi">18</span><span class="p">)</span> <span class="ow">=</span> <span class="s">&#34;High school&#34;</span>
+        <span class="o">|</span>  <span class="n">otherwise</span> <span class="s">&#34;Go to college&#34;</span>
+
+<span class="c1">-- 使用where能够帮我们处理条件</span>
+<span class="nf">batAvgRating</span> <span class="ow">::</span> <span class="kt">Double</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kt">Double</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kt">String</span>
+<span class="nf">batAvgRating</span> <span class="n">hits</span> <span class="n">atBats</span>
+    <span class="o">|</span> <span class="n">avg</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="ow">=</span> <span class="mf">0.200</span> <span class="ow">=</span> <span class="s">&#34;Terrible Batting Average&#34;</span>
+    <span class="o">|</span> <span class="n">avg</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="ow">=</span> <span class="mf">0.250</span> <span class="ow">=</span> <span class="s">&#34;Average Player&#34;</span>
+    <span class="o">|</span> <span class="n">avg</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="ow">=</span> <span class="mf">0.280</span> <span class="ow">=</span> <span class="s">&#34;Your doing pretty good&#34;</span>
+    <span class="o">|</span> <span class="n">otherwise</span> <span class="ow">=</span> <span class="s">&#34;You&#39;re a Superstar&#34;</span>
+    <span class="kr">where</span> <span class="n">avg</span> <span class="ow">=</span> <span class="n">hits</span> <span class="o">/</span> <span class="n">atBats</span>
+
+<span class="c1">-- 多条件判断不同的list状态</span>
+<span class="nf">getListItems</span> <span class="ow">::</span> <span class="p">[</span><span class="kt">Int</span><span class="p">]</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kt">String</span>
+<span class="nf">getListItems</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="s">&#34;Your list is empty&#34;</span>
+<span class="nf">getListItems</span> <span class="p">(</span><span class="n">x</span><span class="kt">:[]</span><span class="p">)</span> <span class="ow">=</span> <span class="s">&#34;Your list contains &#34;</span> <span class="o">++</span> <span class="n">show</span> <span class="n">x</span>
+<span class="nf">getListItems</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">y</span><span class="kt">:[]</span><span class="p">)</span> <span class="ow">=</span> <span class="s">&#34;Your list contains &#34;</span> <span class="o">++</span> <span class="n">show</span> <span class="n">x</span> <span class="o">++</span> <span class="s">&#34; and &#34;</span> <span class="o">++</span> <span class="n">show</span> <span class="n">y</span>
+<span class="nf">getListItems</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="s">&#34;The first item is &#34;</span> <span class="o">++</span> <span class="n">show</span> <span class="n">x</span> <span class="o">++</span> <span class="s">&#34; and the rest are &#34;</span> 
+    <span class="o">++</span> <span class="n">show</span> <span class="n">xs</span>
+
+<span class="c1">-- 我们也能够通过模式来定义一个函数</span>
+<span class="nf">getFirstItem</span> <span class="ow">::</span> <span class="kt">String</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kt">String</span>
+<span class="nf">getFirstItem</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="s">&#34;Empty String&#34;</span>
+<span class="nf">getFirstItem</span> <span class="n">all</span><span class="o">@</span><span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="s">&#34;The first letter in &#34;</span> <span class="o">++</span> <span class="n">all</span> <span class="o">++</span> <span class="s">&#34;is&#34;</span> <span class="o">++</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+
+
+
+<span class="c1">-- ------ 高阶函数 -------</span>
+<span class="c1">-- 能够将一个函数像一个值一样传入到另一个函数中</span>
+
+<span class="nf">times4</span> <span class="ow">::</span> <span class="kt">Int</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kt">Int</span>
+<span class="nf">times4</span> <span class="n">x</span> <span class="ow">=</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">4</span>
+
+<span class="c1">-- map 能够将一个列表应用于另一个函数并求值</span>
+
+<span class="nf">listTimes4</span> <span class="ow">=</span> <span class="n">map</span> <span class="n">times4</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>
+<span class="c1">-- [4,8,12,16,20]</span>
+
+<span class="c1">-- 然后我们来定义一个map</span>
+
+<span class="nf">multBy4</span> <span class="ow">::</span> <span class="p">[</span><span class="kt">Int</span><span class="p">]</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="p">[</span><span class="kt">Int</span><span class="p">]</span>
+<span class="nf">multBy4</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="kt">[]</span>
+
+<span class="c1">-- 将一个列表中的某个值取出然后乘以4再存入到另一个列表中</span>
+<span class="c1">-- 这里的xs 类型是 [Int], 这是一个递归写法 </span>
+<span class="nf">multBy4</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="n">times4</span> <span class="n">x</span> <span class="kt">:</span> <span class="n">multBy4</span> <span class="n">xs</span>
+
+<span class="c1">-- 判断两个字符串是否相等</span>
+
+<span class="nf">areStringEq</span> <span class="ow">::</span> <span class="p">[</span><span class="kt">Char</span><span class="p">]</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="p">[</span><span class="kt">Char</span><span class="p">]</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kt">Bool</span>
+<span class="nf">areStringEq</span> <span class="kt">[]</span> <span class="kt">[]</span> <span class="ow">=</span> <span class="kt">True</span>
+<span class="nf">areStringEq</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="p">(</span><span class="n">y</span><span class="kt">:</span><span class="n">ys</span><span class="p">)</span> <span class="ow">=</span> <span class="n">x</span> <span class="o">==</span> <span class="n">y</span> <span class="o">&amp;&amp;</span> <span class="n">areStringEq</span> <span class="n">xs</span> <span class="n">ys</span>
+<span class="nf">areStringEq</span> <span class="kr">_</span> <span class="kr">_</span> <span class="ow">=</span> <span class="kt">False</span>
+
+<span class="c1">-- 将一个函数作为另一个函数的参数</span>
+<span class="c1">-- (Int -&amp;gt; Int) 代表我们需要一个参数是Int 返回值是Int的函数作为参数传入</span>
+
+<span class="nf">doMult</span> <span class="ow">::</span> <span class="p">(</span><span class="kt">Int</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kt">Int</span><span class="p">)</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kt">Int</span>
+<span class="nf">doMult</span> <span class="n">func</span> <span class="ow">=</span> <span class="n">func</span> <span class="mi">3</span>
+
+<span class="nf">num3Time4</span> <span class="ow">=</span> <span class="n">doMult</span> <span class="n">times4</span>
+
+<span class="c1">-- 返回一个函数</span>
+<span class="nf">getAddFunc</span> <span class="ow">::</span> <span class="kt">Int</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="p">(</span><span class="kt">Int</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kt">Int</span><span class="p">)</span>
+
+<span class="c1">-- 我们能够值传入</span>
+<span class="nf">getAddFunc</span> <span class="n">x</span> <span class="n">y</span> <span class="ow">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+
+<span class="c1">-- 我们也能得到一个+3的函数</span>
+
+<span class="nf">adds3</span> <span class="ow">=</span> <span class="n">getAddFunc</span> <span class="mi">3</span>
+<span class="nf">fourPlus3</span> <span class="ow">=</span> <span class="n">adds3</span> <span class="mi">4</span>
+
+<span class="c1">-- 我们也能够将这个函数用到map中</span>
+
+<span class="nf">threePlusList</span> <span class="ow">=</span> <span class="n">map</span> <span class="n">adds3</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>
+
+
+<span class="c1">-- ------ LAMBDA ------</span>
+<span class="c1">-- 创建一个匿名函数 也称为lambda 用 \ 开始表示这是一个lambda (\arguments -&amp;gt; result)</span>
+
+<span class="nf">db1To10</span> <span class="n">map</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="mi">10</span><span class="p">]</span>
+
+<span class="c1">-- ------- 条件 ------</span>
+<span class="c1">-- 所有的if 都必须包含else</span>
+
+<span class="nf">doubleEvenNumber</span> <span class="n">y</span> <span class="ow">=</span> 
+    <span class="kr">if</span> <span class="p">(</span><span class="n">y</span> <span class="p">`</span><span class="n">mod</span><span class="p">`</span> <span class="mi">2</span> <span class="o">/=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="kr">then</span> <span class="n">y</span>
+        <span class="kr">else</span> <span class="n">y</span> <span class="o">*</span> <span class="mi">2</span>
+
+<span class="c1">-- 我们能够利用case表达式</span>
+<span class="nf">getClass</span> <span class="ow">::</span> <span class="kt">Int</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kt">String</span>
+<span class="nf">getClass</span> <span class="n">n</span> <span class="ow">=</span> <span class="kr">case</span> <span class="n">n</span> <span class="kr">of</span> 
+    <span class="mi">5</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="s">&#34;Go to kindergarten&#34;</span>
+    <span class="mi">6</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="s">&#34;Go to elementary school&#34;</span>
+    <span class="kr">_</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="s">&#34;Go to some place else&#34;</span>
+
+
+<span class="c1">-- ------ MODULES -------</span>
+<span class="c1">-- 我们能够将一组函数组织起来，集合成一个module，通过import能加载一个模块</span>
+<span class="c1">-- 那么如何创建一个模块呢？</span>
+<span class="c1">-- 1. 创建一个文件</span>
+<span class="c1">-- 2. 将所有需要使用的函数包含进去</span>
+<span class="c1">-- TODO</span>
+<span class="c1">-- 3.  在文件的顶部将所有需要导出的函数列出</span>
+
+<span class="c1">-- ------ 枚举 ------</span>
+
+<span class="kr">data</span> <span class="kt">BaseallPlayer</span> <span class="ow">=</span> <span class="kt">Pitcher</span>
+                    <span class="o">|</span> <span class="kt">Catcher</span>
+                    <span class="o">|</span> <span class="kt">Infield</span>
+                    <span class="o">|</span> <span class="kt">Outfield</span>
+                <span class="kr">deriving</span> <span class="kt">Show</span>
+
+<span class="nf">barryBonds</span> <span class="ow">::</span> <span class="kt">BaseallPlayer</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kt">Bool</span>
+<span class="nf">barryBonds</span> <span class="kt">Outfield</span> <span class="ow">=</span> <span class="kt">True</span>
+
+<span class="nf">barryInOf</span> <span class="n">print</span><span class="p">(</span><span class="n">barryBonds</span> <span class="kt">Outfield</span><span class="p">)</span>
+
+<span class="c1">-- ------ 自定义类型 ------</span>
+
+<span class="kr">data</span> <span class="kt">Customer</span> <span class="ow">=</span> <span class="kt">Customer</span> <span class="kt">String</span> <span class="kt">String</span> <span class="kt">Double</span>
+    <span class="kr">deriving</span> <span class="kt">Show</span>
+
+<span class="c1">--定义自定义类型的变量</span>
+<span class="nf">tomSmith</span> <span class="ow">::</span> <span class="kt">Customer</span>
+<span class="nf">tomSmith</span> <span class="ow">=</span> <span class="kt">Customer</span> <span class="s">&#34;Tom Smith&#34;</span> <span class="s">&#34;123 Main st&#34;</span> <span class="mf">20.50</span>
+
+<span class="c1">-- 定义一个需要使用该自定义类型的函数</span>
+<span class="nf">getBalance</span> <span class="ow">::</span> <span class="kt">Customer</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kt">Double</span>
+<span class="nf">getBalance</span> <span class="p">(</span><span class="kt">Customer</span> <span class="kr">_</span> <span class="kr">_</span> <span class="n">b</span><span class="p">)</span> <span class="ow">=</span> <span class="n">b</span>
+
+<span class="nf">tomSmithBal</span> <span class="n">print</span><span class="p">(</span><span class="n">getBalance</span> <span class="n">tomSmith</span><span class="p">)</span>
+
+
+<span class="kr">data</span> <span class="kt">RPS</span> <span class="ow">=</span> <span class="kt">Rock</span> <span class="o">|</span> <span class="kt">Paper</span> <span class="o">|</span> <span class="kt">Scissors</span>
+
+<span class="nf">shoot</span> <span class="ow">::</span> <span class="kt">RPS</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kt">RPS</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kt">String</span>
+<span class="nf">shoot</span> <span class="kt">Paper</span> <span class="kt">Rock</span> <span class="ow">=</span> <span class="s">&#34;Paper Beats Rock&#34;</span>
+<span class="nf">shoot</span> <span class="kt">Rock</span> <span class="kt">Scissors</span><span class="ow">=</span> <span class="s">&#34;Rock Beats Scissors&#34;</span>
+<span class="nf">shoot</span> <span class="kt">Scissors</span> <span class="kt">Paper</span><span class="ow">=</span> <span class="s">&#34;Rock Beats Scissors&#34;</span>
+<span class="nf">shoot</span> <span class="kt">Scissors</span> <span class="kt">Rocks</span><span class="ow">=</span> <span class="s">&#34;Scissors Lose to Rocks&#34;</span>
+<span class="nf">shoot</span> <span class="kt">Paper</span> <span class="kt">Scissors</span><span class="ow">=</span> <span class="s">&#34;Paper Lose to Scissors&#34;</span>
+<span class="nf">shoot</span> <span class="kt">Rock</span> <span class="kt">Paper</span><span class="ow">=</span> <span class="s">&#34;Rock Loses to Paper&#34;</span>
+<span class="nf">shoot</span> <span class="kr">_</span> <span class="kr">_</span><span class="ow">=</span> <span class="s">&#34;Error&#34;</span>
+
+<span class="kr">data</span> <span class="kt">Shape</span> <span class="ow">=</span> <span class="kt">Circle</span> <span class="kt">Float</span> <span class="kt">Float</span> <span class="kt">Float</span> <span class="o">|</span> <span class="kt">Rectangle</span> <span class="kt">Float</span> <span class="kt">Float</span> <span class="kt">Float</span> <span class="kt">Float</span>
+    <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Show</span><span class="p">)</span>
+
+<span class="c1">-- :t Circle = Float -&amp;gt; Float -&amp;gt; Float -&amp;gt; Float</span>
+
+<span class="nf">area</span> <span class="ow">::</span> <span class="kt">Shape</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kt">Float</span>
+<span class="nf">area</span> <span class="p">(</span><span class="kt">Circle</span> <span class="kr">_</span> <span class="kr">_</span> <span class="n">r</span><span class="p">)</span> <span class="ow">=</span> <span class="n">pi</span> <span class="o">*</span> <span class="n">r</span> <span class="o">^</span> <span class="mi">2</span> 
+<span class="nf">area</span> <span class="p">(</span><span class="kt">Rectangle</span> <span class="n">x</span> <span class="n">y</span> <span class="n">x2</span> <span class="n">y2</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="n">abs</span> <span class="p">(</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x</span><span class="p">))</span>  <span class="o">*</span> <span class="p">(</span><span class="n">abs</span> <span class="p">(</span><span class="n">y2</span> <span class="o">-</span> <span class="n">y</span><span class="p">))</span>
+
+<span class="c1">-- 使用 $ 符号可以把$后面的表达式作为一个参数传入到前面的函数中</span>
+<span class="c1">-- 使用 . 可以作为一个管道符号，将后面一个函数的输出作为前一个函数的输入</span>
+<span class="nf">putStrLn</span> <span class="o">.</span> <span class="n">show</span> <span class="o">$</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span>
+
+<span class="c1">-- Get area of shapes </span>
+<span class="nf">areaOfCircle</span> <span class="ow">=</span> <span class="n">area</span> <span class="p">(</span><span class="kt">Circle</span> <span class="mi">50</span> <span class="mi">60</span> <span class="mi">20</span><span class="p">)</span>
+
+<span class="nf">areaOfRectangle</span> <span class="ow">=</span> <span class="n">area</span> <span class="o">$</span> <span class="kt">Rectangle</span> <span class="mi">10</span> <span class="mi">10</span> <span class="mi">100</span> <span class="mi">100</span>
+
+<span class="c1">-- ------ Type Class -------</span>
+<span class="c1">-- Num, Eq 和 Show 是类型类</span>
+<span class="c1">-- Type Class相当于面向对象的接口</span>
+<span class="c1">-- 多态函数（具有多种参数，多种数据类型，通常用类型定义</span>
+<span class="c1">-- 例如， + 运算符就是用Num 类型类定义的</span>
+<span class="c1">-- :t (+) :: Num a =&amp;gt; a -&amp;gt; a -&amp;gt; a</span>
+<span class="c1">-- 这代表 a 是Num的一个实例，+ 能够处理两个a类型的数然后返回一个类型为Num的数</span>
+
+<span class="c1">--自定义一个自定义类型类，并让其能够进行比较</span>
+
+<span class="kr">data</span> <span class="kt">Emplyee</span> <span class="ow">=</span> <span class="kt">Emplyee</span> <span class="p">{</span>
+    <span class="n">name</span> <span class="ow">::</span> <span class="kt">String</span><span class="p">,</span>
+    <span class="n">position</span> <span class="ow">::</span> <span class="kt">String</span><span class="p">,</span>
+    <span class="n">idNum</span> <span class="ow">::</span> <span class="kt">Int</span><span class="p">,</span>
+<span class="p">}</span> <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Eq</span><span class="p">,</span><span class="kt">Show</span><span class="p">)</span>
+
+<span class="nf">samSmith</span> <span class="ow">=</span> <span class="kt">Emplyee</span><span class="p">{</span><span class="n">name</span> <span class="ow">=</span> <span class="s">&#34;Sam Smith&#34;</span><span class="p">,</span><span class="n">position</span> <span class="ow">=</span> <span class="s">&#34;Manager&#34;</span><span class="p">,</span><span class="kt">IdNum</span> <span class="ow">=</span> <span class="mi">1000</span><span class="p">}</span>
+<span class="nf">pamMax</span> <span class="ow">=</span> <span class="kt">Emplyee</span><span class="p">{</span><span class="n">name</span> <span class="ow">=</span> <span class="s">&#34;Pam Max&#34;</span><span class="p">,</span><span class="n">position</span> <span class="ow">=</span> <span class="s">&#34;Sales&#34;</span><span class="p">,</span><span class="kt">IdNum</span> <span class="ow">=</span> <span class="mi">1001</span><span class="p">}</span>
+
+<span class="nf">isSamPam</span> <span class="ow">=</span> <span class="n">smaSmith</span> <span class="o">==</span> <span class="n">pamMax</span>
+
+<span class="nf">samSimithData</span> <span class="ow">=</span> <span class="n">show</span> <span class="n">smaSmith</span>
+
+<span class="c1">-- 实现一个自己实现的Eq 和Show类型类的数据类型</span>
+<span class="kr">data</span> <span class="kt">ShirtSize</span> <span class="ow">=</span> <span class="kt">S</span> <span class="o">|</span> <span class="kt">M</span> <span class="o">|</span> <span class="kt">L</span>
+
+<span class="kr">instance</span> <span class="kt">Eq</span> <span class="kt">ShirtSize</span> <span class="kr">where</span>
+    <span class="kt">S</span> <span class="o">==</span> <span class="kt">S</span> <span class="ow">=</span> <span class="kt">True</span>
+    <span class="kt">M</span> <span class="o">==</span> <span class="kt">M</span> <span class="ow">=</span> <span class="kt">True</span>
+    <span class="kt">L</span> <span class="o">==</span> <span class="kt">L</span> <span class="ow">=</span> <span class="kt">True</span>
+    <span class="kr">_</span> <span class="o">==</span> <span class="kr">_</span> <span class="ow">=</span> <span class="kt">False</span>
+
+<span class="kr">instance</span> <span class="kt">Show</span> <span class="kt">ShirtSize</span> <span class="kr">where</span>
+    <span class="n">show</span> <span class="kt">S</span> <span class="ow">=</span> <span class="s">&#34;Small&#34;</span>
+    <span class="n">show</span> <span class="kt">M</span> <span class="ow">=</span> <span class="s">&#34;Medium&#34;</span>
+    <span class="n">show</span> <span class="kt">L</span> <span class="ow">=</span> <span class="s">&#34;Large&#34;</span>
+
+<span class="c1">-- Check if S is in the list</span>
+<span class="c1">-- 需要实现Eq才能够用elem 方法</span>
+<span class="nf">smallAvail</span> <span class="ow">=</span> <span class="kt">S</span> <span class="p">`</span><span class="n">elem</span><span class="p">`</span> <span class="p">[</span><span class="kt">S</span><span class="p">,</span> <span class="kt">M</span><span class="p">,</span> <span class="kt">L</span><span class="p">]</span>
+
+<span class="c1">-- Get string value for ShirtSize</span>
+<span class="c1">-- 需要实现Show 类型类</span>
+<span class="nf">theSize</span> <span class="ow">=</span> <span class="n">show</span> <span class="kt">S</span>
+
+<span class="c1">-- 自定义类型类</span>
+<span class="kr">class</span> <span class="kt">MyEq</span> <span class="n">a</span> <span class="kr">where</span>
+    <span class="n">areEqual</span> <span class="ow">::</span> <span class="n">a</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">a</span> <span class="o">-&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="kt">Bool</span>
+
+
+<span class="c1">-- 实现自己定义的类型类</span>
+
+<span class="kr">instance</span> <span class="kt">MyEq</span> <span class="kt">ShirtSize</span> <span class="kr">where</span>
+    <span class="n">areEqual</span> <span class="kt">S</span> <span class="kt">S</span> <span class="ow">=</span> <span class="kt">True</span>
+    <span class="n">areEqual</span> <span class="kt">M</span> <span class="kt">M</span> <span class="ow">=</span> <span class="kt">True</span>
+    <span class="n">areEqual</span> <span class="kt">L</span> <span class="kt">L</span> <span class="ow">=</span> <span class="kt">True</span>
+    <span class="n">areEqual</span> <span class="kr">_</span> <span class="kr">_</span> <span class="ow">=</span> <span class="kt">Fasle</span>
+
+<span class="nf">newSize</span> <span class="ow">=</span> <span class="n">areEqual</span> <span class="kt">M</span> <span class="kt">M</span>
+
+
+
+
+<span class="c1">-- ------ I/O ------</span>
+
+<span class="nf">sayHello</span> <span class="ow">=</span> <span class="kr">do</span>
+    <span class="n">putStrLn</span> <span class="s">&#34;What&#39;s your name: &#34;</span>
+    <span class="n">name</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">-</span> <span class="n">getLine</span>
+
+    <span class="n">putStrLn</span> <span class="o">$</span> <span class="s">&#34;Hello&#34;</span> <span class="o">++</span> <span class="n">name</span>
+
+<span class="c1">-- File I/O</span>
+
+<span class="nf">writeToFile</span> <span class="ow">=</span> <span class="kr">do</span>
+    <span class="n">theFile</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">-</span> <span class="n">openFile</span> <span class="s">&#34;test.txt&#34;</span> <span class="kt">WriteMode</span>
+
+    <span class="n">hPutStrLn</span> <span class="n">theFile</span> <span class="p">(</span><span class="s">&#34;Random line of text&#34;</span><span class="p">)</span>
+
+    <span class="n">hClose</span> <span class="n">theFile</span>
+
+<span class="nf">readFromFile</span> <span class="ow">=</span> <span class="kr">do</span>
+    <span class="n">theFile2</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">-</span> <span class="n">openFile</span> <span class="s">&#34;test.txt&#34;</span> <span class="kt">ReadMode</span>
+
+    <span class="n">contents</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">-</span> <span class="n">hGetContents</span> <span class="n">theFile2</span>
+    <span class="n">putStr</span> <span class="n">contents</span>
+    <span class="n">hClose</span> <span class="n">theFile2</span>
+
+
+<span class="c1">-- ------ EXAMPLE: FIBONACCI SEQUENCE ------</span>
+<span class="c1">-- 1,1,2,3,5,8, ...</span>
+
+<span class="c1">-- 1 : 1 : 代表函数的开始</span>
+<span class="c1">-- | 表示对于每个 a,b 并将其相加</span>
+<span class="c1">-- &amp;lt;- 存储 a + b 之和</span>
+<span class="c1">-- tail : 得到除了第一个值之外的所有值</span>
+<span class="c1">-- zip 将两个列表压缩，并得到一个tuple 列表</span>
+
+<span class="nf">fib</span> <span class="ow">=</span> <span class="mi">1</span> <span class="kt">:</span> <span class="mi">1</span><span class="kt">:</span> <span class="p">[</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span> <span class="o">|</span> <span class="p">(</span><span class="n">a</span> <span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">-</span> <span class="n">zip</span> <span class="n">fib</span> <span class="p">(</span><span class="n">tail</span> <span class="n">fib</span><span class="p">)]</span>
+<span class="c1">-- 对上式进行推演</span>
+<span class="c1">-- 1. 首先 fib = 1 然后tail fib = 1</span>
+<span class="c1">-- 2. 现在列表变成了 [1,1,2] 因为 a:1 + b:1 = 2</span>
+<span class="c1">-- 3. 然后第二步, fib = 1 然后 (tail fib) = 2</span>
+<span class="c1">-- 4. 现在列表变成了 [1,1,2,3] 因为 a: 1 + b: 2 = 3</span>
+
+</code></pre></td></tr></table>
+</div>
+</div>
+        </div>
+    </article>
+
+</div>
+
+ 
+<div class="container">
+
+    
+    <nav class="flex suggested">
+        
+        <a rel="prev" href="/posts/mastering-in-diving/" title="Previous post (older)">
+            <span>Previous</span>
+            精通 sed (mastering sed)
+            </a>
+        
+        
+        
+        <a rel="next" href="/posts/functional-programming-by-haskell-js-golang/" title="Next post (newer)">
+            <span>Next</span>
+            从Haskell、JS、go看函数式编程
+            </a> 
+        
+    </nav>
+    
+
+    
+</div>
+
+</main>
+
+
+        </main>
+        <footer class="footer flex">
+    <section class="container">
+        <nav class="footer-links">
+            
+            <a href="https://chainlark.com/">chainlark</a>
+            
+            <a href="/index.xml">RSS</a>
+            
+        </nav>
+    </section>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.js" integrity="sha512-0UbR6HN0dY8fWN9T7fF658896tsPgnbRREHCNq46J9/JSn8GonXDZmqtTc3qS879GM0zV49b9LPhdc/maKP8Kg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" integrity="sha512-Tn2m0TIpgVyTzzvmxLNuqbSJH3JP8jm+Cy3hvHrW7ndTDcJ1w5mBiksqDBb8GpE2ksktFvDB/ykZ0mDpsZj20w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+
+    (function(){
+        
+        
+        let images = $('img');
+        for (let img of images) {
+            $(img).featherlight($(img));
+        }
+    })();
+    </script>
+    <script defer src="/ts/features.882b72337b0ef8cf09fe2162c5a3e8bc2381c17b65e1c654a4fbd770d38fe420.js" data-enable-footnotes="false"></script>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8R697QBLL4"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-8R697QBLL4');
+    </script>
+</footer>
+    </body>
+</html>

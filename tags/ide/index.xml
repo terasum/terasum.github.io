@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ide on CodeStack</title>
+    <link>https://chenquan.me/tags/ide/</link>
+    <description>Recent content in ide on CodeStack</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 25 Aug 2016 00:09:16 +0000</lastBuildDate><atom:link href="https://chenquan.me/tags/ide/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Sublime Text 安装配置，代理设置，插件管理</title>
+      <link>https://chenquan.me/posts/sublime-text-installation-proxy-plugin/</link>
+      <pubDate>Thu, 25 Aug 2016 00:09:16 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/sublime-text-installation-proxy-plugin/</guid>
+      <description>我一直想写一篇文章，用来说明如何按照我自己的喜好来进行Sublime Text(目前版本是V3)的安装和设置。
+这篇文章更多的是为我自己写的一篇指南，以免未来的什么时候我忘记了。如果这篇文章能够帮到你，那就更棒啦！
+   步骤1: 下载并且安装  你可以从以下链接下载最新版本：
+ Sublime Text 2 Sublime Text 3  目前我使用的版本是ST3 build 3065 更新于2014年8月29日
+ 译者 用的版本是st3 build 3083
+    步骤2: 安装Package Control (插件管理工具)  如果想安装其他的插件，需要先安装这个Package Control 插件，请遵照这个链接中的安装教程：
+Package Control Install
+注意：如果你在使用代理，可能需要手动下载并安装这个包，安装完成之后，需要重启下sublime text (出于安全因素的考虑)
+译者 ：
+由于考虑到国内不一定能打开安装链接，我把安装代码贴在下面，请在st3中按快捷键’ctrl+`’然后再弹出的输入框中输入以下代码并回车（2015/8/25）：
+1 2 3 4 5  import urllib.request,os,hashlib; h = &amp;#39;eb2297e1a458f27d836c04bb0cbaf282&amp;#39; +&amp;amp;lt;/blockquote&amp;amp;gt; &amp;#39;d0e7a3098092775ccb37ca9d6b2e4b7d&amp;#39;; pf = &amp;#39;Package Control.sublime-package&amp;#39;; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>混沌测试 on CodeStack</title>
+    <link>https://chenquan.me/tags/%E6%B7%B7%E6%B2%8C%E6%B5%8B%E8%AF%95/</link>
+    <description>Recent content in 混沌测试 on CodeStack</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Wed, 12 Sep 2018 16:45:40 +0000</lastBuildDate><atom:link href="https://chenquan.me/tags/%E6%B7%B7%E6%B2%8C%E6%B5%8B%E8%AF%95/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>使用 pubma 对区块链网络进行混沌测试</title>
+      <link>https://chenquan.me/posts/chaos-testing-by-pubma/</link>
+      <pubDate>Wed, 12 Sep 2018 16:45:40 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/chaos-testing-by-pubma/</guid>
+      <description>Author: 陈权@hyperchain
+    0x01 问题明确  当前我们需要模拟如下场景：
+ 节点在高网络延迟下的表现 节点在高网络丢包率下的表现  有些bug我们是在比较苛刻的网络条件下测试得到的，而按照传统的经验，我们会想办法将环境部署到互联网上进行测试，但是这种方式非常原始，而且得到的结果也具备大量的偶然性，我们想要复现相同的结果也是十分困难的，因此我们使用容器技术对不同的网络情况进行模拟，以期得到可控的网络抖动测试环境。
+   0x02 pumba 工具介绍  先对容器网络Chaos-testing 工具pubma进行简单介绍，以及相关使用的说明。
+   What is Pubma(a)?  相信出生于90年代的小伙伴们都知道一个电影叫 The Lion King（狮子王），里面有一个角色的名字就叫Pumbaa，在Swahili语中，Pumbaa的意识是”保持愚蠢，无知，以及懒惰”。当然这个工具起这个名字的内涵大概就是想模拟一个“愚蠢的，不可预知的环境”的意思。
+   Pumba 能做什么？  简单地说，Pubma 能够完成包括对Docker容器的 kill，stop， remove，pause。
+当然， Pubma 也能够完成网络模拟，模拟包括一系列的网络问题（延迟，丢包，使用不同的丢包模型，带宽限制等等）。针对网络模拟，Pumba使用的是Linux内核tc netem实现的。 如果目标container不支持tc的话，Pumba将会使用sidekick 附着到目标容器进行控制。
+   怎么使用 Pumba  通常可以传一个容器列表到Pumba中，可以简单地写一个正则表达式来选择匹配的容器。如果你没有指定容器，那么Pumba将会对所有运行的容器进行干预。
+如果你使用了--random选项，那么Pumba将会在提供的容器列表中选择一些随机容器进行干扰。
+你也可以通过传入一些重复参数，以及持续时间参数来更加精细地控制你需要产生的chaos 混沌。
+   如何安装 pumba     源码安装  1 2 3 4 5 6 7 8  # Download binary from https://github.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>blocachain on CodeStack</title>
+    <link>https://chenquan.me/tags/blocachain/</link>
+    <description>Recent content in blocachain on CodeStack</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 12 Jun 2017 15:37:22 +0000</lastBuildDate><atom:link href="https://chenquan.me/tags/blocachain/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Elliptic Curve Cryptography: a gentle introduction (1)</title>
+      <link>https://chenquan.me/posts/elliptic-curve-cryptography_a-gentle-introduction_1/</link>
+      <pubDate>Mon, 12 Jun 2017 15:37:22 +0000</pubDate>
+      
+      <guid>https://chenquan.me/posts/elliptic-curve-cryptography_a-gentle-introduction_1/</guid>
+      <description>现在我们可以在TLS,PGP,SSH等应用中看到椭圆曲线加密系统的踪影，这三个应用几乎构建起了现代web应用和信息技术世界的基石，更不要说Bitcoin以及其他的加密货币。
+在ECC流行之前，几乎所有的公钥算法都是基于RSA,DSA以及DH，这些算法都是基于同余理论构建的。RSA以及其同类算法现在还是很流行，往往配合ECC一同使用，相对于RSA这种原理很容易被人理解，也很容易实现的算法而言，ECC的内部机理对大多数人而言似乎是一种未解之谜。
+我将会用这一系列的文章带领大家进入椭圆曲线加密的全新世界，我的目标不是详细地说明ECC的全部细节(这些在网上随手都能搜索到)，而是要提供一个简单易懂的教程说明什么是ECC，以及为什么它是安全的，当然我也不想花费大量的时间去进行数学证明。我将会提供一些有用的样例然后用一些生动的动态交互工具和脚本去展现它们。
+特别地，这里有些点事我将要提及的：
+为了理解这里都在说些什么，你需要预先理解一些理论：几何和现代代数，并且需要了解对称加密和非对称加密算法，最后你需要对什么是easy的问题，什么是hard的问题有一个清晰的认识。
+准备好了吗？让我们开始吧！
+   椭圆曲线 （Elliptic Curves）  首先，从什么是椭圆曲线（Elliptic Curver）开始，Wolfram MathWorld给了一个完整定义: 但是我们不玩这个，简单来说，椭圆曲线就是一个可以通过等式： $$ y^2 = x^3 + ax + b $$
+描述的点集。
+其中$4a^3+27b^2 \neq 0$
+ 因为需要排除掉 singular curves 也称奇异曲线。
+ 上述的等式叫做椭圆曲线_Weierstrass normal form_
+ 上图是不同椭圆曲线的形状（ b=1, a从2变化到-3 ）
+  singularities 曲线:
+左边, a curve with a cusp（尖点）:$y^2=x^3$
+右边, a curve with a self-intersection（自交）$y^2 = x^3 - 3x + 2$上述两者均为不合法的椭圆曲线
+ 根据不同的a和b，椭圆曲线可能在平面上展现出不同的形状，很明显，椭圆曲线是关于x轴对称的。
+在我们的设计当中，我们还需要一个_无穷点_ Point at infinity（或者称为理想点），现在我们用符号 0 作为作为我们的无穷点。</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="theme-color" content="dark">
+    <title>Lodash 源码分析（三）Array | CodeStack</title>
+
+    
+    
+    
+    <meta property="og:site_name" content="Hugo Tania is Amazing" />
+    <meta property="og:title" content="Lodash 源码分析（三）Array | CodeStack"/>
+    <meta itemprop="name" content="Lodash 源码分析（三）Array | CodeStack" />
+    <meta name="twitter:title" content="Lodash 源码分析（三）Array | CodeStack" />
+    <meta name="application-name" content="Lodash 源码分析（三）Array | CodeStack" />
+
+
+    <meta name="description" content="Hugo is Absurdly Fast!" />
+    <meta name="twitter:description" content="Hugo is Absurdly Fast!"/>
+    <meta itemprop="description" content="Hugo is Absurdly Fast!"/>
+    <meta property="og:description" content="Hugo is Absurdly Fast!" />
+
+    
+
+
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    
+    <link rel="stylesheet" href="/sass/main.min.0158e06e6beeec53cf25d2cb31334e3da41c26993a6f06151e34b499e132997a.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.gallery.min.css" integrity="sha512-B31/elyDKOSa2yGC1ALSAHkdlJ5FOhZJTNANGUFxWOnVMfKQmekRG2/sNdp6yJPrO7Ae9rlAxUlr0QjiJne01Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.css" integrity="sha512-56GJrpSgHk6Mc9Fltt+bQKcICJoEpxtvozXPA5n5OT0rfWiqGlJmJCI/vl16kctf/0XbBloh03vl7OF2xFnR8g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+</head>
+    <script>
+    (function() {
+        const colorSchemeKey = 'ThemeColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.userColorScheme = 'dark';
+        } else {
+            document.documentElement.dataset.userColorScheme = 'light';
+        }
+    })();
+</script>
+
+    <body class="dark">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-content flex">
+            <div id="nav-left" class="nav-left flex">
+                <a class="brand" href="/">
+                    
+                    <i class="fas fa-code"></i> 
+                    &nbsp; CodeStack
+                 </a>
+                 
+                 
+                 <a id="nav-left-extend" href="javascript:toggle_nav_extend();" class="nav-left-extend"><i class="czs-category-l"></i></a>
+            </div>
+
+            <div id="nav-right" class="nav-right flex">
+                
+                <a target="_blank" href="https://docker.chenquan.me/">
+                    
+                    <i class="fab fa-docker"></i>
+                    
+                   Docker 教程 
+                </a>
+                
+                <a target="_blank" href="/articles/">
+                    
+                    <i class="fas fa-archive"></i>
+                    
+                   文章归档 
+                </a>
+                
+
+                
+            </div>
+         </div>
+    </div>
+</nav>
+
+<script lang="javascript">
+    
+    function toggle_search_box() {
+        let search_box = document.getElementById('search-query');
+        let computedStyle = window.getComputedStyle(search_box, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'block') {
+            search_box.setAttribute('style', 'display: none; width: 0px;');
+        } else {
+            search_box.setAttribute('style', 'display: block; width: 200px;');
+        }
+    }
+    
+    function toggle_nav_extend() {
+        let nav_left_extend = document.getElementById('nav-left-extend');
+        let extend_icon = nav_left_extend.children[0];
+        let nav_right = document.getElementById('nav-right');
+        let computedStyle = window.getComputedStyle(nav_right, null);
+        let display_prop = computedStyle['display'];
+        if (display_prop && display_prop === 'flex') {
+            nav_right.setAttribute('style', 'display: none;');
+            extend_icon.setAttribute('style', 'font-size: 26px;');
+            extend_icon.setAttribute('class', 'czs-category-l');
+        } else {
+            extend_icon.setAttribute('class', 'czs-close-l');
+            extend_icon.setAttribute('style', 'font-size: 20px;padding: 1px 0 0 3px;');
+            nav_right.setAttribute('style', 'display: flex;');
+        }
+    }
+</script>
+        <main>
+            
+<div class="container mainarea post-shadow">
+    <article class="post-article">
+        <header class="article-header">
+            <div class="thumb">
+                <div>
+                    <h1>Lodash 源码分析（三）Array</h1>
+                    <div class="post-meta">
+                        <div>
+                            
+                            
+                            By terasum / <time>2017-09-21</time>
+                        </div>
+                        <div class="tags">
+                            
+                            <a href="/tags/javascript/">javascript</a>
+                            
+                            <a href="/tags/lodash/">lodash</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="article-post" id="write">
+        <p>这是Lodash源码分析系列文章的第三篇，前面两篇文章(<a href="http://www.chenquan.me/archives/254">Lodash 源码分析（一）“Function” Methods</a>、<a href="http://www.chenquan.me/archives/267">Lodash 源码分析（二）“Function” Methods</a>)分别分析了Lodash “Function” 中的一些重要函数，也给出了简化的实现，为理解其内部机理和执行方式提供了便利。这篇文章将专注于Array，Array是Lodash中非常重要的内容，我们将分析其代码实现以及同类似库中的实现对比。</p>
+<h2 id="_head">
+    <a href="#_head" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    _.head
+</h2>
+<p><code>_.head</code>函数其实很简单，返回一个数组的第一个元素，完全可以在两三行代码中实现。可以看到Lodash中是这么实现的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">head</span><span class="p">(</span><span class="nx">array</span><span class="p">)</span> <span class="p">{</span>
+   <span class="k">return</span> <span class="p">(</span><span class="nx">array</span> <span class="o">&amp;&amp;</span> <span class="nx">array</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="o">?</span> <span class="nx">array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">:</span> <span class="kc">undefined</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Lodash进行了简单的判断，然后返回了第一个元素。这么简单的函数其实没有什么好说的，但我拿出来说是想介绍另一个库<code>Ramda.js</code>的实现：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">nth</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>它是用<code>nth</code>函数实现该功能的，那么这个函数式怎么样的呢？</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">_curry2</span><span class="p">(</span><span class="kd">function</span> <span class="nx">nth</span><span class="p">(</span><span class="nx">offset</span><span class="p">,</span> <span class="nx">list</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">idx</span> <span class="o">=</span> <span class="nx">offset</span> <span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span> <span class="mi">0</span> <span class="o">?</span> <span class="nx">list</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="nx">offset</span> <span class="o">:</span> <span class="nx">offset</span><span class="p">;</span>
+  <span class="k">return</span> <span class="nx">_isString</span><span class="p">(</span><span class="nx">list</span><span class="p">)</span> <span class="o">?</span> <span class="nx">list</span><span class="p">.</span><span class="nx">charAt</span><span class="p">(</span><span class="nx">idx</span><span class="p">)</span> <span class="o">:</span> <span class="nx">list</span><span class="p">[</span><span class="nx">idx</span><span class="p">];</span>
+<span class="p">});</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这个函数就有点意思了，用了柯里化，是一个函数式的实现，当<code>head</code>函数返回一个<code>nth(0)</code>时，其实返回的是一个柯里化之后的函数，然后再接受一个数组，判断数组类型之后返回<code>list[offset]</code>的值。</p>
+<p>再看看Lodash的<code>nth</code>的实现：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">nth</span><span class="p">(</span><span class="nx">array</span><span class="p">,</span> <span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+   <span class="k">return</span> <span class="p">(</span><span class="nx">array</span> <span class="o">&amp;&amp;</span> <span class="nx">array</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="o">?</span> <span class="nx">baseNth</span><span class="p">(</span><span class="nx">array</span><span class="p">,</span> <span class="nx">toInteger</span><span class="p">(</span><span class="nx">n</span><span class="p">))</span> <span class="o">:</span> <span class="kc">undefined</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">baseNth</span><span class="p">(</span><span class="nx">array</span><span class="p">,</span> <span class="nx">n</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">length</span> <span class="o">=</span> <span class="nx">array</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="nx">n</span> <span class="o">+=</span> <span class="nx">n</span> <span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span> <span class="mi">0</span> <span class="o">?</span> <span class="nx">length</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">return</span> <span class="nx">isIndex</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">length</span><span class="p">)</span> <span class="o">?</span> <span class="nx">array</span><span class="p">[</span><span class="nx">n</span><span class="p">]</span> <span class="o">:</span> <span class="kc">undefined</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>仔细对比两个库的实现，两个库都允许负下标的处理，但是对于Ramda而言，如果list是一个<code>null</code>或者<code>undefined</code>类型的数据的话，将会抛出<code>TypeError</code>，而Lodash则优雅一些。</p>
+<h2 id="_join">
+    <a href="#_join" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    _.join
+</h2>
+<p><code>_.join</code>函数是另一个简单的函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">arrayProto</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">nativeJoin</span> <span class="o">=</span> <span class="nx">arrayProto</span><span class="p">.</span><span class="nx">join</span><span class="p">;</span>
+
+<span class="kd">function</span> <span class="nx">join</span><span class="p">(</span><span class="nx">array</span><span class="p">,</span> <span class="nx">separator</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">array</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span> <span class="s1">&#39;&#39;</span> <span class="o">:</span> <span class="nx">nativeJoin</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">array</span><span class="p">,</span> <span class="nx">separator</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>重写之后函数变为:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">join</span><span class="p">(</span><span class="nx">array</span><span class="p">,</span><span class="nx">separator</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">array</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">?</span> <span class="s1">&#39;&#39;</span> <span class="o">:</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">join</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">array</span><span class="p">,</span> <span class="nx">separator</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们再对比一下Ramda的实现：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span><span class="nx">br</span> <span class="o">/&gt;</span><span class="kd">var</span> <span class="nx">invoker</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./invoker&#39;</span><span class="p">);</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">invoker</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;join&#39;</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>再看看invoker函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">_curry2</span><span class="p">(</span><span class="kd">function</span> <span class="nx">invoker</span><span class="p">(</span><span class="nx">arity</span><span class="p">,</span> <span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">curryN</span><span class="p">(</span><span class="nx">arity</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">target</span> <span class="o">=</span> <span class="nx">arguments</span><span class="p">[</span><span class="nx">arity</span><span class="p">];</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">target</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="nx">_isFunction</span><span class="p">(</span><span class="nx">target</span><span class="p">[</span><span class="nx">method</span><span class="p">]))</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">target</span><span class="p">[</span><span class="nx">method</span><span class="p">].</span><span class="nx">apply</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">arity</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nx">TypeError</span><span class="p">(</span><span class="nx">toString</span><span class="p">(</span><span class="nx">target</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; does not have a method named &#34;&#39;</span> <span class="o">+</span> <span class="nx">method</span> <span class="o">+</span> <span class="s1">&#39;&#34;&#39;</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>invoker</code>函数就是为了返回一个curry化的函数，那么我们其实可以这么理解如果用Lodash实现一个函数化的<code>join</code>可以这么实现：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">_join</span><span class="p">(</span><span class="nx">array</span><span class="p">,</span><span class="nx">separator</span><span class="p">){</span>
+        <span class="k">return</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">join</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">array</span><span class="p">,</span><span class="nx">seprator</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kd">var</span> <span class="nx">join</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">curry</span><span class="p">(</span><span class="nx">_join</span><span class="p">);</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>那么我们可以和Ramda的使用方式一样使用：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="nx">join</span><span class="p">(</span><span class="nx">_</span><span class="p">,</span><span class="s2">&#34;,&#34;</span><span class="p">)([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]);</span>
+<span class="c1">// 1,2,3
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id="_remove">
+    <a href="#_remove" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    _.remove
+</h2>
+<p>这个方法很有意思，我们可以看到不同的实现方式（通常实现/函数式实现），两种实现差别很大，所以拿出来分析一下。</p>
+<p>先看看Lodash的实现：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript">    <span class="cm">/**
+</span><span class="cm">     * Removes all elements from `array` that `predicate` returns truthy for
+</span><span class="cm">     * and returns an array of the removed elements. The predicate is invoked
+</span><span class="cm">     * with three arguments: (value, index, array).
+</span><span class="cm">     *
+</span><span class="cm">     * **Note:** Unlike `_.filter`, this method mutates `array`. Use `_.pull`
+</span><span class="cm">     * to pull elements from an array by value.
+</span><span class="cm">     *
+</span><span class="cm">     * @static
+</span><span class="cm">     * @memberOf _
+</span><span class="cm">     * @since 2.0.0
+</span><span class="cm">     * @category Array
+</span><span class="cm">     * @param {Array} array The array to modify.
+</span><span class="cm">     * @param {Function} [predicate=_.identity] The function invoked per iteration.
+</span><span class="cm">     * @returns {Array} Returns the new array of removed elements.
+</span><span class="cm">     * @example
+</span><span class="cm">     *
+</span><span class="cm">     * var array = [1, 2, 3, 4];
+</span><span class="cm">     * var evens = _.remove(array, function(n) {
+</span><span class="cm">     *   return n % 2 == 0;
+</span><span class="cm">     * });
+</span><span class="cm">     *
+</span><span class="cm">     * console.log(array);
+</span><span class="cm">     * // =&amp;gt; [1, 3]
+</span><span class="cm">     *
+</span><span class="cm">     * console.log(evens);
+</span><span class="cm">     * // =&amp;gt; [2, 4]
+</span><span class="cm">     */</span>
+    <span class="kd">function</span> <span class="nx">remove</span><span class="p">(</span><span class="nx">array</span><span class="p">,</span> <span class="nx">predicate</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="p">[];</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="nx">array</span> <span class="o">&amp;&amp;</span> <span class="nx">array</span><span class="p">.</span><span class="nx">length</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="kd">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+          <span class="nx">indexes</span> <span class="o">=</span> <span class="p">[],</span>
+          <span class="nx">length</span> <span class="o">=</span> <span class="nx">array</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+
+      <span class="nx">predicate</span> <span class="o">=</span> <span class="nx">getIteratee</span><span class="p">(</span><span class="nx">predicate</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>
+      <span class="k">while</span> <span class="p">(</span><span class="o">++</span><span class="nx">index</span> <span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span> <span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">array</span><span class="p">[</span><span class="nx">index</span><span class="p">];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">predicate</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">array</span><span class="p">))</span> <span class="p">{</span>
+          <span class="nx">result</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+          <span class="nx">indexes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">index</span><span class="p">);</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+      <span class="nx">basePullAt</span><span class="p">(</span><span class="nx">array</span><span class="p">,</span> <span class="nx">indexes</span><span class="p">);</span>
+      <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+    <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>**一定要注意的是，该方法会修改原数组。**官方也对其进行了说明。该方法同<code>_.fliter</code>的区别也就在是否会修改原对象上。</p>
+<p>我们分析一下Lodash是如何实现这个功能的，首先判断数组是否合法，如果不合法就直接返回。在Lodash中的实现其实很简单，首先得到一个<code>predicate</code>谓词函数，该谓词函数用于判断元素是否符合条件，如果符合条件就将其从原数组中移除。逻辑也比较简单，但是该函数会修改原array，该功能是通过<code>basePullAt()</code>实现的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript">    <span class="cm">/**
+</span><span class="cm">     * The base implementation of `_.pullAt` without support for individual
+</span><span class="cm">     * indexes or capturing the removed elements.
+</span><span class="cm">     *
+</span><span class="cm">     * @private
+</span><span class="cm">     * @param {Array} array The array to modify.
+</span><span class="cm">     * @param {number[]} indexes The indexes of elements to remove.
+</span><span class="cm">     * @returns {Array} Returns `array`.
+</span><span class="cm">     */</span>
+    <span class="kd">function</span> <span class="nx">basePullAt</span><span class="p">(</span><span class="nx">array</span><span class="p">,</span> <span class="nx">indexes</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">length</span> <span class="o">=</span> <span class="nx">array</span> <span class="o">?</span> <span class="nx">indexes</span><span class="p">.</span><span class="nx">length</span> <span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+          <span class="nx">lastIndex</span> <span class="o">=</span> <span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+
+      <span class="k">while</span> <span class="p">(</span><span class="nx">length</span><span class="o">--</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="nx">indexes</span><span class="p">[</span><span class="nx">length</span><span class="p">];</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">length</span> <span class="o">==</span> <span class="nx">lastIndex</span> <span class="o">||</span> <span class="nx">index</span> <span class="o">!==</span> <span class="nx">previous</span><span class="p">)</span> <span class="p">{</span>
+          <span class="kd">var</span> <span class="nx">previous</span> <span class="o">=</span> <span class="nx">index</span><span class="p">;</span>
+          <span class="k">if</span> <span class="p">(</span><span class="nx">isIndex</span><span class="p">(</span><span class="nx">index</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">splice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">array</span><span class="p">,</span> <span class="nx">index</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+          <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">baseUnset</span><span class="p">(</span><span class="nx">array</span><span class="p">,</span> <span class="nx">index</span><span class="p">);</span>
+          <span class="p">}</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="nx">array</span><span class="p">;</span>
+    <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>需要说明的是，这里的<code>splice</code>方法的原型是<code>Array.prototype.splice</code>，该方法同<code>Array.prototype.slice</code>的区别是，<code>splice</code>会修改原数组的内容，而<code>slice</code>不会修改原数组的内容，而仅仅做的是一次浅拷贝。</p>
+<p>还需要说明一下的是<code>baseUnset</code>：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="cm">/**
+</span><span class="cm"> * The base implementation of `unset`.
+</span><span class="cm"> *
+</span><span class="cm"> * @private
+</span><span class="cm"> * @param {Object} object The object to modify.
+</span><span class="cm"> * @param {Array|string} path The property path to unset.
+</span><span class="cm"> * @returns {boolean} Returns `true` if the property is deleted, else `false`.
+</span><span class="cm"> */</span>
+<span class="kd">function</span> <span class="nx">baseUnset</span><span class="p">(</span><span class="nx">object</span><span class="p">,</span> <span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">path</span> <span class="o">=</span> <span class="nx">castPath</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="nx">object</span><span class="p">)</span>
+  <span class="nx">object</span> <span class="o">=</span> <span class="nx">parent</span><span class="p">(</span><span class="nx">object</span><span class="p">,</span> <span class="nx">path</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nx">object</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="k">delete</span> <span class="nx">object</span><span class="p">[</span><span class="nx">toKey</span><span class="p">(</span><span class="nx">last</span><span class="p">(</span><span class="nx">path</span><span class="p">))]</span>
+<span class="p">}</span>
+
+<span class="kr">export</span> <span class="k">default</span> <span class="nx">baseUnset</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>这个方法其实很简单，就是删除对象中的某一个属性/键。</p>
+<p>所以Lodash的整个<code>_.remove</code>的脉络就捋清楚了，按照惯例，我们需要稍微简化一下这个函数，把核心逻辑抽取出来：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">remove</span><span class="p">(</span><span class="nx">list</span><span class="p">,</span><span class="nx">predicated</span><span class="p">){</span>
+  <span class="kd">var</span> <span class="nx">indexes</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nx">i</span> <span class="o">&amp;</span><span class="nx">lt</span><span class="p">;</span> <span class="nx">list</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span><span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+      <span class="k">if</span><span class="p">(</span><span class="nx">predicated</span><span class="p">(</span><span class="nx">list</span><span class="p">[</span><span class="nx">i</span><span class="p">])){</span>
+        <span class="nx">indexes</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">idx</span> <span class="o">=</span> <span class="nx">indexes</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="nx">idx</span> <span class="o">&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nx">idx</span><span class="o">--</span><span class="p">){</span>
+      <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">splice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">list</span><span class="p">,</span><span class="nx">indexes</span><span class="p">[</span><span class="nx">idx</span><span class="p">],</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">list</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">];</span>
+<span class="nx">remove</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">){</span><span class="k">if</span> <span class="p">(</span><span class="nx">a</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span> <span class="k">return</span> <span class="kc">true</span><span class="p">;</span> <span class="k">else</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;});</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a</span><span class="p">);</span> <span class="c1">// [1,2,4]
+</span></code></pre></td></tr></table>
+</div>
+</div><p>恩，感觉好像也挺好用的。</p>
+<p>但是我们不能止步于此，作为一个热衷函数式编程的程序员，最终目标是代码中没有循环没有分支。我们看看Ramda.js是怎么实现的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="cm">/**
+</span><span class="cm"> * Removes the sub-list of `list` starting at index `start` and containing
+</span><span class="cm"> * `count` elements. _Note that this is not destructive_: it returns a copy of
+</span><span class="cm"> * the list with the changes.
+</span><span class="cm"> * &amp;lt;small&amp;gt;No lists have been harmed in the application of this function.&amp;lt;/small&amp;gt;
+</span><span class="cm"> *
+</span><span class="cm"> * @func
+</span><span class="cm"> * @memberOf R
+</span><span class="cm"> * @since v0.2.2
+</span><span class="cm"> * @category List
+</span><span class="cm"> * @sig Number -&amp;gt; Number -&amp;gt; [a] -&amp;gt; [a]
+</span><span class="cm"> * @param {Number} start The position to start removing elements
+</span><span class="cm"> * @param {Number} count The number of elements to remove
+</span><span class="cm"> * @param {Array} list The list to remove from
+</span><span class="cm"> * @return {Array} A new Array with `count` elements from `start` removed.
+</span><span class="cm"> * @example
+</span><span class="cm"> *
+</span><span class="cm"> *      R.remove(2, 3, [1,2,3,4,5,6,7,8]); //=&amp;gt; [1,2,6,7,8]
+</span><span class="cm"> */</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">_curry3</span><span class="p">(</span><span class="kd">function</span> <span class="nx">remove</span><span class="p">(</span><span class="nx">start</span><span class="p">,</span> <span class="nx">count</span><span class="p">,</span> <span class="nx">list</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">list</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+  <span class="nx">result</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">start</span><span class="p">,</span> <span class="nx">count</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+<span class="p">});</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>其实Ramda就是对<code>splice</code>进行了curry化，什么也没有做，毫无参考价值。没有达到我们的预期，所以只能自己动手了：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="kd">function</span> <span class="nx">remove2</span><span class="p">(</span><span class="nx">list</span><span class="p">,</span><span class="nx">predicated</span><span class="p">){</span>
+  <span class="k">return</span> <span class="nx">_remove</span><span class="p">(</span><span class="nx">list</span><span class="p">,</span><span class="nx">list</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="nx">predicated</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kd">function</span> <span class="nx">_remove</span><span class="p">(</span><span class="nx">list</span><span class="p">,</span><span class="nx">idx</span><span class="p">,</span><span class="nx">predicated</span><span class="p">){</span>
+  <span class="k">if</span><span class="p">(</span><span class="nx">predicated</span><span class="p">(</span><span class="nx">list</span><span class="p">[</span><span class="nx">idx</span><span class="p">])){</span>
+    <span class="nx">list</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="nx">idx</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span><span class="k">return</span> <span class="nx">list</span><span class="p">;}</span><span class="k">else</span><span class="p">{</span>
+      <span class="nx">_remove</span><span class="p">(</span><span class="nx">list</span><span class="p">,</span><span class="nx">idx</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="nx">predicated</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">//调用
+</span><span class="c1"></span><span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">];</span>
+<span class="nx">remove2</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span><span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">){</span><span class="k">if</span> <span class="p">(</span><span class="nx">a</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span> <span class="k">return</span> <span class="kc">true</span><span class="p">;</span> <span class="k">else</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;});</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">a</span><span class="p">);</span> <span class="c1">//[1,2,4]
+</span></code></pre></td></tr></table>
+</div>
+</div><p>感觉舒服多了，对于JavaScript而言没有分支语句是不可能的，但是可以把所有的循环用递归取代，感觉代码也简洁了许多，函数式能够让人以另一个角度思考问题，真的是一个很好的编程范式。</p>
+<h2 id="结语">
+    <a href="#%e7%bb%93%e8%af%ad" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    结语
+</h2>
+<p>最近工作非常忙，也没有时间写第三篇连载，忙里抽空用午休时间将本文写完了。成文比较匆忙难免有一些谬误望各位看官海涵，也希望能够直接指出我文章中的错误，感激不尽！</p>
+<h2 id="敬请期待">
+    <a href="#%e6%95%ac%e8%af%b7%e6%9c%9f%e5%be%85" class="anchor">
+        <svg class="icon" aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16">
+            <path fill-rule="evenodd"
+                d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z">
+            </path>
+        </svg>
+    </a>
+    敬请期待
+</h2>
+<p>本系列文章还有后续内容，包括数组和集合的操作，以及对象的操作，具体还没有想好涉及哪方面内容，总之敬请期待！</p>
+        </div>
+    </article>
+
+</div>
+
+ 
+<div class="container">
+
+    
+    <nav class="flex suggested">
+        
+        <a rel="prev" href="/posts/lodash-source-code-analysis-2/" title="Previous post (older)">
+            <span>Previous</span>
+            Lodash 源码分析（二）“Function” Methods
+            </a>
+        
+        
+        
+        <a rel="next" href="/posts/how-to-compile-v8-engine-by-gn/" title="Next post (newer)">
+            <span>Next</span>
+            如何用GN编译V8引擎
+            </a> 
+        
+    </nav>
+    
+
+    
+</div>
+
+</main>
+
+
+        </main>
+        <footer class="footer flex">
+    <section class="container">
+        <nav class="footer-links">
+            
+            <a href="https://chainlark.com/">chainlark</a>
+            
+            <a href="/index.xml">RSS</a>
+            
+        </nav>
+    </section>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.js" integrity="sha512-0UbR6HN0dY8fWN9T7fF658896tsPgnbRREHCNq46J9/JSn8GonXDZmqtTc3qS879GM0zV49b9LPhdc/maKP8Kg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" integrity="sha512-Tn2m0TIpgVyTzzvmxLNuqbSJH3JP8jm+Cy3hvHrW7ndTDcJ1w5mBiksqDBb8GpE2ksktFvDB/ykZ0mDpsZj20w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+
+    (function(){
+        
+        
+        let images = $('img');
+        for (let img of images) {
+            $(img).featherlight($(img));
+        }
+    })();
+    </script>
+    <script defer src="/ts/features.882b72337b0ef8cf09fe2162c5a3e8bc2381c17b65e1c654a4fbd770d38fe420.js" data-enable-footnotes="false"></script>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8R697QBLL4"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-8R697QBLL4');
+    </script>
+</footer>
+    </body>
+</html>
