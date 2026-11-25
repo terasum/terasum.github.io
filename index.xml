@@ -1,8 +1,8 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>CodeStack</title>
+    <title>codestack</title>
     <link>https://chenquan.me/</link>
-    <description>Recent content on CodeStack</description>
+    <description>Recent content on codestack</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <lastBuildDate>Tue, 01 Feb 2022 15:37:14 +0000</lastBuildDate><atom:link href="https://chenquan.me/index.xml" rel="self" type="application/rss+xml" />
@@ -10,7 +10,7 @@
     <title>全链路追踪系统技术分析</title>
     <link>https://chenquan.me/posts/tracing-system-analysis/</link>
     <pubDate>Tue, 01 Feb 2022 15:37:14 +0000</pubDate>
-    <author>terasum</author>
+    <author>codestack</author>
     <guid>https://chenquan.me/posts/tracing-system-analysis/</guid>
     <description>
         &lt;h2 id=&#34;前言&#34;&gt;
@@ -1022,7 +1022,7 @@ SOFA Tracer 将TraceId和SpanID的&lt;a href=&#34;https://www.sofastack.tech/pro
     <title>PBFT算法关键要点详叙</title>
     <link>https://chenquan.me/posts/pbft-key-points/</link>
     <pubDate>Mon, 18 Jan 2021 07:36:44 +0000</pubDate>
-    <author>terasum</author>
+    <author>codestack</author>
     <guid>https://chenquan.me/posts/pbft-key-points/</guid>
     <description>
         &lt;h2 id=&#34;引言&#34;&gt;
@@ -1937,7 +1937,7 @@ $$&lt;/p&gt;
     <title>WRK2 http benchmark 快速笔记</title>
     <link>https://chenquan.me/posts/wrk2-note/</link>
     <pubDate>Fri, 11 Jan 2019 08:39:41 +0000</pubDate>
-    <author>terasum</author>
+    <author>codestack</author>
     <guid>https://chenquan.me/posts/wrk2-note/</guid>
     <description>
         &lt;p&gt;首先需要克隆 wrk2 仓库的代码:&lt;/p&gt;
@@ -2034,7 +2034,7 @@ $$&lt;/p&gt;
     <title>使用 pubma 对区块链网络进行混沌测试</title>
     <link>https://chenquan.me/posts/chaos-testing-by-pubma/</link>
     <pubDate>Wed, 12 Sep 2018 16:45:40 +0000</pubDate>
-    <author>terasum</author>
+    <author>codestack</author>
     <guid>https://chenquan.me/posts/chaos-testing-by-pubma/</guid>
     <description>
         &lt;blockquote&gt;
@@ -2788,7 +2788,7 @@ pumba --log-level info netem --tc-image&lt;span class=&#34;o&#34;&gt;=&lt;/span&
     <title>寻觅了很久的 .vimrc</title>
     <link>https://chenquan.me/posts/vimrc-configuration/</link>
     <pubDate>Thu, 30 Aug 2018 01:32:44 +0000</pubDate>
-    <author>terasum</author>
+    <author>codestack</author>
     <guid>https://chenquan.me/posts/vimrc-configuration/</guid>
     <description>
         &lt;p&gt;&lt;code&gt;.vimrc&lt;/code&gt;熟悉又痛苦的一个文件，从自己编译&lt;code&gt;YCM&lt;/code&gt;，安装&lt;code&gt;Ctags&lt;/code&gt;到索性一键安装&lt;code&gt;SpaceVim&lt;/code&gt;最终还是归于沉寂。&lt;/p&gt;
@@ -3206,7 +3206,7 @@ A tab page is a collection of windows.&lt;/p&gt;
     <title>如何用GN编译V8引擎</title>
     <link>https://chenquan.me/posts/how-to-compile-v8-engine-by-gn/</link>
     <pubDate>Sat, 12 May 2018 01:50:38 +0000</pubDate>
-    <author>terasum</author>
+    <author>codestack</author>
     <guid>https://chenquan.me/posts/how-to-compile-v8-engine-by-gn/</guid>
     <description>
         &lt;p&gt;在v8引擎的6.5版本以上，google采用了&lt;code&gt;GN+Ninja&lt;/code&gt;的编译组合，因此本文主要是基于&lt;code&gt;GN+Ninjia&lt;/code&gt;的编译方式进行说明。&lt;/p&gt;
@@ -3553,7 +3553,7 @@ if (strip_absolute_paths_from_debug_symbols_default) {
     <title>Lodash 源码分析（三）Array</title>
     <link>https://chenquan.me/posts/lodash-source-code-analysis-3/</link>
     <pubDate>Thu, 21 Sep 2017 04:57:38 +0000</pubDate>
-    <author>terasum</author>
+    <author>codestack</author>
     <guid>https://chenquan.me/posts/lodash-source-code-analysis-3/</guid>
     <description>
         &lt;p&gt;这是Lodash源码分析系列文章的第三篇，前面两篇文章(&lt;a href=&#34;http://www.chenquan.me/archives/254&#34;&gt;Lodash 源码分析（一）“Function” Methods&lt;/a&gt;、&lt;a href=&#34;http://www.chenquan.me/archives/267&#34;&gt;Lodash 源码分析（二）“Function” Methods&lt;/a&gt;)分别分析了Lodash “Function” 中的一些重要函数，也给出了简化的实现，为理解其内部机理和执行方式提供了便利。这篇文章将专注于Array，Array是Lodash中非常重要的内容，我们将分析其代码实现以及同类似库中的实现对比。&lt;/p&gt;
@@ -4118,7 +4118,7 @@ if (strip_absolute_paths_from_debug_symbols_default) {
     <title>Lodash 源码分析（二）“Function” Methods</title>
     <link>https://chenquan.me/posts/lodash-source-code-analysis-2/</link>
     <pubDate>Tue, 29 Aug 2017 10:55:53 +0000</pubDate>
-    <author>terasum</author>
+    <author>codestack</author>
     <guid>https://chenquan.me/posts/lodash-source-code-analysis-2/</guid>
     <description>
         &lt;p&gt;这是Lodash源码分析的第二篇文章，我们在第一篇&lt;a href=&#34;http://www.chenquan.me/archives/254&#34;&gt;Lodash 源码分析（一）“Function” Methods&lt;/a&gt;中介绍了基本的&lt;code&gt;_.after&lt;/code&gt;，&lt;code&gt;_.map&lt;/code&gt;，以及复杂的&lt;code&gt;_.ary&lt;/code&gt;函数的实现以及我们自己的自定义轻量级版本。大概清楚了Lodash的整个代码脉络。这次我们继续分析，这次我们讲讲&lt;code&gt;_.reduce&lt;/code&gt;和&lt;code&gt;_.curry&lt;/code&gt;。&lt;/p&gt;
@@ -4640,7 +4640,7 @@ if (strip_absolute_paths_from_debug_symbols_default) {
 &lt;/h2&gt;
 &lt;p&gt;下周将继续更新Lodash源码分析系列，接下来将会分析Lodash集合方法。&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;© 版权所有，禁止一切形式转载。顺便宣传一下个人博客&lt;a href=&#34;http://chenquan.me&#34;&gt;http://chenquan.me&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;© 版权所有，禁止一切形式转载。顺便宣传一下个人博客&lt;a href=&#34;http://chenquan.me&#34;&gt;codestack&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
     </description>
     </item>
@@ -4649,7 +4649,7 @@ if (strip_absolute_paths_from_debug_symbols_default) {
     <title>Lodash 源码分析（一）“Function” Methods</title>
     <link>https://chenquan.me/posts/lodash-source-code-analysis-1/</link>
     <pubDate>Mon, 21 Aug 2017 11:38:10 +0000</pubDate>
-    <author>terasum</author>
+    <author>codestack</author>
     <guid>https://chenquan.me/posts/lodash-source-code-analysis-1/</guid>
     <description>
         &lt;p&gt;Lodash一直是我很喜欢用的一个库，代码也十分简洁优美，一直想抽时间好好分析一下Lodash的源代码。最近抽出早上的一些时间来分析一下Lodash的一些我觉得比较好的源码。因为函数之间可能会有相互依赖，所以不会按照文档顺序进行分析，而是根据依赖关系和简易程度由浅入深地进行分析。因为个人能力有限，如果理解有偏差，还请直接指出，以便我及时修改。&lt;/p&gt;
@@ -5643,7 +5643,7 @@ if (strip_absolute_paths_from_debug_symbols_default) {
     <title>Go实时GC——三色算法理论与实践</title>
     <link>https://chenquan.me/posts/golang-gc-algorithm-3-colors/</link>
     <pubDate>Sun, 20 Aug 2017 04:32:13 +0000</pubDate>
-    <author>terasum</author>
+    <author>codestack</author>
     <guid>https://chenquan.me/posts/golang-gc-algorithm-3-colors/</guid>
     <description>
         &lt;p&gt;对于实时系统而言，垃圾回收系统可能是一个极大的隐患，因为在垃圾回收的时候需要将整个程序暂停。所以在我们设计消息总线系统的时候，需要小心地选择我们的语言。Go一直在强调它的低延迟，但是它真的做到了吗？如果是的，它是怎么做到的呢？&lt;/p&gt;
@@ -6067,7 +6067,7 @@ func main() {
     <title>Go 线程调度器</title>
     <link>https://chenquan.me/posts/golang-thread-scheduler/</link>
     <pubDate>Sat, 19 Aug 2017 07:24:24 +0000</pubDate>
-    <author>terasum</author>
+    <author>codestack</author>
     <guid>https://chenquan.me/posts/golang-thread-scheduler/</guid>
     <description>
         &lt;p&gt;在Go1.1版本中，加入了由Dmitry Vyukov贡献的新的调度器。新的调度器能够动态地调整Go程序的并发性能，而且表现非常出色。因此我想写篇文章介绍一下这个调度器。&lt;/p&gt;
@@ -6169,7 +6169,7 @@ func main() {
     <title>从Haskell、JS、go看函数式编程</title>
     <link>https://chenquan.me/posts/functional-programming-by-haskell-js-golang/</link>
     <pubDate>Sat, 12 Aug 2017 10:23:31 +0000</pubDate>
-    <author>terasum</author>
+    <author>codestack</author>
     <guid>https://chenquan.me/posts/functional-programming-by-haskell-js-golang/</guid>
     <description>
         &lt;p&gt;本文就是我在学习函数式编程的过程当中自己体悟到的一些东西，这里将用go,JavaScript以及Haskell三种语言来分析函数式编程的一些奥秘。JavaScript由于具有的一些优势能够让我们可以实现函数式编程，而go作为一种强类型语言，虽然灵活性又稍有欠缺，但是也能够完成一些高阶函数的实现，Haskell语言作为正统的函数式编程语言，为了解释说明问题，作为对比参照。&lt;/p&gt;
@@ -7032,7 +7032,7 @@ func main() {
     <title>Haskell — 你应该学的一门语言</title>
     <link>https://chenquan.me/posts/haskell-the-language-you-should-learn/</link>
     <pubDate>Wed, 09 Aug 2017 12:37:04 +0000</pubDate>
-    <author>terasum</author>
+    <author>codestack</author>
     <guid>https://chenquan.me/posts/haskell-the-language-you-should-learn/</guid>
     <description>
         &lt;p&gt;三月的时候立下一个flag, 说是在一个月内学会haskell，现在已经8月了，终于有时间坐下来好好地看看haskell,一直以来我都执着于各种语言，现在已经掌握的语言包括: go, python, php, c, java, javascript, shell, 这些语言在不同的领域都是神兵利器，能够帮我解决不同的问题，但是haskell不一样，是一种我完全凭借兴趣去学习的语言。&lt;/p&gt;
@@ -8299,7 +8299,7 @@ func main() {
     <title>精通 sed (mastering sed)</title>
     <link>https://chenquan.me/posts/mastering-in-diving/</link>
     <pubDate>Wed, 05 Jul 2017 14:06:00 +0000</pubDate>
-    <author>terasum</author>
+    <author>codestack</author>
     <guid>https://chenquan.me/posts/mastering-in-diving/</guid>
     <description>
         &lt;h1 id=&#34;mastering-sed&#34;&gt;
@@ -8683,7 +8683,7 @@ hahahahaha
     <title>小船浮绿水——乌镇一日游</title>
     <link>https://chenquan.me/posts/traveling-in-wuzhen/</link>
     <pubDate>Sun, 02 Jul 2017 13:46:09 +0000</pubDate>
-    <author>terasum</author>
+    <author>codestack</author>
     <guid>https://chenquan.me/posts/traveling-in-wuzhen/</guid>
     <description>
         &lt;p&gt;&lt;img loading=&#34;lazy&#34; 
@@ -8726,7 +8726,7 @@ hahahahaha
     <title>用gomock进行mock测试</title>
     <link>https://chenquan.me/posts/use-gomock-to-mock-testing/</link>
     <pubDate>Thu, 22 Jun 2017 15:26:11 +0000</pubDate>
-    <author>terasum</author>
+    <author>codestack</author>
     <guid>https://chenquan.me/posts/use-gomock-to-mock-testing/</guid>
     <description>
         &lt;p&gt;mock对象就是为了解决上面的问题而诞生的，mock(模拟)对象能够模拟实际依赖对象的功能，同时又不需要非常复杂的准备工作，你需要做的，仅仅就是定义对象接口，然后实现它，再交给测试对象去使用。&lt;/p&gt;
@@ -9065,7 +9065,7 @@ FAIL    hellomock   0.007s
     <title>Elliptic Curve Cryptography: a gentle introduction (4)</title>
     <link>https://chenquan.me/posts/elliptic-curve-cryptography_a-gentle-introduction_4/</link>
     <pubDate>Thu, 15 Jun 2017 16:10:28 +0000</pubDate>
-    <author>terasum</author>
+    <author>codestack</author>
     <guid>https://chenquan.me/posts/elliptic-curve-cryptography_a-gentle-introduction_4/</guid>
     <description>
         &lt;h1&gt;椭圆曲线加密：安全性以及RSA对比&lt;/h1&gt;
@@ -9251,7 +9251,7 @@ Took 0m 21s (138 steps on average)&lt;/blockquote&gt;
     <title>Elliptic Curve Cryptography: a gentle introduction (3)</title>
     <link>https://chenquan.me/posts/elliptic-curve-cryptography_a-gentle-introduction_3/</link>
     <pubDate>Thu, 15 Jun 2017 15:54:41 +0000</pubDate>
-    <author>terasum</author>
+    <author>codestack</author>
     <guid>https://chenquan.me/posts/elliptic-curve-cryptography_a-gentle-introduction_3/</guid>
     <description>
         &lt;p&gt;这篇文章是系列文章ECC：优雅入门中的第三篇文章。&lt;/p&gt;
@@ -9421,7 +9421,7 @@ $$&lt;/p&gt;
     <title>Elliptic Curve Cryptography: a gentle introduction (2)</title>
     <link>https://chenquan.me/posts/elliptic-curve-cryptography_a-gentle-introduction_2/</link>
     <pubDate>Wed, 14 Jun 2017 15:14:45 +0000</pubDate>
-    <author>terasum</author>
+    <author>codestack</author>
     <guid>https://chenquan.me/posts/elliptic-curve-cryptography_a-gentle-introduction_2/</guid>
     <description>
         &lt;p&gt;&lt;strong&gt;这篇文章是ECC:优雅入门系列的第二篇文章&lt;/strong&gt;&lt;/p&gt;
@@ -9633,7 +9633,7 @@ $$&lt;/p&gt;
     <title>Elliptic Curve Cryptography: a gentle introduction (1)</title>
     <link>https://chenquan.me/posts/elliptic-curve-cryptography_a-gentle-introduction_1/</link>
     <pubDate>Mon, 12 Jun 2017 15:37:22 +0000</pubDate>
-    <author>terasum</author>
+    <author>codestack</author>
     <guid>https://chenquan.me/posts/elliptic-curve-cryptography_a-gentle-introduction_1/</guid>
     <description>
         &lt;p&gt;现在我们可以在&lt;code&gt;TLS&lt;/code&gt;,&lt;code&gt;PGP&lt;/code&gt;,&lt;code&gt;SSH&lt;/code&gt;等应用中看到椭圆曲线加密系统的踪影，这三个应用几乎构建起了现代web应用和信息技术世界的基石，更不要说Bitcoin以及其他的加密货币。&lt;/p&gt;
@@ -9981,11 +9981,11 @@ $$&lt;/p&gt;
     <title>普吉岛之旅 - 雨季去浮潜是怎样的体验</title>
     <link>https://chenquan.me/posts/diving-in-puket-/</link>
     <pubDate>Sat, 10 Jun 2017 11:42:02 +0000</pubDate>
-    <author>terasum</author>
+    <author>codestack</author>
     <guid>https://chenquan.me/posts/diving-in-puket-/</guid>
     <description>
           &lt;!--[if lt IE 9]&gt;&lt;![endif]--&gt;&lt;video class=&#34;wp-video-shortcode&#34; id=&#34;video-91-1&#34; width=&#34;640&#34; height=&#34;360&#34; preload=&#34;metadata&#34; controls=&#34;controls&#34;&gt;&lt;source type=&#34;video/mp4&#34; src=&#34;http://chenquanme.oss-cn-shanghai.aliyuncs.com/blog/puket.mp4?_=1&#34; /&gt;
-&lt;p&gt;&lt;a href=&#34;http://chenquanme.oss-cn-shanghai.aliyuncs.com/blog/puket.mp4&#34;&gt;&lt;a href=&#34;http://chenquanme.oss-cn-shanghai.aliyuncs.com/blog/puket.mp4&#34;&gt;http://chenquanme.oss-cn-shanghai.aliyuncs.com/blog/puket.mp4&lt;/a&gt;&lt;/a&gt;&lt;/video&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;http://chenquanme.oss-cn-shanghai.aliyuncs.com/blog/puket.mp4&#34;&gt;&lt;a href=&#34;http://chenquanme.oss-cn-shanghai.aliyuncs.com/blog/puket.mp4&#34;&gt;观看视频&lt;/a&gt;&lt;/a&gt;&lt;/video&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;blockquote&gt;
 &lt;p&gt;普吉岛&lt;br&gt;
@@ -10000,7 +10000,7 @@ hyperchain 团建&lt;/p&gt;
     <title>你好泰国! 带着索尼 A6000 去普吉岛拍照</title>
     <link>https://chenquan.me/posts/hello-tailand-traveling-in-puket/</link>
     <pubDate>Fri, 09 Jun 2017 13:39:10 +0000</pubDate>
-    <author>terasum</author>
+    <author>codestack</author>
     <guid>https://chenquan.me/posts/hello-tailand-traveling-in-puket/</guid>
     <description>
         &lt;p&gt;&lt;img loading=&#34;lazy&#34; 
@@ -10080,7 +10080,7 @@ Sony a6000 / iPhone SE&lt;/p&gt;
     <title>一个成功的git分支模型</title>
     <link>https://chenquan.me/posts/a-successful-git-branch-model/</link>
     <pubDate>Sun, 16 Apr 2017 14:34:58 +0000</pubDate>
-    <author>terasum</author>
+    <author>codestack</author>
     <guid>https://chenquan.me/posts/a-successful-git-branch-model/</guid>
     <description>
         &lt;p&gt;在这篇文章中我将介绍一些在过去一年中（无论是工作还是个人项目中）较为成功的开发模型，这里不会介绍很多项目的细节，仅仅是介绍分支策略和发布管理。&lt;/p&gt;
@@ -10529,7 +10529,7 @@ Deleted branch hotfix-1.2.1 &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;was abbe
     <title>Sublime Text 安装配置，代理设置，插件管理</title>
     <link>https://chenquan.me/posts/sublime-text-installation-proxy-plugin/</link>
     <pubDate>Thu, 25 Aug 2016 00:09:16 +0000</pubDate>
-    <author>terasum</author>
+    <author>codestack</author>
     <guid>https://chenquan.me/posts/sublime-text-installation-proxy-plugin/</guid>
     <description>
         &lt;p&gt;我一直想写一篇文章，用来说明如何按照我自己的喜好来进行Sublime Text(目前版本是V3)的安装和设置。&lt;br&gt;

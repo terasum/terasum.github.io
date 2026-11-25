@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>ecc on CodeStack</title>
+    <title>ecc on codestack</title>
     <link>https://chenquan.me/tags/ecc/</link>
-    <description>Recent content in ecc on CodeStack</description>
+    <description>Recent content in ecc on codestack</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <lastBuildDate>Thu, 15 Jun 2017 16:10:28 +0000</lastBuildDate><atom:link href="https://chenquan.me/tags/ecc/index.xml" rel="self" type="application/rss+xml" />

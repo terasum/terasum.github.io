@@ -3,19 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Go实时GC——三色算法理论与实践 · 陈泉</title>
+<title>Go实时GC——三色算法理论与实践 · codestack</title>
 <link rel="stylesheet" href="../../blog-assets/site.css">
 
 </head>
 <body>
 <header class="masthead"><div class="shell">
-<a class="brand" href="../../"><span class="mark" aria-hidden="true">陈</span><span>陈泉</span></a>
+<a class="brand" href="../../"><span class="mark" aria-hidden="true">C</span><span>codestack</span></a>
 <nav aria-label="网站导航"><a href="../../">首页</a><a href="../../#latest">文章</a><a href="../../#about">关于</a></nav>
 </div></header>
 <main class="shell article-layout">
 <article class="article">
 <header><a class="return" href="../../#latest">← 返回文章列表</a>
-<h1>Go实时GC——三色算法理论与实践</h1><p class="meta">陈泉 · <time datetime="2017-08-20">2017-08-20</time> · 工程</p></header>
+<h1>Go实时GC——三色算法理论与实践</h1><p class="meta">codestack · <time datetime="2017-08-20">2017-08-20</time> · 工程</p></header>
 <div class="prose">
 <p>对于实时系统而言，垃圾回收系统可能是一个极大的隐患，因为在垃圾回收的时候需要将整个程序暂停。所以在我们设计消息总线系统的时候，需要小心地选择我们的语言。Go一直在强调它的低延迟，但是它真的做到了吗？如果是的，它是怎么做到的呢？</p>
 <p>在这篇文章当中，我们将会看到Go语言的GC是如何实现的（tricolor algorithm，三色算法），以及为什么这种方法能够达到如此之低的GC暂停，以及最重要的是，它是否真的有效（对这些GC暂停进行benchmar测试，以及同其它类型的语言进行比较）。</p>
@@ -413,5 +413,5 @@ func main() {
 </div>
 </article>
 <aside class="sidebar" aria-label="文章导航"><nav class="toc" aria-label="本文目录"><h2>本文目录</h2><ul><li><a href="#from-haskell-to-go">From Haskell to Go</a></li><li><a href="#并行垃圾回收是如何工作的">并行垃圾回收是如何工作的?</a></li><li><a href="#延迟-vs-吞吐">延迟 VS 吞吐</a></li><li><a href="#实际表现">实际表现</a></li><li><a href="#为什么go的结果不能再好点">为什么Go的结果不能再好点？</a></li><li><a href="#总结">总结</a></li></ul></nav><h2>延伸阅读</h2><ul><li><a href="../tracing-system-analysis/">全链路追踪系统技术分析</a></li><li><a href="../golang-thread-scheduler/">Go 线程调度器</a></li><li><a href="../use-gomock-to-mock-testing/">用gomock进行mock测试</a></li><li><a href="../mastering-in-diving/">精通 sed (mastering sed)</a></li></ul></aside></main>
-<footer><div class="shell">陈泉 · <a href="https://github.com/terasum">GitHub</a></div></footer>
+<footer><div class="shell">codestack</div></footer>
 </body></html>

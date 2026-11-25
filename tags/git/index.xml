@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>git on CodeStack</title>
+    <title>git on codestack</title>
     <link>https://chenquan.me/tags/git/</link>
-    <description>Recent content in git on CodeStack</description>
+    <description>Recent content in git on codestack</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
     <lastBuildDate>Sun, 16 Apr 2017 14:34:58 +0000</lastBuildDate><atom:link href="https://chenquan.me/tags/git/index.xml" rel="self" type="application/rss+xml" />
