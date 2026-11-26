@@ -6153,7 +6153,7 @@ func main() {
 &lt;p&gt;关于调度器还有许多细节，像&lt;code&gt;cgo&lt;/code&gt;线程、&lt;code&gt;LockOSThread()&lt;/code&gt;函数以及与系统与网络&lt;code&gt;poller&lt;/code&gt;的整合。这些已经超过这篇文章的要探讨的范围了，但是仍然值得去深入研究。在Go运行时库里，仍然有大量有意思的创建工作要做。&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;原文 &lt;a href=&#34;http://morsmachine.dk/go-scheduler&#34;&gt;Daniel Morsing&lt;/a&gt;&lt;br&gt;
-翻译 &lt;a href=&#34;http://www.chenquan.me/?p=258&#34;&gt;Chen Quan&lt;/a&gt;&lt;/p&gt;
+翻译 &lt;a href=&#34;http://www.chenquan.me/?p=258&#34;&gt;codestack&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;Releated articles:&lt;/p&gt;
 &lt;ul&gt;
@@ -8679,48 +8679,7 @@ hahahahaha
     </description>
     </item>
     
-    <item>
-    <title>小船浮绿水——乌镇一日游</title>
-    <link>https://chenquan.me/posts/traveling-in-wuzhen/</link>
-    <pubDate>Sun, 02 Jul 2017 13:46:09 +0000</pubDate>
-    <author>codestack</author>
-    <guid>https://chenquan.me/posts/traveling-in-wuzhen/</guid>
-    <description>
-        &lt;p&gt;&lt;img loading=&#34;lazy&#34; 
-    src=&#34;https://chainlark.oss-cn-beijing.aliyuncs.com/82nnh.jpg&#34; 
-    alt=&#34;10001&#34; 
-     /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img loading=&#34;lazy&#34; 
-    src=&#34;https://chainlark.oss-cn-beijing.aliyuncs.com/imfki.jpg&#34; 
-    alt=&#34;10002&#34; 
-     /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img loading=&#34;lazy&#34; 
-    src=&#34;https://chainlark.oss-cn-beijing.aliyuncs.com/sg5qy.jpg&#34; 
-    alt=&#34;10005&#34; 
-     /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img loading=&#34;lazy&#34; 
-    src=&#34;https://chainlark.oss-cn-beijing.aliyuncs.com/hu9xv.jpg&#34; 
-    alt=&#34;10006&#34; 
-     /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img loading=&#34;lazy&#34; 
-    src=&#34;https://chainlark.oss-cn-beijing.aliyuncs.com/989xy.jpg&#34; 
-    alt=&#34;10007&#34; 
-     /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img loading=&#34;lazy&#34; 
-    src=&#34;https://chainlark.oss-cn-beijing.aliyuncs.com/qtogl.jpg&#34; 
-    alt=&#34;10008&#34; 
-     /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img loading=&#34;lazy&#34; 
-    src=&#34;https://chainlark.oss-cn-beijing.aliyuncs.com/g6dvu.jpg&#34; 
-    alt=&#34;10009&#34; 
-     /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img loading=&#34;lazy&#34; 
-    src=&#34;https://chainlark.oss-cn-beijing.aliyuncs.com/uqovx.jpg&#34; 
-    alt=&#34;10010&#34; 
-     /&gt;&lt;/p&gt;
-
-    </description>
-    </item>
+    
     
     <item>
     <title>用gomock进行mock测试</title>
@@ -9977,104 +9936,9 @@ $$&lt;/p&gt;
     </description>
     </item>
     
-    <item>
-    <title>普吉岛之旅 - 雨季去浮潜是怎样的体验</title>
-    <link>https://chenquan.me/posts/diving-in-puket-/</link>
-    <pubDate>Sat, 10 Jun 2017 11:42:02 +0000</pubDate>
-    <author>codestack</author>
-    <guid>https://chenquan.me/posts/diving-in-puket-/</guid>
-    <description>
-          &lt;!--[if lt IE 9]&gt;&lt;![endif]--&gt;&lt;video class=&#34;wp-video-shortcode&#34; id=&#34;video-91-1&#34; width=&#34;640&#34; height=&#34;360&#34; preload=&#34;metadata&#34; controls=&#34;controls&#34;&gt;&lt;source type=&#34;video/mp4&#34; src=&#34;http://chenquanme.oss-cn-shanghai.aliyuncs.com/blog/puket.mp4?_=1&#34; /&gt;
-&lt;p&gt;&lt;a href=&#34;http://chenquanme.oss-cn-shanghai.aliyuncs.com/blog/puket.mp4&#34;&gt;&lt;a href=&#34;http://chenquanme.oss-cn-shanghai.aliyuncs.com/blog/puket.mp4&#34;&gt;观看视频&lt;/a&gt;&lt;/a&gt;&lt;/video&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;blockquote&gt;
-&lt;p&gt;普吉岛&lt;br&gt;
-2017年5月&lt;br&gt;
-hyperchain 团建&lt;/p&gt;
-&lt;/blockquote&gt;
-
-    </description>
-    </item>
     
-    <item>
-    <title>你好泰国! 带着索尼 A6000 去普吉岛拍照</title>
-    <link>https://chenquan.me/posts/hello-tailand-traveling-in-puket/</link>
-    <pubDate>Fri, 09 Jun 2017 13:39:10 +0000</pubDate>
-    <author>codestack</author>
-    <guid>https://chenquan.me/posts/hello-tailand-traveling-in-puket/</guid>
-    <description>
-        &lt;p&gt;&lt;img loading=&#34;lazy&#34; 
-    src=&#34;https://chainlark.oss-cn-beijing.aliyuncs.com/e8nin.jpg&#34; 
-    alt=&#34;10007&#34; 
-     /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img loading=&#34;lazy&#34; 
-    src=&#34;https://chainlark.oss-cn-beijing.aliyuncs.com/rqzqb.jpg&#34; 
-    alt=&#34;10001&#34; 
-     /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img loading=&#34;lazy&#34; 
-    src=&#34;https://chainlark.oss-cn-beijing.aliyuncs.com/wy88v.jpg&#34; 
-    alt=&#34;10002&#34; 
-     /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img loading=&#34;lazy&#34; 
-    src=&#34;https://chainlark.oss-cn-beijing.aliyuncs.com/8lva4.jpg&#34; 
-    alt=&#34;10003&#34; 
-     /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img loading=&#34;lazy&#34; 
-    src=&#34;https://chainlark.oss-cn-beijing.aliyuncs.com/nc2r8.jpg&#34; 
-    alt=&#34;10004&#34; 
-     /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img loading=&#34;lazy&#34; 
-    src=&#34;https://chainlark.oss-cn-beijing.aliyuncs.com/0xys0.jpg&#34; 
-    alt=&#34;10005&#34; 
-     /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img loading=&#34;lazy&#34; 
-    src=&#34;https://chainlark.oss-cn-beijing.aliyuncs.com/dd693.jpg&#34; 
-    alt=&#34;10006&#34; 
-     /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img loading=&#34;lazy&#34; 
-    src=&#34;https://chainlark.oss-cn-beijing.aliyuncs.com/cogrt.jpg&#34; 
-    alt=&#34;10008&#34; 
-     /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img loading=&#34;lazy&#34; 
-    src=&#34;https://chainlark.oss-cn-beijing.aliyuncs.com/vduz8.jpg&#34; 
-    alt=&#34;10009&#34; 
-     /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img loading=&#34;lazy&#34; 
-    src=&#34;https://chainlark.oss-cn-beijing.aliyuncs.com/nuqhp.jpg&#34; 
-    alt=&#34;10010&#34; 
-     /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img loading=&#34;lazy&#34; 
-    src=&#34;https://chainlark.oss-cn-beijing.aliyuncs.com/yvh3l.jpg&#34; 
-    alt=&#34;10011&#34; 
-     /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img loading=&#34;lazy&#34; 
-    src=&#34;https://chainlark.oss-cn-beijing.aliyuncs.com/yox9y.jpg&#34; 
-    alt=&#34;10012&#34; 
-     /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img loading=&#34;lazy&#34; 
-    src=&#34;https://chainlark.oss-cn-beijing.aliyuncs.com/yugfj.jpg&#34; 
-    alt=&#34;10013&#34; 
-     /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img loading=&#34;lazy&#34; 
-    src=&#34;https://chainlark.oss-cn-beijing.aliyuncs.com/21mk8.jpg&#34; 
-    alt=&#34;10014&#34; 
-     /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img loading=&#34;lazy&#34; 
-    src=&#34;https://chainlark.oss-cn-beijing.aliyuncs.com/zw1oc.jpg&#34; 
-    alt=&#34;10015&#34; 
-     /&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img loading=&#34;lazy&#34; 
-    src=&#34;https://chainlark.oss-cn-beijing.aliyuncs.com/9egr3.jpg&#34; 
-    alt=&#34;10017&#34; 
-     /&gt;&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Puket, Thailand&lt;br&gt;
-2017-05-23/2017-05-28&lt;br&gt;
-Sony a6000 / iPhone SE&lt;/p&gt;
-&lt;/blockquote&gt;
-
-    </description>
-    </item>
+    
+    
     
     <item>
     <title>一个成功的git分支模型</title>

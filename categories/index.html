@@ -1,186 +1,228 @@
 <!DOCTYPE html>
-<html lang="zh-cn">
-    
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="theme-color" content="dark">
-    <title>Categories | codestack</title>
-
-    
-    
-    
-    <meta property="og:site_name" content="codestack" />
-    <meta property="og:title" content="Categories | codestack"/>
-    <meta itemprop="name" content="Categories | codestack" />
-    <meta name="twitter:title" content="Categories | codestack" />
-    <meta name="application-name" content="Categories | codestack" />
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="技术笔记与工程实践">
+<title>Categories</title>
 
 
-    <meta name="description" content="Hugo is Absurdly Fast!" />
-    <meta name="twitter:description" content="Hugo is Absurdly Fast!"/>
-    <meta itemprop="description" content="Hugo is Absurdly Fast!"/>
-    <meta property="og:description" content="Hugo is Absurdly Fast!" />
-
-    
+<link rel="canonical" href="https://chenquan.me/categories/">
 
 
-    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-    
-    <link rel="stylesheet" href="/sass/main.min.0158e06e6beeec53cf25d2cb31334e3da41c26993a6f06151e34b499e132997a.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/default.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.gallery.min.css" integrity="sha512-B31/elyDKOSa2yGC1ALSAHkdlJ5FOhZJTNANGUFxWOnVMfKQmekRG2/sNdp6yJPrO7Ae9rlAxUlr0QjiJne01Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.css" integrity="sha512-56GJrpSgHk6Mc9Fltt+bQKcICJoEpxtvozXPA5n5OT0rfWiqGlJmJCI/vl16kctf/0XbBloh03vl7OF2xFnR8g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-
-</head>
+<link rel="stylesheet" href="/scss/style.min.7fd1aee5a5cb4e7cb4ddf1370cee6afa3a480e060b3f325c6cbe847ec84a99d4.css"><meta property='og:title' content="Categories">
+<meta property='og:description' content="技术笔记与工程实践">
+<meta property='og:url' content='https://chenquan.me/categories/'>
+<meta property='og:site_name' content='codestack'>
+<meta property='og:type' content='website'><meta property='og:updated_time' content=' 2022-02-01T00:00:00&#43;00:00 '/>
+<meta name="twitter:title" content="Categories">
+<meta name="twitter:description" content="技术笔记与工程实践"><link rel="alternate" type="application/rss&#43;xml" href="https://chenquan.me/categories/index.xml">
+    </head>
+    <body class="">
     <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
     (function() {
-        const colorSchemeKey = 'ThemeColorScheme';
+        const colorSchemeKey = 'StackColorScheme';
         const colorSchemeItem = localStorage.getItem(colorSchemeKey);
         const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
 
         if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
             
 
-            document.documentElement.dataset.userColorScheme = 'dark';
+            document.documentElement.dataset.scheme = 'dark';
         } else {
-            document.documentElement.dataset.userColorScheme = 'light';
+            document.documentElement.dataset.scheme = 'light';
         }
     })();
 </script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
 
-    <body class="dark">
-        <nav class="navbar">
-    <div class="container">
-        <div class="navbar-content flex">
-            <div id="nav-left" class="nav-left flex">
-                <a class="brand" href="/">
-                    
-                    <i class="fas fa-code"></i> 
-                    &nbsp; codestack
-                 </a>
-                 
-                 
-                 <a id="nav-left-extend" href="javascript:toggle_nav_extend();" class="nav-left-extend"><i class="czs-category-l"></i></a>
-            </div>
-
-            <div id="nav-right" class="nav-right flex">
-                
-                <a target="_blank" href="https://docker.chenquan.me/">
-                    
-                    <i class="fab fa-docker"></i>
-                    
-                   Docker 教程 
-                </a>
-                
-                <a target="_blank" href="/articles/">
-                    
-                    <i class="fas fa-archive"></i>
-                    
-                   文章归档 
-                </a>
-                
-
-                
-            </div>
-         </div>
-    </div>
-</nav>
-
-<script lang="javascript">
-    
-    function toggle_search_box() {
-        let search_box = document.getElementById('search-query');
-        let computedStyle = window.getComputedStyle(search_box, null);
-        let display_prop = computedStyle['display'];
-        if (display_prop && display_prop === 'block') {
-            search_box.setAttribute('style', 'display: none; width: 0px;');
-        } else {
-            search_box.setAttribute('style', 'display: block; width: 200px;');
-        }
-    }
-    
-    function toggle_nav_extend() {
-        let nav_left_extend = document.getElementById('nav-left-extend');
-        let extend_icon = nav_left_extend.children[0];
-        let nav_right = document.getElementById('nav-right');
-        let computedStyle = window.getComputedStyle(nav_right, null);
-        let display_prop = computedStyle['display'];
-        if (display_prop && display_prop === 'flex') {
-            nav_right.setAttribute('style', 'display: none;');
-            extend_icon.setAttribute('style', 'font-size: 26px;');
-            extend_icon.setAttribute('class', 'czs-category-l');
-        } else {
-            extend_icon.setAttribute('class', 'czs-close-l');
-            extend_icon.setAttribute('style', 'font-size: 20px;padding: 1px 0 0 3px;');
-            nav_right.setAttribute('style', 'display: flex;');
-        }
-    }
-</script>
-        <main>
-            
-
-
-
-
-<header>
-    <div class="container">
-        <h1>Categories</h1>
-    </div>
-</header>
-
-<section>
-    <div class="container">
-        <div class="terms">
-            
-            <a href="/categories/%E5%BD%B1%E8%AF%84/">影评 <span class="bg-number">3</span></a>
-            
+    <header>
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">codestack</a></h1>
+            <h2 class="site-description">技术笔记与工程实践</h2>
         </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>首页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archive/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+<section class="widget tagCloud">
+    <div class="widget-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+    </div>
+    <h2 class="widget-title section-title">
+        
+            <a href="/categories/">
+                分类
+            </a>
+        
+    </h2>
+
+    <div class="tagCloud-tags">
+        
+            <a href="/categories/%E5%B7%A5%E7%A8%8B/">
+                工程
+            </a>
+        
+            <a href="/categories/%E7%B3%BB%E7%BB%9F/">
+                系统
+            </a>
+        
     </div>
 </section>
 
+            
+        
+    </aside>
 
-        </main>
-        <footer class="footer flex">
-    <section class="container">
-        <nav class="footer-links">
+
+            <main class="main full-width">
+    <header>
+        <h3 class="section-title">
             
-            <a href="https://chainlark.com/">chainlark</a>
+                章节
             
-            <a href="/index.xml">RSS</a>
+        </h3>
+
+        <div class="section-card">
+            <div class="section-details">
+                <h3 class="section-count">2 个页面</h3>
+                <h1 class="section-term">Categories</h1>
+                
+            </div>
+        </div>
+    </header>
+    
+    
+        <section class="article-list--compact">
             
-        </nav>
+                <article>
+    <a href="/categories/%E7%B3%BB%E7%BB%9F/">
+        <div class="article-details">
+            <h2 class="article-title">系统</h2>
+                <footer class="article-meta"><span class="article-description">1 个页面</span>
+                </footer></div>
+    </a>
+</article>
+            
+                <article>
+    <a href="/categories/%E5%B7%A5%E7%A8%8B/">
+        <div class="article-details">
+            <h2 class="article-title">工程</h2>
+                <footer class="article-meta"><span class="article-description">4 个页面</span>
+                </footer></div>
+    </a>
+</article>
+            
+        </section>
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2026 codestack
     </section>
-
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.js" integrity="sha512-0UbR6HN0dY8fWN9T7fF658896tsPgnbRREHCNq46J9/JSn8GonXDZmqtTc3qS879GM0zV49b9LPhdc/maKP8Kg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" integrity="sha512-Tn2m0TIpgVyTzzvmxLNuqbSJH3JP8jm+Cy3hvHrW7ndTDcJ1w5mBiksqDBb8GpE2ksktFvDB/ykZ0mDpsZj20w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script>
-
-    (function(){
-        
-        
-        let images = $('img');
-        for (let img of images) {
-            $(img).featherlight($(img));
-        }
-    })();
-    </script>
-    <script defer src="/ts/features.882b72337b0ef8cf09fe2162c5a3e8bc2381c17b65e1c654a4fbd770d38fe420.js" data-enable-footnotes="false"></script>
-    
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8R697QBLL4"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-8R697QBLL4');
-    </script>
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="4.0.3">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
 </footer>
+
+
+            </main>
+        </div>
+        
+<script type="text/javascript" src="/ts/main.f856840516f7c2ad1769a8f5937e3d08d6cb386e2cd2dd025ae696e0ff207958.js" defer></script>
+
+
     </body>
 </html>

@@ -1,32 +1,198 @@
-<!doctype html>
-<html lang="zh-CN">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>文章 · codestack</title>
-<link rel="stylesheet" href="blog-assets/site.css">
-<script src="blog-assets/filter.js" defer></script>
-</head>
-<body>
-<header class="masthead"><div class="shell">
-<a class="brand" href="./"><span class="mark" aria-hidden="true">C</span><span>codestack</span></a>
-<nav aria-label="网站导航"><a href="./">首页</a><a href="#latest">文章</a><a href="#about">关于</a></nav>
-</div></header>
-<main class="shell">
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="技术笔记与工程实践">
+<title>codestack</title>
 
-<section class="featured-section" aria-labelledby="featured-title"><h1 id="featured-title">精选文章</h1><div class="featured"><a href="posts/tracing-system-analysis/" class="tile"><img src="blog-assets/circuit.jpg" alt=""><div><small>系统</small><h2>全链路追踪系统技术分析</h2><p>从调用链、采样到上下文传播，梳理分布式追踪的基本原理。</p></div></a><a href="posts/golang-thread-scheduler/" class="tile"><img src="blog-assets/code.jpg" alt=""><div><small>工程</small><h3>Go 线程调度器</h3></div></a><a href="posts/traveling-in-wuzhen/" class="tile"><img src="blog-assets/wuzhen.jpg" alt=""><div><small>生活</small><h3>小船浮绿水——乌镇一日游</h3></div></a></div></section>
-<div class="feed">
-<section id="latest" aria-labelledby="latest-title"><h2 class="section-title" id="latest-title">文章</h2>
-<div class="filters" role="group" aria-label="按分类筛选">
-<button type="button" data-topic="all" aria-pressed="true">全部</button>
-<button type="button" data-topic="系统" aria-pressed="false">系统</button>
-<button type="button" data-topic="工程" aria-pressed="false">工程</button>
-<button type="button" data-topic="生活" aria-pressed="false">生活</button>
-</div>
-<article class="entry" data-topic="系统"><p class="meta">系统 · <time datetime="2022-02-01">2022-02-01</time></p><h3><a href="posts/tracing-system-analysis/">全链路追踪系统技术分析</a></h3><p>从调用链、采样到上下文传播，梳理分布式追踪的基本原理。</p></article><article class="entry" data-topic="工程"><p class="meta">工程 · <time datetime="2017-08-19">2017-08-19</time></p><h3><a href="posts/golang-thread-scheduler/">Go 线程调度器</a></h3><p>从 goroutine 的调度出发，理解 Go 运行时如何分配执行资源。</p></article><article class="entry" data-topic="生活"><p class="meta">生活 · <time datetime="2017-07-02">2017-07-02</time></p><h3><a href="posts/traveling-in-wuzhen/">小船浮绿水——乌镇一日游</a></h3><p>沿河走一走，用照片记录乌镇的一日。</p></article><article class="entry" data-topic="工程"><p class="meta">工程 · <time datetime="2017-08-20">2017-08-20</time></p><h3><a href="posts/golang-gc-algorithm-3-colors/">Go实时GC——三色算法理论与实践</a></h3><p>结合示意图理解三色标记，以及它在 Go 垃圾回收中的应用。</p></article><article class="entry" data-topic="工程"><p class="meta">工程 · <time datetime="2017-06-22">2017-06-22</time></p><h3><a href="posts/use-gomock-to-mock-testing/">用gomock进行mock测试</a></h3><p>看看如何为 Go 接口生成 mock，并把它用到单元测试里。</p></article><article class="entry" data-topic="工程"><p class="meta">工程 · <time datetime="2017-07-05">2017-07-05</time></p><h3><a href="posts/mastering-in-diving/">精通 sed (mastering sed)</a></h3><p>从常用的文本替换入手，理解 sed 的脚本和处理流程。</p></article>
-</section>
-<aside class="sidebar" id="about"><h2>关于</h2><p>技术笔记和旅行记录。</p>
-<h2>旧站归档</h2><p><a href="archive/">浏览旧站文章 →</a></p></aside>
-</div></main>
-<footer><div class="shell">codestack</div></footer>
-</body></html>
+
+<link rel="canonical" href="https://chenquan.me/">
+
+
+
+<link rel="stylesheet" href="/scss/style.min.7fd1aee5a5cb4e7cb4ddf1370cee6afa3a480e060b3f325c6cbe847ec84a99d4.css"><meta property='og:title' content="codestack">
+<meta property='og:description' content="技术笔记与工程实践">
+<meta property='og:url' content='https://chenquan.me/'>
+<meta property='og:site_name' content='codestack'>
+<meta property='og:type' content='website'><meta property='og:updated_time' content=' 2022-02-01T00:00:00&#43;00:00 '/>
+<meta name="twitter:title" content="codestack">
+<meta name="twitter:description" content="技术笔记与工程实践"><link rel="alternate" type="application/rss&#43;xml" href="https://chenquan.me/index.xml">
+    <meta name="generator" content="Hugo 0.170.1">
+</head>
+    <body class="editorial-home">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended">
+            <main class="main full-width"><header class="editorial-header">
+        <a class="editorial-brand" href="/">codestack</a>
+        <nav aria-label="主导航">
+            <a href="/" aria-current="page">首页</a>
+            <a href="/archive/">归档</a>
+            <a href="/index.xml">RSS</a>
+        </nav>
+    </header>
+
+    
+        <section class="editorial-section" aria-labelledby="featured-heading">
+            <h1 id="featured-heading">精选文章</h1>
+            <div class="editorial-featured">
+                <article class="editorial-lead">
+                    <a href="/posts/tracing-system-analysis/">
+                        
+                            
+                            
+                            <img src="/home/tracing_hu_57e848464dfeb17a.webp"
+                                srcset="/home/tracing_hu_57e848464dfeb17a.webp 540w, /home/tracing_hu_30f5766e169cf25e.webp 1080w"
+                                sizes="(max-width: 740px) 100vw, 720px" width="1080" height="720" alt="" fetchpriority="high">
+                        
+                        <div class="editorial-lead-copy">
+                            <p class="editorial-topic">系统</p>
+                            <h2>全链路追踪系统技术分析</h2>
+                            <p>从调用链、采样到上下文传播，梳理分布式追踪的基本原理。</p>
+                        </div>
+                    </a>
+                </article>
+
+                <div class="editorial-picks">
+                    
+                        <article class="editorial-pick">
+                            <a href="/posts/golang-thread-scheduler/">
+                                <div>
+                                    <p class="editorial-topic">Go 运行时</p>
+                                    <h2>Go 线程调度器</h2>
+                                    <p>从 goroutine 的调度出发，理解 Go 运行时如何分配执行资源。</p>
+                                </div>
+                                
+                                    
+                                        <img src="/home/scheduler_hu_41b3c6bca3a367a0.webp" width="272" height="216" alt="">
+                                    
+                                
+                            </a>
+                        </article>
+                    
+                    
+                        <article class="editorial-pick">
+                            <a href="/posts/golang-gc-algorithm-3-colors/">
+                                <div>
+                                    <p class="editorial-topic">Go 运行时</p>
+                                    <h2>Go实时GC——三色算法理论与实践</h2>
+                                    <p>结合示意图理解三色标记，以及它在 Go 垃圾回收中的应用。</p>
+                                </div>
+                            </a>
+                        </article>
+                    
+                </div>
+            </div>
+        </section>
+    
+
+    <div class="editorial-columns">
+        <section class="editorial-section" aria-labelledby="recent-heading">
+            <div class="editorial-section-heading">
+                <h2 id="recent-heading">最新文章</h2>
+                <a href="/archive/">全部归档 <span aria-hidden="true">→</span></a>
+            </div>
+            
+                <article class="editorial-entry">
+                    <div>
+                        <p class="editorial-topic">系统</p>
+                        <h3><a href="/posts/tracing-system-analysis/">全链路追踪系统技术分析</a></h3>
+                        <p class="editorial-description">从调用链、采样到上下文传播，梳理分布式追踪的基本原理。</p>
+                    </div>
+                    <time datetime="2022-02-01">2022-02-01</time>
+                </article>
+            
+                <article class="editorial-entry">
+                    <div>
+                        <p class="editorial-topic">工程</p>
+                        <h3><a href="/posts/golang-gc-algorithm-3-colors/">Go实时GC——三色算法理论与实践</a></h3>
+                        <p class="editorial-description">结合示意图理解三色标记，以及它在 Go 垃圾回收中的应用。</p>
+                    </div>
+                    <time datetime="2017-08-20">2017-08-20</time>
+                </article>
+            
+                <article class="editorial-entry">
+                    <div>
+                        <p class="editorial-topic">工程</p>
+                        <h3><a href="/posts/golang-thread-scheduler/">Go 线程调度器</a></h3>
+                        <p class="editorial-description">从 goroutine 的调度出发，理解 Go 运行时如何分配执行资源。</p>
+                    </div>
+                    <time datetime="2017-08-19">2017-08-19</time>
+                </article>
+            
+                <article class="editorial-entry">
+                    <div>
+                        <p class="editorial-topic">工程</p>
+                        <h3><a href="/posts/mastering-in-diving/">精通 sed (mastering sed)</a></h3>
+                        <p class="editorial-description">从常用的文本替换入手，理解 sed 的脚本和处理流程。</p>
+                    </div>
+                    <time datetime="2017-07-05">2017-07-05</time>
+                </article>
+            
+                <article class="editorial-entry">
+                    <div>
+                        <p class="editorial-topic">工程</p>
+                        <h3><a href="/posts/use-gomock-to-mock-testing/">用gomock进行mock测试</a></h3>
+                        <p class="editorial-description">看看如何为 Go 接口生成 mock，并把它用到单元测试里。</p>
+                    </div>
+                    <time datetime="2017-06-22">2017-06-22</time>
+                </article>
+            
+            
+        </section>
+
+        
+            <aside class="editorial-section editorial-categories" aria-labelledby="categories-heading">
+                <h2 id="categories-heading">专题</h2>
+                <ul>
+                    
+                        <li><a href="/categories/%E5%B7%A5%E7%A8%8B/">工程 <span>4 篇</span></a></li>
+                    
+                        <li><a href="/categories/%E7%B3%BB%E7%BB%9F/">系统 <span>1 篇</span></a></li>
+                    
+                </ul>
+            </aside>
+        
+    </div>
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2026 codestack
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="4.0.3">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+            </main>
+        </div>
+        
+<script type="text/javascript" src="/ts/main.f856840516f7c2ad1769a8f5937e3d08d6cb386e2cd2dd025ae696e0ff207958.js" defer></script>
+
+
+    </body>
+</html>

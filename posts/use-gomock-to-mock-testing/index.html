@@ -1,352 +1,439 @@
-<!doctype html>
-<html lang="zh-CN">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>用gomock进行mock测试 · codestack</title>
-<link rel="stylesheet" href="../../blog-assets/site.css">
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="看看如何为 Go 接口生成 mock，并把它用到单元测试里。">
+<title>用gomock进行mock测试</title>
 
-</head>
-<body>
-<header class="masthead"><div class="shell">
-<a class="brand" href="../../"><span class="mark" aria-hidden="true">C</span><span>codestack</span></a>
-<nav aria-label="网站导航"><a href="../../">首页</a><a href="../../#latest">文章</a><a href="../../#about">关于</a></nav>
-</div></header>
-<main class="shell article-layout">
-<article class="article">
-<header><a class="return" href="../../#latest">← 返回文章列表</a>
-<h1>用gomock进行mock测试</h1><p class="meta">codestack · <time datetime="2017-06-22">2017-06-22</time> · 工程</p></header>
-<div class="prose">
-<p>mock对象就是为了解决上面的问题而诞生的，mock(模拟)对象能够模拟实际依赖对象的功能，同时又不需要非常复杂的准备工作，你需要做的，仅仅就是定义对象接口，然后实现它，再交给测试对象去使用。</p>
+
+<link rel="canonical" href="https://chenquan.me/posts/use-gomock-to-mock-testing/">
+
+
+
+<link rel="stylesheet" href="/scss/style.min.7fd1aee5a5cb4e7cb4ddf1370cee6afa3a480e060b3f325c6cbe847ec84a99d4.css"><meta property='og:title' content="用gomock进行mock测试">
+<meta property='og:description' content="看看如何为 Go 接口生成 mock，并把它用到单元测试里。">
+<meta property='og:url' content='https://chenquan.me/posts/use-gomock-to-mock-testing/'>
+<meta property='og:site_name' content='codestack'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:published_time' content='2017-06-22T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2017-06-22T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="用gomock进行mock测试">
+<meta name="twitter:description" content="看看如何为 Go 接口生成 mock，并把它用到单元测试里。">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">codestack</a></h1>
+            <h2 class="site-description">技术笔记与工程实践</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>首页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archive/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            
+            
+            
+            <a href="/categories/%E5%B7%A5%E7%A8%8B/" style="background-color: hsl(132, 60%, 84%); color: hsl(132, 60%, 15%);">
+                工程
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/use-gomock-to-mock-testing/">用gomock进行mock测试</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            看看如何为 Go 接口生成 mock，并把它用到单元测试里。
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    
+    
+    
+    <footer class="article-meta">
+        
+            <div class="inline-meta">
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                    <time class="article-time--published" datetime='2017-06-22T00:00:00Z'>2017-06-22</time>
+                
+
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                    <time class="article-time--reading">
+                        阅读时长: 4 分钟
+                    </time>
+                
+            </div>
+        
+
+        
+
+        
+    </footer>
+    
+</div>
+
+</header>
+
+    
+
+    <section class="article-content">
+    
+    
+    <p>mock对象就是为了解决上面的问题而诞生的，mock(模拟)对象能够模拟实际依赖对象的功能，同时又不需要非常复杂的准备工作，你需要做的，仅仅就是定义对象接口，然后实现它，再交给测试对象去使用。</p>
 <p>go-mock是专门为go语言开发的mock库，该库使用方式简单，支持自动生成代码，可以说是不可多得的好工具。下面我就简单地展示一下go-mock是如何工作的:</p>
 <p>首先你需要做的是将依赖下载到本地：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma" tabindex="0"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma" tabindex="0"><code class="language-shell" data-lang="shell">go get github.com/golang/mock/gomock
-go get github.com/golang/mock/mockgen
-</code></pre></td></tr></table>
-</div>
-</div><p>第一个是代码依赖，第二个是命令行工具（特别好用）。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">go get github.com/golang/mock/gomock
+</span></span><span class="line"><span class="cl">go get github.com/golang/mock/mockgen
+</span></span></code></pre></div><p>第一个是代码依赖，第二个是命令行工具（特别好用）。</p>
 <p>下面用一个非常简单的例子来说明gomock是如何工作的：</p>
 <p>我在<code>$GOPATH/src</code>目录下新建一个项目：<code>hellomock</code>，在<code>$GOPATH/src/hellomock</code>目录下新建<code>hellomock.go</code>，并定义一个接口<code>Talker</code>:</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma" tabindex="0"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma" tabindex="0"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">hellomock</span>
-
-<span class="kd">type</span> <span class="nx">Talker</span> <span class="kd">interface</span> <span class="p">{</span>
-    <span class="nf">SayHello</span><span class="p">(</span><span class="nx">word</span> <span class="kt">string</span><span class="p">)(</span><span class="nx">response</span> <span class="kt">string</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>然后我们需要一个实现了<code>Talker</code>功能的结构体，假设我们有这样的场景，我们现在有一个迎宾的岗位，需要一个能够迎宾的迎宾员，当然这个迎宾员可以是一个人，或者是一只鹦鹉。那么我们需要做的是，定义一个<code>Persion</code>结构体（或者是鹦鹉或者是别的什么东西），并实现<code>Talker</code>接口：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nx">hellomock</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">type</span><span class="w"> </span><span class="nx">Talker</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nf">SayHello</span><span class="p">(</span><span class="nx">word</span><span class="w"> </span><span class="kt">string</span><span class="p">)(</span><span class="nx">response</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>然后我们需要一个实现了<code>Talker</code>功能的结构体，假设我们有这样的场景，我们现在有一个迎宾的岗位，需要一个能够迎宾的迎宾员，当然这个迎宾员可以是一个人，或者是一只鹦鹉。那么我们需要做的是，定义一个<code>Persion</code>结构体（或者是鹦鹉或者是别的什么东西），并实现<code>Talker</code>接口：</p>
 <p><code>person.go</code></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma" tabindex="0"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma" tabindex="0"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">hellomock</span>
-
-<span class="kn">import</span> <span class="s">"fmt"</span>
-
-<span class="kd">type</span> <span class="nx">Person</span> <span class="kd">struct</span><span class="p">{</span>
-  <span class="nx">name</span> <span class="kt">string</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">NewPerson</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span><span class="o">*</span><span class="nx">Person</span><span class="p">{</span>
-  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">Person</span><span class="p">{</span>
-      <span class="nx">name</span><span class="p">:</span><span class="nx">name</span><span class="p">,</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">p</span> <span class="o">*</span><span class="nx">Person</span><span class="p">)</span><span class="nf">SayHello</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)(</span><span class="nx">word</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
-  <span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">"Hello %s, welcome come to our company, my name is %s"</span><span class="p">,</span><span class="nx">name</span><span class="p">,</span><span class="nx">p</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>现在我们的<code>Person</code>已经实现了<code>Talker</code>接口，现在我们让他发挥作用吧！</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nx">hellomock</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="s">&#34;fmt&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">type</span><span class="w"> </span><span class="nx">Person</span><span class="w"> </span><span class="kd">struct</span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nx">name</span><span class="w"> </span><span class="kt">string</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">func</span><span class="w"> </span><span class="nf">NewPerson</span><span class="p">(</span><span class="nx">name</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">*</span><span class="nx">Person</span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">Person</span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nx">name</span><span class="p">:</span><span class="nx">name</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">p</span><span class="w"> </span><span class="o">*</span><span class="nx">Person</span><span class="p">)</span><span class="nf">SayHello</span><span class="p">(</span><span class="nx">name</span><span class="w"> </span><span class="kt">string</span><span class="p">)(</span><span class="nx">word</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;Hello %s, welcome come to our company, my name is %s&#34;</span><span class="p">,</span><span class="nx">name</span><span class="p">,</span><span class="nx">p</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>现在我们的<code>Person</code>已经实现了<code>Talker</code>接口，现在我们让他发挥作用吧！</p>
 <p>现在假设，我们有一个公司，公司有一个迎宾员，也就是我们的前台妹子，这个妹子实现了<code>Talker</code>接口.她能够自动向来的客人<code>SayHello</code>:</p>
 <p><code>company.go</code></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma" tabindex="0"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma" tabindex="0"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">hellomock</span>
-
-<span class="kd">type</span> <span class="nx">Company</span> <span class="kd">struct</span> <span class="p">{</span>
-  <span class="nx">Usher</span> <span class="nx">Talker</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">NewCompany</span><span class="p">(</span><span class="nx">t</span> <span class="nx">Talker</span><span class="p">)</span> <span class="o">*</span><span class="nx">Company</span><span class="p">{</span>
-  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">Company</span><span class="p">{</span>
-    <span class="nx">Usher</span><span class="p">:</span><span class="nx">t</span><span class="p">,</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="p">(</span> <span class="nx">c</span> <span class="o">*</span><span class="nx">Company</span><span class="p">)</span> <span class="nf">Meeting</span><span class="p">(</span><span class="nx">gusetName</span> <span class="kt">string</span><span class="p">)</span><span class="kt">string</span><span class="p">{</span>
-  <span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">Usher</span><span class="p">.</span><span class="nf">SayHello</span><span class="p">(</span><span class="nx">gusetName</span><span class="p">)</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>我们的场景已经设计好了，那么我们传统的话，会如何实现单元测试呢？</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nx">hellomock</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">type</span><span class="w"> </span><span class="nx">Company</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nx">Usher</span><span class="w"> </span><span class="nx">Talker</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">func</span><span class="w"> </span><span class="nf">NewCompany</span><span class="p">(</span><span class="nx">t</span><span class="w"> </span><span class="nx">Talker</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="nx">Company</span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">Company</span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nx">Usher</span><span class="p">:</span><span class="nx">t</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="w"> </span><span class="nx">c</span><span class="w"> </span><span class="o">*</span><span class="nx">Company</span><span class="p">)</span><span class="w"> </span><span class="nf">Meeting</span><span class="p">(</span><span class="nx">gusetName</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="kt">string</span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">c</span><span class="p">.</span><span class="nx">Usher</span><span class="p">.</span><span class="nf">SayHello</span><span class="p">(</span><span class="nx">gusetName</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>我们的场景已经设计好了，那么我们传统的话，会如何实现单元测试呢？</p>
 <p><code>company_test.go</code></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma" tabindex="0"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span><span class="lnt">9
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma" tabindex="0"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">hellomock</span>
-
-<span class="kn">import</span> <span class="s">"testing"</span>
-
-<span class="kd">func</span> <span class="nf">TestCompany_Meeting</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">person</span> <span class="o">:=</span> <span class="nf">NewPerson</span><span class="p">(</span><span class="s">"王尼美"</span><span class="p">)</span>
-    <span class="nx">company</span> <span class="o">:=</span> <span class="nf">NewCompany</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span>
-    <span class="nx">t</span><span class="p">.</span><span class="nf">Log</span><span class="p">(</span><span class="nx">company</span><span class="p">.</span><span class="nf">Meeting</span><span class="p">(</span><span class="s">"王尼玛"</span><span class="p">))</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>测试之：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma" tabindex="0"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma" tabindex="0"><code class="language-shell" data-lang="shell">/usr/local/go/bin/go <span class="nb">test</span> -v hellomock -run ^TestCompany_Meeting$
-
-    company_test.go:8: Hello 王尼玛, welcome come to our company, my name is 王尼美
-
-ok      hellomock   0.013s
-</code></pre></td></tr></table>
-</div>
-</div><p>现在我们构造一个<code>王尼美</code>还是很简单的，但是我们现在要用mock对象进行模拟,这时<code>mockgen</code>就登场了：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma" tabindex="0"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma" tabindex="0"><code class="language-shell" data-lang="shell">➜  hellomock<span class="p">&amp;</span>gt<span class="p">;</span> mkdir mock
-➜  hellomock<span class="p">&amp;</span>gt<span class="p">;</span> mockgen -source<span class="o">=</span>hellomock.go <span class="p">&amp;</span>gt<span class="p">;</span> mock/mock_Talker.go
-</code></pre></td></tr></table>
-</div>
-</div><p>这个时候，将会生成<code>mock/mock_Talker.go</code>文件：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nx">hellomock</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="s">&#34;testing&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">func</span><span class="w"> </span><span class="nf">TestCompany_Meeting</span><span class="p">(</span><span class="nx">t</span><span class="w"> </span><span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nx">person</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nf">NewPerson</span><span class="p">(</span><span class="s">&#34;王尼美&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nx">company</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nf">NewCompany</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nx">t</span><span class="p">.</span><span class="nf">Log</span><span class="p">(</span><span class="nx">company</span><span class="p">.</span><span class="nf">Meeting</span><span class="p">(</span><span class="s">&#34;王尼玛&#34;</span><span class="p">))</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>测试之：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">/usr/local/go/bin/go <span class="nb">test</span> -v hellomock -run ^TestCompany_Meeting$
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    company_test.go:8: Hello 王尼玛, welcome come to our company, my name is 王尼美
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ok      hellomock   0.013s
+</span></span></code></pre></div><p>现在我们构造一个<code>王尼美</code>还是很简单的，但是我们现在要用mock对象进行模拟,这时<code>mockgen</code>就登场了：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">➜  hellomock<span class="p">&amp;</span>gt<span class="p">;</span> mkdir mock
+</span></span><span class="line"><span class="cl">➜  hellomock<span class="p">&amp;</span>gt<span class="p">;</span> mockgen -source<span class="o">=</span>hellomock.go <span class="p">&amp;</span>gt<span class="p">;</span> mock/mock_Talker.go
+</span></span></code></pre></div><p>这个时候，将会生成<code>mock/mock_Talker.go</code>文件：</p>
 <p><strong>需要注意的是，自动生成的文件同源文件在不同的包下，需要新建一个目录存放</strong></p>
 <p><em>我们并不需要在意生成文件的内容，我们只需要知道如何去使用即可</em></p>
 <p><code>mock_Talker.go</code></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma" tabindex="0"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma" tabindex="0"><code class="language-go" data-lang="go"><span class="c1">// Automatically generated by MockGen. DO NOT EDIT!
-</span><span class="c1">// Source: hellomock.go
-</span><span class="c1"></span>
-<span class="kn">package</span> <span class="nx">mock_hellomock</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-    <span class="nx">gomock</span> <span class="s">"github.com/golang/mock/gomock"</span>
-<span class="p">)</span>
-
-<span class="c1">// MockTalker is a mock of Talker interface
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">MockTalker</span> <span class="kd">struct</span> <span class="p">{</span>
-    <span class="nx">ctrl</span>     <span class="o">*</span><span class="nx">gomock</span><span class="p">.</span><span class="nx">Controller</span>
-    <span class="nx">recorder</span> <span class="o">*</span><span class="nx">MockTalkerMockRecorder</span>
-<span class="p">}</span>
-
-<span class="c1">// MockTalkerMockRecorder is the mock recorder for MockTalker
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">MockTalkerMockRecorder</span> <span class="kd">struct</span> <span class="p">{</span>
-    <span class="nx">mock</span> <span class="o">*</span><span class="nx">MockTalker</span>
-<span class="p">}</span>
-
-<span class="c1">// NewMockTalker creates a new mock instance
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">NewMockTalker</span><span class="p">(</span><span class="nx">ctrl</span> <span class="o">*</span><span class="nx">gomock</span><span class="p">.</span><span class="nx">Controller</span><span class="p">)</span> <span class="o">*</span><span class="nx">MockTalker</span> <span class="p">{</span>
-    <span class="nx">mock</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">MockTalker</span><span class="p">{</span><span class="nx">ctrl</span><span class="p">:</span> <span class="nx">ctrl</span><span class="p">}</span>
-    <span class="nx">mock</span><span class="p">.</span><span class="nx">recorder</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">MockTalkerMockRecorder</span><span class="p">{</span><span class="nx">mock</span><span class="p">}</span>
-    <span class="k">return</span> <span class="nx">mock</span>
-<span class="p">}</span>
-
-<span class="c1">// EXPECT returns an object that allows the caller to indicate expected use
-</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">_m</span> <span class="o">*</span><span class="nx">MockTalker</span><span class="p">)</span> <span class="nf">EXPECT</span><span class="p">()</span> <span class="o">*</span><span class="nx">MockTalkerMockRecorder</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">_m</span><span class="p">.</span><span class="nx">recorder</span>
-<span class="p">}</span>
-
-<span class="c1">// SayHello mocks base method
-</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">_m</span> <span class="o">*</span><span class="nx">MockTalker</span><span class="p">)</span> <span class="nf">SayHello</span><span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">string</span> <span class="p">{</span>
-    <span class="nx">ret</span> <span class="o">:=</span> <span class="nx">_m</span><span class="p">.</span><span class="nx">ctrl</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="nx">_m</span><span class="p">,</span> <span class="s">"SayHello"</span><span class="p">,</span> <span class="nx">name</span><span class="p">)</span>
-    <span class="nx">ret0</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">].(</span><span class="kt">string</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nx">ret0</span>
-<span class="p">}</span>
-
-<span class="c1">// SayHello indicates an expected call of SayHello
-</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">_mr</span> <span class="o">*</span><span class="nx">MockTalkerMockRecorder</span><span class="p">)</span> <span class="nf">SayHello</span><span class="p">(</span><span class="nx">arg0</span> <span class="kd">interface</span><span class="p">{})</span> <span class="o">*</span><span class="nx">gomock</span><span class="p">.</span><span class="nx">Call</span> <span class="p">{</span>
-    <span class="k">return</span> <span class="nx">_mr</span><span class="p">.</span><span class="nx">mock</span><span class="p">.</span><span class="nx">ctrl</span><span class="p">.</span><span class="nf">RecordCall</span><span class="p">(</span><span class="nx">_mr</span><span class="p">.</span><span class="nx">mock</span><span class="p">,</span> <span class="s">"SayHello"</span><span class="p">,</span> <span class="nx">arg0</span><span class="p">)</span>
-<span class="p">}</span>
-
-</code></pre></td></tr></table>
-</div>
-</div><p>接下来看看如何去使用这个mock对象，新建一个单元测试：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma" tabindex="0"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span><span class="lnt">9
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma" tabindex="0"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">TestCompany_Meeting2</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">ctl</span> <span class="o">:=</span> <span class="nx">gomock</span><span class="p">.</span><span class="nf">NewController</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span>
-    <span class="nx">mock_talker</span> <span class="o">:=</span> <span class="nx">mock_hellomock</span><span class="p">.</span><span class="nf">NewMockTalker</span><span class="p">(</span><span class="nx">ctl</span><span class="p">)</span>
-    <span class="nx">mock_talker</span><span class="p">.</span><span class="nf">EXPECT</span><span class="p">().</span><span class="nf">SayHello</span><span class="p">(</span><span class="nx">gomock</span><span class="p">.</span><span class="nf">Eq</span><span class="p">(</span><span class="s">"王尼玛"</span><span class="p">)).</span><span class="nf">Return</span><span class="p">(</span><span class="s">"这是自定义的返回值，可以是任意类型。"</span><span class="p">)</span>
-
-    <span class="nx">company</span> <span class="o">:=</span> <span class="nf">NewCompany</span><span class="p">(</span><span class="nx">mock_talker</span><span class="p">)</span>
-    <span class="nx">t</span><span class="p">.</span><span class="nf">Log</span><span class="p">(</span><span class="nx">company</span><span class="p">.</span><span class="nf">Meeting</span><span class="p">(</span><span class="s">"王尼玛"</span><span class="p">))</span>
-    <span class="c1">//t.Log(company.Meeting("张全蛋"))
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>测试之：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma" tabindex="0"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma" tabindex="0"><code class="language-shell" data-lang="shell">/usr/local/go/bin/go <span class="nb">test</span> -v hellomock -run ^TestCompany_Meeting2$
-    company_test.go:21: 这是自定义的返回值，可以是任意类型。
-ok      hellomock   0.015s
-</code></pre></td></tr></table>
-</div>
-</div><p>可以看到，返回的是我们在mock对象上定义的返回值。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="c1">// Automatically generated by MockGen. DO NOT EDIT!</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Source: hellomock.go</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">package</span><span class="w"> </span><span class="nx">mock_hellomock</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kn">import</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nx">gomock</span><span class="w"> </span><span class="s">&#34;github.com/golang/mock/gomock&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">// MockTalker is a mock of Talker interface</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">type</span><span class="w"> </span><span class="nx">MockTalker</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nx">ctrl</span><span class="w">     </span><span class="o">*</span><span class="nx">gomock</span><span class="p">.</span><span class="nx">Controller</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nx">recorder</span><span class="w"> </span><span class="o">*</span><span class="nx">MockTalkerMockRecorder</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">// MockTalkerMockRecorder is the mock recorder for MockTalker</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">type</span><span class="w"> </span><span class="nx">MockTalkerMockRecorder</span><span class="w"> </span><span class="kd">struct</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nx">mock</span><span class="w"> </span><span class="o">*</span><span class="nx">MockTalker</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">// NewMockTalker creates a new mock instance</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">func</span><span class="w"> </span><span class="nf">NewMockTalker</span><span class="p">(</span><span class="nx">ctrl</span><span class="w"> </span><span class="o">*</span><span class="nx">gomock</span><span class="p">.</span><span class="nx">Controller</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="nx">MockTalker</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nx">mock</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">MockTalker</span><span class="p">{</span><span class="nx">ctrl</span><span class="p">:</span><span class="w"> </span><span class="nx">ctrl</span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nx">mock</span><span class="p">.</span><span class="nx">recorder</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="o">&amp;</span><span class="nx">MockTalkerMockRecorder</span><span class="p">{</span><span class="nx">mock</span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">mock</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">// EXPECT returns an object that allows the caller to indicate expected use</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">_m</span><span class="w"> </span><span class="o">*</span><span class="nx">MockTalker</span><span class="p">)</span><span class="w"> </span><span class="nf">EXPECT</span><span class="p">()</span><span class="w"> </span><span class="o">*</span><span class="nx">MockTalkerMockRecorder</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">_m</span><span class="p">.</span><span class="nx">recorder</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">// SayHello mocks base method</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">_m</span><span class="w"> </span><span class="o">*</span><span class="nx">MockTalker</span><span class="p">)</span><span class="w"> </span><span class="nf">SayHello</span><span class="p">(</span><span class="nx">name</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nx">ret</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">_m</span><span class="p">.</span><span class="nx">ctrl</span><span class="p">.</span><span class="nf">Call</span><span class="p">(</span><span class="nx">_m</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;SayHello&#34;</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nx">ret0</span><span class="p">,</span><span class="w"> </span><span class="nx">_</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">].(</span><span class="kt">string</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">ret0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="c1">// SayHello indicates an expected call of SayHello</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="kd">func</span><span class="w"> </span><span class="p">(</span><span class="nx">_mr</span><span class="w"> </span><span class="o">*</span><span class="nx">MockTalkerMockRecorder</span><span class="p">)</span><span class="w"> </span><span class="nf">SayHello</span><span class="p">(</span><span class="nx">arg0</span><span class="w"> </span><span class="kd">interface</span><span class="p">{})</span><span class="w"> </span><span class="o">*</span><span class="nx">gomock</span><span class="p">.</span><span class="nx">Call</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">_mr</span><span class="p">.</span><span class="nx">mock</span><span class="p">.</span><span class="nx">ctrl</span><span class="p">.</span><span class="nf">RecordCall</span><span class="p">(</span><span class="nx">_mr</span><span class="p">.</span><span class="nx">mock</span><span class="p">,</span><span class="w"> </span><span class="s">&#34;SayHello&#34;</span><span class="p">,</span><span class="w"> </span><span class="nx">arg0</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>接下来看看如何去使用这个mock对象，新建一个单元测试：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span><span class="w"> </span><span class="nf">TestCompany_Meeting2</span><span class="p">(</span><span class="nx">t</span><span class="w"> </span><span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nx">ctl</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">gomock</span><span class="p">.</span><span class="nf">NewController</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nx">mock_talker</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">mock_hellomock</span><span class="p">.</span><span class="nf">NewMockTalker</span><span class="p">(</span><span class="nx">ctl</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nx">mock_talker</span><span class="p">.</span><span class="nf">EXPECT</span><span class="p">().</span><span class="nf">SayHello</span><span class="p">(</span><span class="nx">gomock</span><span class="p">.</span><span class="nf">Eq</span><span class="p">(</span><span class="s">&#34;王尼玛&#34;</span><span class="p">)).</span><span class="nf">Return</span><span class="p">(</span><span class="s">&#34;这是自定义的返回值，可以是任意类型。&#34;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nx">company</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nf">NewCompany</span><span class="p">(</span><span class="nx">mock_talker</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nx">t</span><span class="p">.</span><span class="nf">Log</span><span class="p">(</span><span class="nx">company</span><span class="p">.</span><span class="nf">Meeting</span><span class="p">(</span><span class="s">&#34;王尼玛&#34;</span><span class="p">))</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="cp">//t.Log(company.Meeting(&#34;张全蛋&#34;))</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="p">}</span><span class="w">
+</span></span></span></code></pre></div><p>测试之：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">/usr/local/go/bin/go <span class="nb">test</span> -v hellomock -run ^TestCompany_Meeting2$
+</span></span><span class="line"><span class="cl">    company_test.go:21: 这是自定义的返回值，可以是任意类型。
+</span></span><span class="line"><span class="cl">ok      hellomock   0.015s
+</span></span></code></pre></div><p>可以看到，返回的是我们在mock对象上定义的返回值。</p>
 <p>需要说明的一点是，mock对象的<code>SayHello</code>可以接受的参数有<code>gomock.Eq(x interface{})</code>和<code>gomock.Any()</code>，前一个要求测试用例入餐严格符合<code>x</code>，第二个允许传入任意参数。比如我们在注释掉的测试中传入了”张全蛋”，结果报错，测试失败：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma" tabindex="0"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma" tabindex="0"><code class="language-shell" data-lang="shell">/usr/local/go/bin/go <span class="nb">test</span> -v hellomock -run ^TestCompany_Meeting2$
-    controller.go:113: no matching expected call: *mock_hellomock.MockTalker.SayHello<span class="o">([</span>张全蛋<span class="o">])</span>
-<span class="nb">exit</span> status <span class="m">1</span>
-FAIL    hellomock   0.007s
-</code></pre></td></tr></table>
-</div>
-</div><p>本文作为抛砖引玉，gomock还有很多高级用法，希望大家能够自行探索。</p>
-<blockquote>
-<p>参考文章：</p>
-<p><a href="https://github.com/golang/mock/blob/master/README.md">https://github.com/golang/mock/blob/master/README.md</a></p>
-<p><a href="https://github.com/grpc/grpc-go/blob/master/Documentation/gomock-example.md">https://github.com/grpc/grpc-go/blob/master/Documentation/gomock-example.md</a></p>
-</blockquote>
-<p><em>转载请注明<a href="http://http://www.chenquan.me/archives/132">出处</a></em></p>
-</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">/usr/local/go/bin/go <span class="nb">test</span> -v hellomock -run ^TestCompany_Meeting2$
+</span></span><span class="line"><span class="cl">    controller.go:113: no matching expected call: *mock_hellomock.MockTalker.SayHello<span class="o">([</span>张全蛋<span class="o">])</span>
+</span></span><span class="line"><span class="cl"><span class="nb">exit</span> status <span class="m">1</span>
+</span></span><span class="line"><span class="cl">FAIL    hellomock   0.007s
+</span></span></code></pre></div><p>本文作为抛砖引玉，gomock还有很多高级用法，希望大家能够自行探索。</p>
+
+    <blockquote>
+        <p>参考文章：</p>
+<p><a class="link" href="https://github.com/golang/mock/blob/master/README.md"  target="_blank" rel="noopener"
+    >https://github.com/golang/mock/blob/master/README.md</a></p>
+<p><a class="link" href="https://github.com/grpc/grpc-go/blob/master/Documentation/gomock-example.md"  target="_blank" rel="noopener"
+    >https://github.com/grpc/grpc-go/blob/master/Documentation/gomock-example.md</a></p>
+
+    </blockquote>
+<p><em>转载请注明<a class="link" href="https://chenquan.me/archives/132"  target="_blank" rel="noopener"
+    >出处</a></em></p>
+
+</section>
+
+
+    <footer class="article-meta article-footer">
+    
+
+    </footer>
+
+
+    
 </article>
-<aside class="sidebar" aria-label="延伸阅读"><h2>延伸阅读</h2><ul><li><a href="../tracing-system-analysis/">全链路追踪系统技术分析</a></li><li><a href="../golang-thread-scheduler/">Go 线程调度器</a></li><li><a href="../golang-gc-algorithm-3-colors/">Go实时GC——三色算法理论与实践</a></li><li><a href="../mastering-in-diving/">精通 sed (mastering sed)</a></li></ul></aside></main>
-<footer><div class="shell">codestack</div></footer>
-</body></html>
+
+    
+
+    
+
+     
+    
+        
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2026 codestack
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="4.0.3">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+
+
+
+<script type="module">
+    import gallery from '\/ts\/gallery.js';
+
+    const articleContent = document.querySelector('.article-content');
+    const shouldLoad = articleContent && (articleContent.querySelectorAll('figure').length > 0 || articleContent.querySelectorAll('img.gallery-image').length > 0);
+    
+    if (shouldLoad) {
+        gallery(articleContent);
+
+        const PhotoSwipeLightbox = (await import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe-lightbox.esm.min.js")).default;
+        const styleHref = "https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.css";
+
+        const styleTag = document.createElement('link');
+        styleTag.rel = 'stylesheet';
+        styleTag.href = styleHref;
+        document.head.appendChild(styleTag);
+
+        const lightbox = new PhotoSwipeLightbox({
+            gallerySelector: '.article-content',
+            childSelector: 'figure a.image-link',
+            pswpModule: () => import("https:\/\/cdn.jsdelivr.net\/npm\/photoswipe@5.4.4\/dist\/photoswipe.esm.min.js")
+        });
+        lightbox.init();
+    }
+</script>
+
+    
+
+            </main>
+        </div>
+        
+<script type="text/javascript" src="/ts/main.f856840516f7c2ad1769a8f5937e3d08d6cb386e2cd2dd025ae696e0ff207958.js" defer></script>
+
+
+    </body>
+</html>

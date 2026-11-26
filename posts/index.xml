@@ -466,14 +466,7 @@ Haskell
    样例  测试文件内容：</description>
     </item>
     
-    <item>
-      <title>小船浮绿水——乌镇一日游</title>
-      <link>https://chenquan.me/posts/traveling-in-wuzhen/</link>
-      <pubDate>Sun, 02 Jul 2017 13:46:09 +0000</pubDate>
-      
-      <guid>https://chenquan.me/posts/traveling-in-wuzhen/</guid>
-      <description></description>
-    </item>
+    
     
     <item>
       <title>用gomock进行mock测试</title>
@@ -562,30 +555,9 @@ p的整数模域(The field of integers modulo p) 首先，有限域，是一个�
 在我们的设计当中，我们还需要一个_无穷点_ Point at infinity（或者称为理想点），现在我们用符号 0 作为作为我们的无穷点。</description>
     </item>
     
-    <item>
-      <title>普吉岛之旅 - 雨季去浮潜是怎样的体验</title>
-      <link>https://chenquan.me/posts/diving-in-puket-/</link>
-      <pubDate>Sat, 10 Jun 2017 11:42:02 +0000</pubDate>
-      
-      <guid>https://chenquan.me/posts/diving-in-puket-/</guid>
-      <description> http://chenquanme.oss-cn-shanghai.aliyuncs.com/blog/puket.mp4
-  普吉岛
-2017年5月
-hyperchain 团建
- </description>
-    </item>
     
-    <item>
-      <title>你好泰国! 带着索尼 A6000 去普吉岛拍照</title>
-      <link>https://chenquan.me/posts/hello-tailand-traveling-in-puket/</link>
-      <pubDate>Fri, 09 Jun 2017 13:39:10 +0000</pubDate>
-      
-      <guid>https://chenquan.me/posts/hello-tailand-traveling-in-puket/</guid>
-      <description> Puket, Thailand
-2017-05-23/2017-05-28
-Sony a6000 / iPhone SE
- </description>
-    </item>
+    
+    
     
     <item>
       <title>一个成功的git分支模型</title>
