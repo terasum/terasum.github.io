@@ -1,322 +1,335 @@
 <!DOCTYPE html>
-<html lang="zh-cn">
-    
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="theme-color" content="dark">
-    <title>Posts | codestack</title>
-
-    
-    
-    
-    <meta property="og:site_name" content="codestack" />
-    <meta property="og:title" content="Posts | codestack"/>
-    <meta itemprop="name" content="Posts | codestack" />
-    <meta name="twitter:title" content="Posts | codestack" />
-    <meta name="application-name" content="Posts | codestack" />
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="技术笔记与工程实践">
+<title>Posts</title>
 
 
-    <meta name="description" content="Hugo is Absurdly Fast!" />
-    <meta name="twitter:description" content="Hugo is Absurdly Fast!"/>
-    <meta itemprop="description" content="Hugo is Absurdly Fast!"/>
-    <meta property="og:description" content="Hugo is Absurdly Fast!" />
-
-    
+<link rel="canonical" href="https://chenquan.me/posts/">
 
 
-    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-    
-    <link rel="stylesheet" href="/sass/main.min.0158e06e6beeec53cf25d2cb31334e3da41c26993a6f06151e34b499e132997a.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.2.0/styles/default.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.gallery.min.css" integrity="sha512-B31/elyDKOSa2yGC1ALSAHkdlJ5FOhZJTNANGUFxWOnVMfKQmekRG2/sNdp6yJPrO7Ae9rlAxUlr0QjiJne01Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.css" integrity="sha512-56GJrpSgHk6Mc9Fltt+bQKcICJoEpxtvozXPA5n5OT0rfWiqGlJmJCI/vl16kctf/0XbBloh03vl7OF2xFnR8g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-
-</head>
+<link rel="stylesheet" href="/scss/style.min.a1f74fb72ea7fed3de6fb129d0160f56a494c7e9b9d32a21483fdc5b4522261d.css"><meta property='og:title' content="Posts">
+<meta property='og:description' content="技术笔记与工程实践">
+<meta property='og:url' content='https://chenquan.me/posts/'>
+<meta property='og:site_name' content='codestack'>
+<meta property='og:type' content='website'><meta property='og:updated_time' content=' 2022-02-01T00:00:00&#43;00:00 '/>
+<meta name="twitter:title" content="Posts">
+<meta name="twitter:description" content="技术笔记与工程实践"><link rel="alternate" type="application/rss&#43;xml" href="https://chenquan.me/posts/index.xml">
+    </head>
+    <body class="">
     <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
     (function() {
-        const colorSchemeKey = 'ThemeColorScheme';
+        const colorSchemeKey = 'StackColorScheme';
         const colorSchemeItem = localStorage.getItem(colorSchemeKey);
         const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
 
         if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
             
 
-            document.documentElement.dataset.userColorScheme = 'dark';
+            document.documentElement.dataset.scheme = 'dark';
         } else {
-            document.documentElement.dataset.userColorScheme = 'light';
+            document.documentElement.dataset.scheme = 'light';
         }
     })();
 </script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
 
-    <body class="dark">
-        <nav class="navbar">
-    <div class="container">
-        <div class="navbar-content flex">
-            <div id="nav-left" class="nav-left flex">
-                <a class="brand" href="/">
-                    
-                    <i class="fas fa-code"></i> 
-                    &nbsp; codestack
-                 </a>
-                 
-                 
-                 <a id="nav-left-extend" href="javascript:toggle_nav_extend();" class="nav-left-extend"><i class="czs-category-l"></i></a>
-            </div>
-
-            <div id="nav-right" class="nav-right flex">
-                
-                <a target="_blank" href="https://docker.chenquan.me/">
-                    
-                    <i class="fab fa-docker"></i>
-                    
-                   Docker 教程 
-                </a>
-                
-                <a target="_blank" href="/articles/">
-                    
-                    <i class="fas fa-archive"></i>
-                    
-                   文章归档 
-                </a>
-                
-
-                
-            </div>
-         </div>
-    </div>
-</nav>
-
-<script lang="javascript">
-    
-    function toggle_search_box() {
-        let search_box = document.getElementById('search-query');
-        let computedStyle = window.getComputedStyle(search_box, null);
-        let display_prop = computedStyle['display'];
-        if (display_prop && display_prop === 'block') {
-            search_box.setAttribute('style', 'display: none; width: 0px;');
-        } else {
-            search_box.setAttribute('style', 'display: block; width: 200px;');
-        }
-    }
-    
-    function toggle_nav_extend() {
-        let nav_left_extend = document.getElementById('nav-left-extend');
-        let extend_icon = nav_left_extend.children[0];
-        let nav_right = document.getElementById('nav-right');
-        let computedStyle = window.getComputedStyle(nav_right, null);
-        let display_prop = computedStyle['display'];
-        if (display_prop && display_prop === 'flex') {
-            nav_right.setAttribute('style', 'display: none;');
-            extend_icon.setAttribute('style', 'font-size: 26px;');
-            extend_icon.setAttribute('class', 'czs-category-l');
-        } else {
-            extend_icon.setAttribute('class', 'czs-close-l');
-            extend_icon.setAttribute('style', 'font-size: 20px;padding: 1px 0 0 3px;');
-            nav_right.setAttribute('style', 'display: flex;');
-        }
-    }
-</script>
-        <main>
-            
-
-
-
-
-<header>
-  <div class="container">
-    <h1>Posts</h1>
-    <p class="subtitle">
-      <span class="count">24</span> posts found.
-    </p>
-  </div>
-</header>
-
-<section>
-  <div class="container">
-    <section>
-      <section>
-        <div class="posts">
-          
-          <div class="post">
-            <a href="/posts/tracing-system-analysis/">
-              <div class="post-row">
-                <time>Feb 01</time>
-                <h3>全链路追踪系统技术分析</h3>
-              </div>
-              
-            </a>
-          </div>
-          
-          <div class="post">
-            <a href="/posts/pbft-key-points/">
-              <div class="post-row">
-                <time>Jan 18</time>
-                <h3>PBFT算法关键要点详叙</h3>
-              </div>
-              
-            </a>
-          </div>
-          
-          <div class="post">
-            <a href="/posts/wrk2-note/">
-              <div class="post-row">
-                <time>Jan 11</time>
-                <h3>WRK2 http benchmark 快速笔记</h3>
-              </div>
-              
-            </a>
-          </div>
-          
-          <div class="post">
-            <a href="/posts/chaos-testing-by-pubma/">
-              <div class="post-row">
-                <time>Sep 12</time>
-                <h3>使用 pubma 对区块链网络进行混沌测试</h3>
-              </div>
-              
-            </a>
-          </div>
-          
-          <div class="post">
-            <a href="/posts/vimrc-configuration/">
-              <div class="post-row">
-                <time>Aug 30</time>
-                <h3>寻觅了很久的 .vimrc</h3>
-              </div>
-              
-            </a>
-          </div>
-          
-          <div class="post">
-            <a href="/posts/how-to-compile-v8-engine-by-gn/">
-              <div class="post-row">
-                <time>May 12</time>
-                <h3>如何用GN编译V8引擎</h3>
-              </div>
-              
-            </a>
-          </div>
-          
-          <div class="post">
-            <a href="/posts/lodash-source-code-analysis-3/">
-              <div class="post-row">
-                <time>Sep 21</time>
-                <h3>Lodash 源码分析（三）Array</h3>
-              </div>
-              
-            </a>
-          </div>
-          
-          <div class="post">
-            <a href="/posts/lodash-source-code-analysis-2/">
-              <div class="post-row">
-                <time>Aug 29</time>
-                <h3>Lodash 源码分析（二）“Function” Methods</h3>
-              </div>
-              
-            </a>
-          </div>
-          
-          <div class="post">
-            <a href="/posts/lodash-source-code-analysis-1/">
-              <div class="post-row">
-                <time>Aug 21</time>
-                <h3>Lodash 源码分析（一）“Function” Methods</h3>
-              </div>
-              
-            </a>
-          </div>
-          
-          <div class="post">
-            <a href="/posts/golang-gc-algorithm-3-colors/">
-              <div class="post-row">
-                <time>Aug 20</time>
-                <h3>Go实时GC——三色算法理论与实践</h3>
-              </div>
-              
-            </a>
-          </div>
-          
-          <div class="post">
-            <a href="/posts/golang-thread-scheduler/">
-              <div class="post-row">
-                <time>Aug 19</time>
-                <h3>Go 线程调度器</h3>
-              </div>
-              
-            </a>
-          </div>
-          
-          <div class="post">
-            <a href="/posts/functional-programming-by-haskell-js-golang/">
-              <div class="post-row">
-                <time>Aug 12</time>
-                <h3>从Haskell、JS、go看函数式编程</h3>
-              </div>
-              
-            </a>
-          </div>
-          
+    <header>
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">codestack</a></h1>
+            <h2 class="site-description">技术笔记与工程实践</h2>
         </div>
-      </section>
-    </section>
-  </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>首页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/#articles' >
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>全部文章</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+<section class="widget tagCloud">
+    <div class="widget-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+    </div>
+    <h2 class="widget-title section-title">
+        
+            <a href="/categories/">
+                分类
+            </a>
+        
+    </h2>
+
+    <div class="tagCloud-tags">
+        
+            <a href="/categories/%E5%B7%A5%E7%A8%8B/">
+                工程
+            </a>
+        
+            <a href="/categories/%E7%B3%BB%E7%BB%9F/">
+                系统
+            </a>
+        
+    </div>
 </section>
-<section>
-  <div class="container">
-    <nav class="pagination">
-      <div class="next-page">
-        <a href="/posts/page/2/">Next Page</a>
-      </div>
-      
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <header>
+        <h3 class="section-title">
+            
+                章节
+            
+        </h3>
+
+        <div class="section-card">
+            <div class="section-details">
+                <h3 class="section-count">21 个页面</h3>
+                <h1 class="section-term">Posts</h1>
+                
+            </div>
+        </div>
+    </header>
+    
+    
+        <section class="article-list--compact">
+            
+                <article>
+    <a href="/posts/tracing-system-analysis/">
+        <div class="article-details">
+            <h2 class="article-title">全链路追踪系统技术分析</h2>
+                <footer class="article-meta"><time datetime="2022-02-01T00:00:00Z">2022-02-01</time>
+                </footer></div>
+    </a>
+</article>
+            
+                <article>
+    <a href="/posts/pbft-key-points/">
+        <div class="article-details">
+            <h2 class="article-title">PBFT算法关键要点详叙</h2>
+                <footer class="article-meta"><time datetime="2021-01-18T00:00:00Z">2021-01-18</time>
+                </footer></div>
+    </a>
+</article>
+            
+                <article>
+    <a href="/posts/wrk2-note/">
+        <div class="article-details">
+            <h2 class="article-title">WRK2 http benchmark 快速笔记</h2>
+                <footer class="article-meta"><time datetime="2019-01-11T00:00:00Z">2019-01-11</time>
+                </footer></div>
+    </a>
+</article>
+            
+                <article>
+    <a href="/posts/chaos-testing-by-pubma/">
+        <div class="article-details">
+            <h2 class="article-title">使用 pubma 对区块链网络进行混沌测试</h2>
+                <footer class="article-meta"><time datetime="2018-09-12T00:00:00Z">2018-09-12</time>
+                </footer></div>
+    </a>
+</article>
+            
+                <article>
+    <a href="/posts/vimrc-configuration/">
+        <div class="article-details">
+            <h2 class="article-title">寻觅了很久的 .vimrc</h2>
+                <footer class="article-meta"><time datetime="2018-08-30T00:00:00Z">2018-08-30</time>
+                </footer></div>
+    </a>
+</article>
+            
+                <article>
+    <a href="/posts/how-to-compile-v8-engine-by-gn/">
+        <div class="article-details">
+            <h2 class="article-title">如何用GN编译V8引擎</h2>
+                <footer class="article-meta"><time datetime="2018-05-12T00:00:00Z">2018-05-12</time>
+                </footer></div>
+    </a>
+</article>
+            
+                <article>
+    <a href="/posts/lodash-source-code-analysis-3/">
+        <div class="article-details">
+            <h2 class="article-title">Lodash 源码分析（三）Array</h2>
+                <footer class="article-meta"><time datetime="2017-09-21T00:00:00Z">2017-09-21</time>
+                </footer></div>
+    </a>
+</article>
+            
+                <article>
+    <a href="/posts/lodash-source-code-analysis-2/">
+        <div class="article-details">
+            <h2 class="article-title">Lodash 源码分析（二）“Function” Methods</h2>
+                <footer class="article-meta"><time datetime="2017-08-29T00:00:00Z">2017-08-29</time>
+                </footer></div>
+    </a>
+</article>
+            
+        </section>
+    <nav
+        class="pagination"
+        role="navigation"
+        aria-label="pagination"
+        data-total="3"
+        data-first-url="/posts/"
+        data-format-url="/posts/page/2/"><a
+            class="page-link disabled"aria-disabled="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-left"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 6l-6 6l6 6" /></svg>
+        </a><a
+            class="page-link current"
+            aria-label="Page 1"aria-current="page">
+            1
+        </a><a
+                    class="page-link  "href="/posts/page/2/"
+                    aria-label="Page 2">
+                    2
+                </a><a
+            class="page-link "href="/posts/page/3/"aria-label="Page 3">
+            3
+        </a><a
+            class="page-link "href="/posts/page/2/"
+                aria-label="Next page">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-chevron-right"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 6l6 6l-6 6" /></svg>
+        </a>
     </nav>
-  </div>
-</section>
 
-
-
-        </main>
-        <footer class="footer flex">
-    <section class="container">
-        <nav class="footer-links">
-            
-            <a href="https://chainlark.com/">chainlark</a>
-            
-            <a href="/index.xml">RSS</a>
-            
-        </nav>
+    <dialog id="pagination-jump-dialog" aria-labelledby="pagination-jump-title">
+        <form method="dialog" class="pagination-jump-form">
+            <header>
+                <label id="pagination-jump-title" class="title" for="pagination-jump-input">
+                    跳转到页码
+                </label>
+                <span class="subtitle">(1 - 3)</span>
+            </header>
+            <div class="pagination-jump-input-group">
+                <input
+                    type="number"
+                    id="pagination-jump-input"
+                    min="1"
+                    max="3"
+                    autofocus
+                    autocomplete="off"
+                    required>
+                <button type="submit" class="btn btn-primary">
+                    跳转
+                </button>
+            </div>
+            <div class="pagination-jump-hint">
+                <kbd>Enter</kbd>
+                <span>按 Enter 键跳转</span>
+            </div>
+        </form>
+    </dialog><footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2026 codestack
     </section>
-
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.7.13/featherlight.min.js" integrity="sha512-0UbR6HN0dY8fWN9T7fF658896tsPgnbRREHCNq46J9/JSn8GonXDZmqtTc3qS879GM0zV49b9LPhdc/maKP8Kg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" integrity="sha512-Tn2m0TIpgVyTzzvmxLNuqbSJH3JP8jm+Cy3hvHrW7ndTDcJ1w5mBiksqDBb8GpE2ksktFvDB/ykZ0mDpsZj20w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script>
-
-    (function(){
-        
-        
-        let images = $('img');
-        for (let img of images) {
-            $(img).featherlight($(img));
-        }
-    })();
-    </script>
-    <script defer src="/ts/features.882b72337b0ef8cf09fe2162c5a3e8bc2381c17b65e1c654a4fbd770d38fe420.js" data-enable-footnotes="false"></script>
-    
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8R697QBLL4"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-8R697QBLL4');
-    </script>
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="4.0.3">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
 </footer>
+
+
+            </main>
+        </div>
+        
+<script type="text/javascript" src="/ts/main.f856840516f7c2ad1769a8f5937e3d08d6cb386e2cd2dd025ae696e0ff207958.js" defer></script>
+
+
     </body>
 </html>
