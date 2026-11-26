@@ -63,7 +63,7 @@
                     <div>
                         <div class="editorial-entry-meta">
                             {{ with index .Params.categories 0 }}<p class="editorial-topic">{{ . }}</p>{{ end }}
-                            <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time>
+                            {{ if ne .Params.showDate false }}<time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time>{{ end }}
                         </div>
                         <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
                         {{ with .Description }}<p class="editorial-description">{{ . }}</p>{{ end }}
