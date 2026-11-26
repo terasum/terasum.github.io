@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 400" role="img" aria-labelledby="title desc">
+  <title id="title">比特币付款状态变化</title><desc id="desc">交易从构造、通过本地检查、进入内存池到确认；发生冲突或重组后会离开该路径。</desc>
+  <style>text{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans CJK SC",sans-serif}.box{fill:#fff;stroke:#d9dce2;stroke-width:2}.label{fill:#15171a;font-size:18px;font-weight:600}.sub{fill:#6a707c;font-size:13px}.line{stroke:#202329;stroke-width:2.5;fill:none}.muted{stroke:#8a909b;stroke-width:2;fill:none;stroke-dasharray:6 6}.dot{fill:#202329}</style>
+  <rect width="1120" height="400" rx="18" fill="#f5f5f4"/>
+  <text x="48" y="55" class="sub">付款状态并不是一个简单的成功或失败</text>
+  <g transform="translate(48 105)"><rect class="box" width="170" height="94" rx="12"/><text x="85" y="40" text-anchor="middle" class="label">已构造</text><text x="85" y="65" text-anchor="middle" class="sub">交易尚未传播</text></g>
+  <path class="line" d="M218 152h58"/><path d="M276 152l-9-6v12z" class="dot"/>
+  <g transform="translate(286 105)"><rect class="box" width="170" height="94" rx="12"/><text x="85" y="40" text-anchor="middle" class="label">本地有效</text><text x="85" y="65" text-anchor="middle" class="sub">输入与脚本通过</text></g>
+  <path class="line" d="M456 152h58"/><path d="M514 152l-9-6v12z" class="dot"/>
+  <g transform="translate(524 105)"><rect class="box" width="170" height="94" rx="12"/><text x="85" y="40" text-anchor="middle" class="label">进入内存池</text><text x="85" y="65" text-anchor="middle" class="sub">节点策略接受</text></g>
+  <path class="line" d="M694 152h58"/><path d="M752 152l-9-6v12z" class="dot"/>
+  <g transform="translate(762 105)"><rect width="170" height="94" rx="12" fill="#202329"/><text x="85" y="40" text-anchor="middle" fill="#fff" class="label">获得确认</text><text x="85" y="65" text-anchor="middle" fill="#cdd0d5" class="sub">位于活跃链</text></g>
+  <path class="line" d="M932 152h58"/><path d="M990 152l-9-6v12z" class="dot"/>
+  <g transform="translate(1000 105)"><rect class="box" width="72" height="94" rx="12"/><text x="36" y="40" text-anchor="middle" class="label">更多</text><text x="36" y="65" text-anchor="middle" class="sub">确认</text></g>
+  <path class="muted" d="M609 199v77H317v-77"/><path d="M317 199l-6 9h12z" fill="#8a909b"/><text x="463" y="300" text-anchor="middle" class="sub">冲突交易或节点策略变化</text>
+  <path class="muted" d="M847 199v77H609v-77"/><path d="M609 199l-6 9h12z" fill="#8a909b"/><text x="728" y="300" text-anchor="middle" class="sub">区块重组后重新检查</text>
+  <g transform="translate(449 328)"><rect width="320" height="42" rx="10" fill="#e7e8ea"/><text x="160" y="27" text-anchor="middle" class="sub">状态变化需要由当前链状态重新判断</text></g>
+</svg>
