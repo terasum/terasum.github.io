@@ -1,0 +1,4 @@
+{{- $display := eq .Type "block" -}}
+{{- if $display }}<div class="article-equation">{{ else }}<span class="article-inline-equation">{{ end -}}
+{{- transform.ToMath .Inner (dict "displayMode" $display "strict" "ignore") -}}
+{{- if $display }}</div>{{ else }}</span>{{ end -}}

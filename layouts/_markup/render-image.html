@@ -1,0 +1,22 @@
+{{- $image := partial "helper/image" (dict "Resources" .Page.Resources "Image" .Destination "Context" .Page) -}}
+{{- $width := $image.Width -}}
+{{- $height := $image.Height -}}
+{{- $localPath := printf "static%s" .Destination -}}
+{{- if and (not $width) (hasPrefix .Destination "/blog-assets/") (fileExists $localPath) -}}
+    {{- with images.Config $localPath -}}
+        {{- $width = .Width -}}
+        {{- $height = .Height -}}
+    {{- end -}}
+{{- end -}}
+{{- $title := .Title | markdownify -}}
+{{- $gallery := and $width $height -}}
+{{- $attrs := dict "src" $image.Permalink "alt" .PlainText "title" $title "loading" "lazy"
+    "width" $width "height" $height "data-title-escaped" ($title | htmlEscape)
+    "class" (cond $gallery "gallery-image" "")
+    "sizes" "(max-width: 850px) calc(100vw - 32px), 724px" -}}
+{{- if $gallery -}}
+    {{- $attrs = merge $attrs (dict "data-flex-grow" (div (mul $width 100) $height) "data-flex-basis" (printf "%dpx" (div (mul $width 240) $height))) -}}
+{{- end -}}
+{{- partial "helper/responsive-image.html" (dict "Resource" $image.Resource
+    "Widths" (cond .Page.Site.Params.ImageProcessing.Content.Enabled .Page.Site.Params.ImageProcessing.Content.Widths nil)
+    "Attributes" $attrs) -}}

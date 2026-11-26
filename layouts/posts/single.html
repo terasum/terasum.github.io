@@ -1,0 +1,56 @@
+{{ define "body-class" }}article-page editorial-reading{{ end }}
+{{ define "left-sidebar" }}{{- "" -}}{{ end }}
+{{ define "main" }}
+    {{ partial "editorial/header.html" . }}
+    {{ $toc := partial "article/components/toc.html" . }}
+    {{ $hasTOC := in $toc "<li>" }}
+
+    <article class="reading-article" aria-labelledby="reading-title">
+        <header class="reading-intro">
+            <div class="reading-meta">
+                {{ range .GetTerms "categories" }}<a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>{{ end }}
+                <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time>
+                <span>{{ T "article.readingTime" .ReadingTime }}</span>
+            </div>
+            <h1 id="reading-title">{{ .Title }}</h1>
+            {{ with .Description }}<p class="reading-deck">{{ . }}</p>{{ end }}
+        </header>
+
+        {{ with .Params.cover }}
+            {{ with resources.Get . }}
+                {{ $small := .Resize "540x webp" }}
+                {{ $large := .Resize "1080x webp" }}
+                <img class="reading-cover" src="{{ $small.RelPermalink }}"
+                    srcset="{{ $small.RelPermalink }} 540w, {{ $large.RelPermalink }} 1080w"
+                    sizes="(max-width: 850px) 100vw, 1000px" width="{{ $large.Width }}" height="{{ $large.Height }}"
+                    alt="" fetchpriority="high">
+            {{ end }}
+        {{ end }}
+
+        <div class="reading-grid{{ if $hasTOC }} reading-grid--toc{{ end }}">
+            {{ if $hasTOC }}
+                <details class="reading-mobile-toc">
+                    <summary>本文目录</summary>
+                    <nav class="toc-nav" aria-label="本文目录">{{ $toc | safeHTML }}</nav>
+                </details>
+                <aside class="reading-rail" aria-labelledby="reading-toc-title">
+                    <h2 id="reading-toc-title">本文目录</h2>
+                    <nav class="toc-nav" aria-labelledby="reading-toc-title">{{ $toc | safeHTML }}</nav>
+                </aside>
+            {{ end }}
+            {{ partial "article/components/content.html" . }}
+        </div>
+        <div class="reading-end">
+            <a href="{{ .Site.Home.RelPermalink }}#articles">查看全部文章</a>
+            <a href="#page-start">返回顶部 ↑</a>
+        </div>
+    </article>
+
+    {{ partial "footer/footer.html" . }}
+    <dialog class="reading-image-viewer" aria-label="查看原图">
+        <form method="dialog"><button type="submit">关闭</button></form>
+        <img alt="">
+    </dialog>
+    {{ $imageViewer := resources.Get "js/reading-images.js" | js.Build (dict "minify" hugo.IsProduction "format" "esm") }}
+    <script type="module" src="{{ $imageViewer.RelPermalink }}"></script>
+{{ end }}

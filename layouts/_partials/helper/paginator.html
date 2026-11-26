@@ -1,0 +1,5 @@
+{{- $paginator := slice -}}
+{{- if in (slice "section" "taxonomy" "term") .Kind -}}
+    {{- $paginator = .Paginate (partial "helper/pages.html" .) -}}
+{{- end -}}
+{{- return $paginator -}}

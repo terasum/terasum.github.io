@@ -1,0 +1,95 @@
+{{ define "body-class" }}editorial-home{{ end }}
+{{ define "left-sidebar" }}{{- "" -}}{{ end }}
+{{ define "main" }}
+    {{- $lead := .GetPage "/posts/tracing-system-analysis" -}}
+    {{ partial "editorial/header.html" . }}
+
+    {{ with $lead }}
+        <section class="editorial-section" aria-labelledby="featured-heading">
+            <h1 id="featured-heading">精选文章</h1>
+            <div class="editorial-featured">
+                <article class="editorial-lead">
+                    <a href="{{ .RelPermalink }}">
+                        {{ with .Params.cover }}
+                            {{ with resources.Get . }}
+                                {{ $small := .Resize "540x webp" }}
+                                {{ $large := .Resize "1080x webp" }}
+                                <img src="{{ $small.RelPermalink }}"
+                                    srcset="{{ $small.RelPermalink }} 540w, {{ $large.RelPermalink }} 1080w"
+                                    sizes="(max-width: 740px) 100vw, 720px" width="{{ $large.Width }}" height="{{ $large.Height }}" alt="" fetchpriority="high">
+                            {{ end }}
+                        {{ end }}
+                        <div class="editorial-lead-copy">
+                            {{ with index .Params.categories 0 }}<p class="editorial-topic">{{ . }}</p>{{ end }}
+                            <h2>{{ .Title }}</h2>
+                            <p>{{ .Description }}</p>
+                        </div>
+                    </a>
+                </article>
+
+                <div class="editorial-picks">
+                    {{ range slice ($.GetPage "/posts/golang-thread-scheduler") ($.GetPage "/posts/golang-gc-algorithm-3-colors") }}
+                        {{ with . }}
+                            <article class="editorial-pick">
+                                <a href="{{ .RelPermalink }}">
+                                    <div>
+                                        <p class="editorial-topic">Go 运行时</p>
+                                        <h2>{{ .Title }}</h2>
+                                        <p>{{ .Description }}</p>
+                                    </div>
+                                    {{ with .Params.cover }}
+                                        {{ with resources.Get . }}
+                                            {{ with .Resize "272x webp" }}
+                                                <img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="">
+                                            {{ end }}
+                                        {{ end }}
+                                    {{ end }}
+                                </a>
+                            </article>
+                        {{ end }}
+                    {{ end }}
+                </div>
+            </div>
+        </section>
+    {{ end }}
+
+    <div class="editorial-columns">
+        <section class="editorial-section" aria-labelledby="articles">
+            <div class="editorial-section-heading">
+                <h2 id="articles">全部文章</h2>
+            </div>
+            {{ range (where .Site.RegularPages "Section" "posts").ByDate.Reverse }}
+                <article class="editorial-entry">
+                    <div>
+                        <div class="editorial-entry-meta">
+                            {{ with index .Params.categories 0 }}<p class="editorial-topic">{{ . }}</p>{{ end }}
+                            <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time>
+                        </div>
+                        <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+                        {{ with .Description }}<p class="editorial-description">{{ . }}</p>{{ end }}
+                    </div>
+                    {{ with .Params.cover }}
+                        {{ with resources.Get . }}
+                            {{ with .Resize "392x webp" }}
+                                <img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="" loading="lazy" decoding="async">
+                            {{ end }}
+                        {{ end }}
+                    {{ end }}
+                </article>
+            {{ end }}
+        </section>
+
+        {{ with .Site.Taxonomies.categories }}
+            <aside class="editorial-section editorial-categories" aria-labelledby="categories-heading">
+                <h2 id="categories-heading">专题</h2>
+                <ul>
+                    {{ range .Alphabetical }}
+                        <li><a href="{{ .Page.RelPermalink }}">{{ .Page.LinkTitle }} <span>{{ .Count }} 篇</span></a></li>
+                    {{ end }}
+                </ul>
+            </aside>
+        {{ end }}
+    </div>
+
+    {{ partial "footer/footer" . }}
+{{ end }}
