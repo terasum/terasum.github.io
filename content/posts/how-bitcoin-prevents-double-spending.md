@@ -12,7 +12,7 @@
 
 在钱包里点下“发送”以后，最直觉的问题是，这笔钱凭什么不能再发一次。签名当然重要，但它只证明有人掌握了花费条件所要求的密钥。节点还要确认这笔交易花的是当前仍存在的输出，金额与锁定条件没有问题，并且这次状态变化可以接在当前链状态之后。沿着一次交易被节点接收和验证的过程，这件事会变得清楚。
 
-![比特币交易验证路径](/diagrams/bitcoin-transaction-validation.svg)
+![比特币交易验证路径](/diagrams/bitcoin-transaction-validation-v2.svg)
 
 ## 先把钱包界面忘掉
 
@@ -76,7 +76,7 @@ SegWit v0 的见证程序会把交易版本、前序输出集合摘要、序列�
 
 ## 从广播到确认，付款经历了哪些状态
 
-![一笔交易从广播到确认的状态变化](/diagrams/bitcoin-payment-states.svg)
+![一笔交易从广播到确认的状态变化](/diagrams/bitcoin-payment-states-v2.svg)
 
 ## 回到那笔 100,000 sat 的付款
 
