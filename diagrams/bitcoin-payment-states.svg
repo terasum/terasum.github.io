@@ -9,7 +9,7 @@
   <path class="line" d="M456 152h58"/><path d="M514 152l-9-6v12z" class="dot"/>
   <g transform="translate(524 105)"><rect class="box" width="170" height="94" rx="12"/><text x="85" y="40" text-anchor="middle" class="label">进入内存池</text><text x="85" y="65" text-anchor="middle" class="sub">节点策略接受</text></g>
   <path class="line" d="M694 152h58"/><path d="M752 152l-9-6v12z" class="dot"/>
-  <g transform="translate(762 105)"><rect width="170" height="94" rx="12" fill="#202329"/><text x="85" y="40" text-anchor="middle" fill="#fff" class="label">获得确认</text><text x="85" y="65" text-anchor="middle" fill="#cdd0d5" class="sub">位于活跃链</text></g>
+  <g transform="translate(762 105)"><rect class="box" width="170" height="94" rx="12" fill="#e7e8ea"/><text x="85" y="40" text-anchor="middle" class="label">获得确认</text><text x="85" y="65" text-anchor="middle" class="sub">位于活跃链</text></g>
   <path class="line" d="M932 152h58"/><path d="M990 152l-9-6v12z" class="dot"/>
   <g transform="translate(1000 105)"><rect class="box" width="72" height="94" rx="12"/><text x="36" y="40" text-anchor="middle" class="label">更多</text><text x="36" y="65" text-anchor="middle" class="sub">确认</text></g>
   <path class="muted" d="M609 199v77H317v-77"/><path d="M317 199l-6 9h12z" fill="#8a909b"/><text x="463" y="300" text-anchor="middle" class="sub">冲突交易或节点策略变化</text>
