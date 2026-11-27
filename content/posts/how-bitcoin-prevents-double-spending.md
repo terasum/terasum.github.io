@@ -1,10 +1,11 @@
 {
   "title": "比特币是如何防止双花的",
+  "date": "2017-03-27",
   "url": "/posts/how-bitcoin-prevents-double-spending/",
   "description": "从 UTXO、脚本验证、内存池到区块确认，拆解一笔交易为何不能在同一状态路径中被花费两次。",
   "categories": ["区块链"],
   "tags": ["Bitcoin", "UTXO", "交易验证", "双花"],
-  "showDate": false
+  "cover": "banners/bitcoin-double-spending.png"
 }
 
 *How Bitcoin Prevents Double Spending: From UTXOs to Block Confirmation*
